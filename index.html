@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <title>Aniamtions Test Page</title>
+        <script
+          src="https://code.jquery.com/jquery-3.2.1.min.js"
+          integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+          crossorigin="anonymous"></script>
+        <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+        <style>
+            pre {
+                overflow: scroll;
+                background-color: #ddd;
+                border-radius: 5px;
+                padding: 10px;
+                box-sizing: border-box;
+            }
+
+            @keyframes pulse {
+                0% {transform: scale(1);}
+                50% {transform: scale(1.5);}
+                100% {transform: scale(1);}
+            }
+
+            @keyframes blinker {
+                from  {opacity: 1.0;}
+                to    {opacity: 0.0;}
+            }
+        </style>
+    </head>
+    <body>
+        <div id="react"></div>
+
+        <script>
+            window.react_mount = document.getElementById('react')
+        </script>
+
+        <script id="react-js" src="index.js"></script>
+    </body>
+</html>
