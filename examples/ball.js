@@ -4,9 +4,11 @@ import ReactDOM from 'react-dom'
 import {createStore, combineReducers} from 'redux'
 import {Provider, connect} from 'react-redux'
 
-import {animations, AnimationHandler} from '../reducers.js'
-import {Translate, RepeatSequence} from '../animations.js'
+import {animations, startAnimation} from '../reducers.js'
+import {AnimationControls} from '../controls.js'
+import {Become, Animate, Translate, RepeatSequence} from '../animations.js'
 import {AnimationStateVisualizer} from '../state-visualizer.js'
+
 
 window.initial_state = {
     ball: {
@@ -18,14 +20,16 @@ window.initial_state = {
             width: 100,
             height: 100,
             borderRadius: 50,
+            zIndex: 1000,
         },
     }
 }
 window.store = createStore(combineReducers({animations}))
-window.animations = new AnimationHandler(window.store, window.initial_state)
+const getWarpedTime = startAnimation(window.store, window.initial_state)
 
-const BOUNCE_ANIMATION = () =>
+const BOUNCE_ANIMATION = (start_time) =>
     RepeatSequence([
+        // high bounce
         Translate({
             path: '/ball',
             amt:  {top: -200, left: 0},
@@ -39,6 +43,8 @@ const BOUNCE_ANIMATION = () =>
             duration: 500,
             curve: 'easeInQuad',
         }),
+
+        // medium bounce
         Translate({
             path: '/ball',
             amt:  {top: -100, left: 0},
@@ -52,6 +58,8 @@ const BOUNCE_ANIMATION = () =>
             duration: 250,
             curve: 'easeInQuad',
         }),
+
+        // low bounce
         Translate({
             path: '/ball',
             amt:  {top: -50, left: 0},
@@ -65,30 +73,69 @@ const BOUNCE_ANIMATION = () =>
             duration: 125,
             curve: 'easeInQuad',
         }),
-    ], 3)
+    ], 3, start_time)
+
+const FOLLOW_ANIMATION = () => {
+    return [
+        Become({
+            path: '/ball/style/position',
+            state: 'fixed',
+        }),
+        Animate({
+            path: '/ball/style/top',
+            duration: Infinity,
+            tick: () => window.mouseY - 50
+        }),
+        Animate({
+            path: '/ball/style/left',
+            duration: Infinity,
+            tick: () => window.mouseX - 50
+        }),
+    ]
+}
 
 
-
-const BallComponent = ({ball, queue, animateBallBounce}) =>
-    <div className="ball" style={ball.style} onClick={animateBallBounce}></div>
+const BallComponent = ({ball, queue, animateBallBounce, animateBallFollow, getTime}) =>
+    <div
+        className="ball"
+        style={ball.style}
+        onClick={() => animateBallBounce(getTime())}
+        onContextMenu={animateBallFollow}>
+    </div>
 
 const mapStateToProps = ({animations}) => ({ball: animations.state.ball})
 const mapDispatchToProps = (dispatch) => ({
-    animateBallBounce: () => {
-        dispatch({type: 'ADD_ANIMATION', animation: BOUNCE_ANIMATION()})
+    animateBallBounce: (start_time) => {
+        dispatch({type: 'ADD_ANIMATION', animation: BOUNCE_ANIMATION(start_time)})
+    },
+    animateBallFollow: (e) => {
+        e.preventDefault()
+        dispatch({type: 'ADD_ANIMATION', animation: FOLLOW_ANIMATION()})
     },
 })
 
 const Ball = connect(mapStateToProps, mapDispatchToProps)(BallComponent)
 
+
+const source_tag = <small style={{opacity: 0.2, float: 'right', marginTop: -10, marginRight: 5}}>
+    <a href="https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/examples/ball.js">examples/ball.js</a>
+</small>
+
 ReactDOM.render(
     <Provider store={window.store}>
         <div>
-            <small style={{opacity: 0.2, float: 'right', marginTop: -10, marginRight: 5}}>examples/ball.js</small><br/>
-            <Ball/>
+            {source_tag}<br/>
+            <Ball getTime={getWarpedTime}/>
+            <hr/>
+            <AnimationControls debug/>
             <hr/>
             <AnimationStateVisualizer debug/>
         </div>
     </Provider>,
     document.getElementById('react'),
 )
+
+window.onmousemove = (e) => {
+    window.mouseY = e.pageY
+    window.mouseX = e.pageX
+}
