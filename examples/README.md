@@ -1,6 +1,12 @@
 # Redux-Time Examples:
 
- - Full Demo Page: [**Live Demo**](https://monadical-sas.github.io/redux-time/examples/demo.html) | **Source:** [`examples/demo.js`](demo.js)
+▶️ [Github Repo](https://github.com/Monadical-SAS/redux-time/) | [Github Pages](https://monadical-sas.github.io/redux-time/) | [Documentation](https://github.com/Monadical-SAS/redux-time/#documentation)
+
+## Demos
+
+ - Full Demo Page
+ 
+   [**Live Demo**](https://monadical-sas.github.io/redux-time/examples/demo.html) | **Source:** [`examples/demo.js`](demo.js)
  
     A fully featured example page that demonstrates the usage of:
 
@@ -10,7 +16,9 @@
         - time travel
         - animation composition
 
- - Interactive Ball Demo: [**Live Demo**](https://monadical-sas.github.io/redux-time/examples/ball.html) | **Source:** [`examples/ball.js`](ball.js)
+ - Interactive Ball Demo
+ 
+   [**Live Demo**](https://monadical-sas.github.io/redux-time/examples/ball.html) | **Source:** [`examples/ball.js`](ball.js)
  
     A basic demonstration of interactive animations, including:
 
@@ -18,7 +26,9 @@
         - right-click makes the ball follow the mouse around in real-time
         - time travel
 
- - Stress Test: [**Live Demo**](https://monadical-sas.github.io/redux-time/examples/stress-test.html) | **Source:** [`examples/stress-test.js`](stress-test.js)
+ - Stress Test
+
+   [**Live Demo**](https://monadical-sas.github.io/redux-time/examples/stress-test.html) | **Source:** [`examples/stress-test.js`](stress-test.js)
  
     A frame with a button to incrementally add more elements while watching the frame-rate, demonstrates:
 
@@ -28,7 +38,9 @@
         - time travel doesn't affect render speed negatively
         - pausing time also pauses rendering (saves battery in background)
     
- - Warped-time: [**Live Demo**](https://monadical-sas.github.io/redux-time/warped-time/examples/demo.html) | **Source:** [`warped-time/examples/demo.js`](../warped-time/examples/demo.js)
+ - Warped-time
+ 
+   [**Live Demo**](https://monadical-sas.github.io/redux-time/warped-time/examples/demo.html) | **Source:** [`warped-time/examples/demo.js`](../warped-time/examples/demo.js)
  
     Simple demonstration of the warped-time library, independed of redux-time, demonstrates:
 
