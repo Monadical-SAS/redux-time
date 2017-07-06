@@ -47,24 +47,28 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch({type: 'ADD_ANIMATION', animation: Become({
             path: '/test_state/text',
             state: '1st state',
+            start_time: window.animations.time.getWarpedTime(),
         })})
     },
     animateSecondState: () => {
         dispatch({type: 'ADD_ANIMATION', animation: Become({
             path: '/test_state/text',
             state: '2nd state',
+            start_time: window.animations.time.getWarpedTime(),
         })})
     },
     animateGreen: () => {
         dispatch({type: 'ADD_ANIMATION', animation: Become({
             path: '/test_state/style/color',
             state: 'green',
+            start_time: window.animations.time.getWarpedTime(),
         })})
     },
     animateRed: () => {
         dispatch({type: 'ADD_ANIMATION', animation: Become({
             path: '/test_state/style/color',
             state: 'red',
+            start_time: window.animations.time.getWarpedTime(),
         })})
     },
     animateMove: () => {
@@ -74,6 +78,7 @@ const mapDispatchToProps = (dispatch) => ({
             end_state: {top: 100, left: 100},
             duration: 3000,
             unit: 'px',
+            start_time: window.animations.time.getWarpedTime(),
         })})
     },
     animateRotate: () => {
@@ -84,6 +89,7 @@ const mapDispatchToProps = (dispatch) => ({
             duration: 3000,
             curve: 'linear',
             unit: 'deg',
+            start_time: window.animations.time.getWarpedTime(),
         }), 3)})
     },
     animatePulse: () => {
@@ -91,6 +97,7 @@ const mapDispatchToProps = (dispatch) => ({
             path: '/test_state',
             name: 'pulse',
             duration: 2000,
+            start_time: window.animations.time.getWarpedTime(),
         })})
     },
     animateBlink: () => {
@@ -98,13 +105,14 @@ const mapDispatchToProps = (dispatch) => ({
             path: '/test_state',
             name: 'blinker',
             duration: 1000,
+            start_time: window.animations.time.getWarpedTime(),
         }), Infinity)})
     },
-    animateStopBlink: () => {
-        dispatch({type: 'ADD_ANIMATION', animation: AnimateCSS({
-            path: '/test_state',
-            name: null,
-            duration: Infinity,
+    animateBlinkStop: () => {
+        dispatch({type: 'ADD_ANIMATION', animation: Become({
+            path: '/test_state/style/animation/blinker',
+            state: null,
+            start_time: window.animations.time.getWarpedTime(),
         })})
     },
 })
