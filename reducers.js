@@ -95,11 +95,11 @@ const css_transform_str = {
     scale:          (scale) =>                  `scale(${scale})`,
     perspective:    (px) =>                     `perspective(${px})`,
     translate:      ({left, top}) =>            `translate(${left}, ${top})`,
-    translate3d:    ({x, y, z}) =>              `translate3d(${x}, ${y})`,
+    translate3d:    ({x, y, z}) =>              `translate3d(${x}, ${y}, ${z})`,
     rotate:         (rotation) =>               `rotate(${rotation})`,
-    rotate3d:       ({x, y, z}) =>              `rotate3d(${x}, ${y})`,
+    rotate3d:       ({x, y, z}) =>              `rotate3d(${x}, ${y}, ${z})`,
     skew:           ({x, y}) =>                 `skew(${x}, ${y})`,
-    scale3d:        ({x, y, z}) =>              `scale3d(${x}, ${y})`,
+    scale3d:        ({x, y, z}) =>              `scale3d(${x}, ${y}, ${z})`,
     // TODO: add more css transform types?
 }
 

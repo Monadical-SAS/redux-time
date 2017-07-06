@@ -35,6 +35,8 @@ const BOUNCE_ANIMATION = (start_time) =>
             amt:  {top: -200, left: 0},
             duration: 500,
             curve: 'easeOutQuad',
+            // start_time: getWarpedTime(),         //  optional, defaults to now
+            // unit: 'px',                          //  optional, defaults to px
         }),
         Translate({
             path: '/ball',
@@ -118,7 +120,7 @@ const Ball = connect(mapStateToProps, mapDispatchToProps)(BallComponent)
 
 
 const source_tag = <small style={{opacity: 0.2, float: 'right', marginTop: -10, marginRight: 5}}>
-    <a href="https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/examples/ball.js">examples/ball.js</a>
+    <a href="https://github.com/Monadical-SAS/redux-time/blob/master/examples/ball.js">examples/ball.js</a>
 </small>
 
 ReactDOM.render(
