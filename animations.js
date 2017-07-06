@@ -69,8 +69,7 @@ const checked_animation_amt = ({key, start_state, end_state, amt}) => {
             return checked_animation_amt({start_state: start_state[key], end_state: end_state[key], amt: amt[key]})
 
         if (typeof(start_state) !== 'object' || typeof(end_state) !== 'object' || typeof(amt) !== 'object') {
-            console.log({start_state, end_state, amt})
-            throw 'Incompatible types passed as {start_state, end_state, and amt}, must all be dict or numbers'
+            throw 'Incompatible types passed as {start_state, end_state, amt}, must all be dict or numbers'
         }
 
         let keys = Object.keys(start_state)
@@ -154,7 +153,7 @@ export const Animate = ({type, path, start_time, end_time, duration, start_state
         }
     } catch(e) {
         console.log('INVALID ANIMATION:', animation)
-        throw `Exception while creating animation object ${type}: ${e.message}`
+        throw `Exception while creating animation object ${type}:\n  ${e} ${e.message ? e.message : ''}`
     }
 
     // console.log(animation.type, animation)
