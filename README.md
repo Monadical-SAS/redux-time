@@ -1,8 +1,6 @@
-# Redux-Time
+# Redux-Time: Javascript animations made easy.
 
-[DEMO](https://monadical-sas.github.io/examples/demo.html)
-
-Redux-Time is a library that allows you to represent your redux state tree as a function of time.  It's primarily used for animations, but it can also be used generically for chaging any redux state as time progresses.
+Redux-Time is a library that allows you to compute your state tree as a function of time.  It's primarily used for animations, but it can also be used for generically changing any redux state as time progresses.
 
 Generally, there are two different categories of animations on websites:
 
@@ -14,7 +12,7 @@ Redux-time is designed for the second case.  If you want simple CSS content tran
 ```bash
 yarn add redux-time
 ```
-See the [demo](https://monadical-sas.github.io/examples/demo.html), or follow the [Walkthrough](#walkthrough-example) below.
+Check it out in action on the [demo](https://monadical-sas.github.io/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.
 
 ## Key Features
 
@@ -56,13 +54,13 @@ const store = createStore(combineReducers({animations}))
 const animationHandler = new AnimationHandler(store, initial_state)
 ```
 
-2. Then we create a redux component with uses this state to render
+2. Then we create a redux component that uses this state to render
 ```javascript
-const BallComponent = ({style}) =>
-    <div className="ball", style={style}></div>
+const BallComponent = ({ball}) =>
+    <div className="ball", style={ball.style}></div>
 
 const mapStateToProps = ({animations}) => ({
-    style: animations.state.ball.style
+    ball: animations.state.ball,
 })
 
 const Ball = connect(mapStateToProps)(BallComponent)
@@ -70,6 +68,8 @@ const Ball = connect(mapStateToProps)(BallComponent)
 
 3. Then we dispatch an `ADD_ANIMATION` action to queue up an animation to move the ball
 ```javascript
+import {Translate} from 'redux-time/animations'
+
 store.dispatch({type: 'ADD_ANIMATION', animation: Translate({
     path: '/ball',
     start_state: {top: 0, left: 0},
@@ -80,11 +80,12 @@ store.dispatch({type: 'ADD_ANIMATION', animation: Translate({
 })})
 ```
 
-4. 1requestAnimationFrame` will dispatch a `TICK` action, then the `animations` reducer gets the TICK and looks in the queue and calculates the state that needs to be produced for all active animations
+4. The `AnimationHandler` will dispatch a `TICK` action on every `requestAnimationFrame`.  Then the `animations` reducer gets the `TICK` and looks in the queue to see which animations are active.  It then uses each `animtion.tick` function to calculates the new state that needs to be produced.
 ```javascript
+// happens on every requestAnimationFrame
 store.dispatch({type: 'TICK', current_timestamp: 1499000000})
 
-// animatons reducer uses the Translate animation.tick(delta) to calculate its animated state:
+// animatons reducer uses the Translate animation.tick(delta) to calculate its animated state, e.g.:
 
 ball: {
     style: {top: 55, left: 0},
@@ -97,11 +98,11 @@ See the demo of this code in action here: [ball.html](https://monadical-sas.gith
 
 ## Info & Motivation
 
-After spending almost a year contemplating how to do React animations cleanly at [Monadical][https://monadical.com] (we're [hiring](https://monadical.com/apply)!), we realized that all state can be represented as composed functions that depend only on a delta from their start time.
+After spending almost a year contemplating how to do React animations cleanly at [Monadical](https://monadical.com) (we're [hiring](https://monadical.com/apply)!), we realized that all state can be represented as composed functions that depend only on a delta from their start time.
 
 On the way we tried almost every other solution out there, from using simple jQuery animations, to react-transition-group, to janky approaches in-between using `setTimout`.  Since all those are designed with content transitions in mind, nothing really "clicked" and felt like a clean way to do interactive game animations.
 
-Finally, we settled on the state tree as a function of time approach, and our life has been much better every since!  We feel this is the best way currently available to do fast, videogame-style animations in declarative React-friendly manner.
+Finally, we settled on the state tree as a function of time approach, and our life has been much better every since!  We feel this is the best way currently available to do fast, videogame-style animations in a declarative React-friendly manner.
 
 ## Links
 
@@ -111,5 +112,5 @@ Finally, we settled on the state tree as a function of time approach, and our li
 - [GSAP](https://greensock.com/gsap): incredibly robust, stable, well-supported Javascript animations library
 - [react-animations](https://github.com/FormidableLabs/react-animations) CSS animations usable with inline-style libraries like StyledComponents
 - [react-animate](https://www.npmjs.com/package/react-animate) library for defining component transitions by extending the React.Component class
-- React.rocks [animation examples](https://react.rocks/tag/Animation)
-- [Animate.css](https://github.com/daneden/animate.css/blob/master/animate.css) repository of great css animations (usable with redux-time)
+- React.rocks: [animation examples](https://react.rocks/tag/Animation)
+- [Animate.css](https://github.com/daneden/animate.css/blob/master/animate.css): repository of great css animations (usable with redux-time)
