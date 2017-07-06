@@ -1,14 +1,22 @@
 # Redux-Time
 
+[DEMO](https://monadical-sas.github.io/examples/demo.html)
+
 Redux-Time is a library that allows you to represent your redux state tree as a function of time.  It's primarily used for animations, but it can also be used generically for chaging any redux state as time progresses.
+
+Generally, there are two different categories of animations on websites:
+
+ - content transitions (e.g. effects when adding/deleting a list item, hover effects, photo gallery transitions, etc)
+ - **full-blown interactive dynamic animations** (like in games)
+
+Redux-time is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) instead. 
 
 ```bash
 yarn add redux-time
 ```
+See the [demo](https://monadical-sas.github.io/examples/demo.html), or follow the [Walkthrough](#walkthrough-example) below.
 
----
-
-## Features
+## Key Features
 
 - all state is a function of the current point in time
 - time-travel debugging (e.g. slow down, reverse, jump to point in time)
@@ -20,16 +28,9 @@ yarn add redux-time
 
 ## Intro
 
-Generally, there are two different categories of animations on websites:
-
- - content transitions (e.g. effects when adding/deleting a list item, hover effects, photo gallery transitions, etc)
- - **full-blown interactive dynamic animations** (like in games)
-
-Redux-time is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [css-transition-group](http://react-component.github.io/animate/) instead. 
-
 Redux-time makes complex, interactive, composable animations possible by using the redux single-source-of-truth state tree model, and extending it with the idea of time.
 
-Redux is already capable of time-travel currently, however you cant slow down the speed of time, reverse time, or jump to a specific point in time since redux only knows about the list of actions and has no first-class conept of time.  This library makes time a first-class concept, and allows you careful control over its progression.
+Redux is already capable of time-travel currently, however you cant slow down the speed of time, reverse time, or jump to a specific point in time since redux only knows about the list of actions and has no first-class conept of time.  This library makes time a first-class concept, and gives you careful control over its progression.
 
 What that means specifically, is that every time a `TICK` action is dispatched with a `current_timestamp` parameter, the `animations` reducer looks through the active animations in `animations.queue`, calls their respective `tick` functions with a `delta` parameter, and uses their output to render a state tree at that point in time.
 
@@ -43,7 +44,14 @@ Every tick function is a pure function of the `start_state`, `end_state`, and de
 
 1. First we create a redux store, and an `AnimationHandler` with our initial state
 ```javascript
-const initial_state = {ball: {style: {top: 0, left: 0}}}
+import {createStore, combineReducers} from 'redux'
+import {animations, AnimationHandler} from 'redux-time'
+
+const initial_state = {
+    ball: {
+        style: {top: 0, left: 0},
+    },
+}
 const store = createStore(combineReducers({animations}))
 const animationHandler = new AnimationHandler(store, initial_state)
 ```
@@ -72,15 +80,36 @@ store.dispatch({type: 'ADD_ANIMATION', animation: Translate({
 })})
 ```
 
-4. requestAnimation will dispatch a `TICK` action, then the `animations` reducer gets the TICK and looks in the queue and calculates the state that needs to be produced for all active animations
+4. 1requestAnimationFrame` will dispatch a `TICK` action, then the `animations` reducer gets the TICK and looks in the queue and calculates the state that needs to be produced for all active animations
 ```javascript
 store.dispatch({type: 'TICK', current_timestamp: 1499000000})
+
 // animatons reducer uses the Translate animation.tick(delta) to calculate its animated state:
-{
-    ball: {style: {top: 55, left: 0}}
-}
+
+ball: {
+    style: {top: 55, left: 0},
+},
 ```
 
 4. Redux re-renders the component automatcially whenever the state changes, so the new state is immediately rendered, and the position of the ball updates on the screen!  This process repeats, and the ball state changes on every `TICK` until the animtion finishes.
 
 See the demo of this code in action here: [ball.html](https://monadical-sas.github.io/redux-time/examples/ball.html), and the full code for the example in [`examples/ball.js`](`https://github.com/Monadical-SaS/redux-time/blob/master/examples/ball.js`)
+
+## Info & Motivation
+
+After spending almost a year contemplating how to do React animations cleanly at [Monadical][https://monadical.com] (we're [hiring](https://monadical.com/apply)!), we realized that all state can be represented as composed functions that depend only on a delta from their start time.
+
+On the way we tried almost every other solution out there, from using simple jQuery animations, to react-transition-group, to janky approaches in-between using `setTimout`.  Since all those are designed with content transitions in mind, nothing really "clicked" and felt like a clean way to do interactive game animations.
+
+Finally, we settled on the state tree as a function of time approach, and our life has been much better every since!  We feel this is the best way currently available to do fast, videogame-style animations in declarative React-friendly manner.
+
+## Links
+
+- [React Docs on Animation](https://facebook.github.io/react/docs/animation.html)
+- [React-Transition-Group](https://github.com/reactjs/react-transition-group/tree/v1-stable) library to add component lifecycle CSS transitions
+- React-Transition-Group walkthrough article:  [UI Animations with React — The Right Way](https://medium.com/@joethedave/achieving-ui-animations-with-react-the-right-way-562fa8a91935)
+- [GSAP](https://greensock.com/gsap): incredibly robust, stable, well-supported Javascript animations library
+- [react-animations](https://github.com/FormidableLabs/react-animations) CSS animations usable with inline-style libraries like StyledComponents
+- [react-animate](https://www.npmjs.com/package/react-animate) library for defining component transitions by extending the React.Component class
+- React.rocks [animation examples](https://react.rocks/tag/Animation)
+- [Animate.css](https://github.com/daneden/animate.css/blob/master/animate.css) repository of great css animations (usable with redux-time)
