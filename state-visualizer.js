@@ -12,7 +12,7 @@ import {
 
 
 const AnimationList = ({animations, verbose=true, style}) =>
-    <table style={{width: '700px', fontSize: '85%', overflow: 'scroll', ...(style || {})}}>
+    <table style={{width: '100%', minWidth: '1500px', fontSize: '85%', overflow: 'scroll', ...(style || {})}}>
         <tbody>
             <tr style={{borderBottom: '1px solid #f0f0f0', lineHeight: '20px', fontWeight: 900}}>
                 <td>Type</td>
@@ -37,7 +37,7 @@ const AnimationList = ({animations, verbose=true, style}) =>
     </table>
 
 
-const AnimationStateVisualizerComponent = ({animations, path}) => {
+const AnimationStateVisualizerComponent = ({animations, path, debug}) => {
     const {queue, current_timestamp, last_timestamp} = animations
     const active_anims = activeAnimations(queue, current_timestamp, last_timestamp)
 
@@ -46,8 +46,9 @@ const AnimationStateVisualizerComponent = ({animations, path}) => {
     const future_anims = sortedAnimations(futureAnimations(queue, current_timestamp, last_timestamp))
 
     const col_style = {width: '32.5%', display: 'inline-block', verticalAlign: 'top'}
-    return <div>
-        <pre height="200" style={{width: '98%', display: 'inline-block', verticalAlign: 'top', textAlign: 'left'}}>
+    return <div style={{position: 'relative'}}>
+        {debug ? <small style={{opacity: 0.2, position: 'absolute', top: -15, right: 5}}>state-visualizer.js</small>: null}
+        <pre height="200" style={{width: '98%', display: 'inline-block', verticalAlign: 'top', textAlign: 'left', overflow: 'scroll'}}>
             <b>Active Animations ({active_anims.length})</b><br/>
             <AnimationList animations={active_anims} style={{width: '100%'}}/>
         </pre>

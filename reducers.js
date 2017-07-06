@@ -92,10 +92,15 @@ export const shouldAnimate = (anim_queue, timestamp, speed) => {
 
 
 const transforms = {
-    translate:  ({top, left}) =>            `translate(${left}, ${top})`,
-    rotate:     (rotation) =>               `rotate(${rotation})`,
-    scale:      (scale) =>                  `scale(${scale})`,
-    // TODO: add more css transform types
+    scale:          (scale) =>                  `scale(${scale})`,
+    perspective:    (px) =>                     `perspective(${px})`,
+    translate:      ({left, top}) =>            `translate(${left}, ${top})`,
+    translate3d:    ({x, y, z}) =>              `translate3d(${x}, ${y})`,
+    rotate:         (rotation) =>               `rotate(${rotation})`,
+    rotate3d:       ({x, y, z}) =>              `rotate3d(${x}, ${y})`,
+    skew:           ({x, y}) =>                 `skew(${x}, ${y})`,
+    scale3d:        ({x, y, z}) =>              `scale3d(${x}, ${y})`,
+    // TODO: add more css transform types?
 }
 
 

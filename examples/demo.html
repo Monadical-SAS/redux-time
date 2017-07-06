@@ -5,6 +5,9 @@
         <link rel="stylesheet" type="text/css" href="static/bootstrap.min.css">
 
         <style>
+            body {
+                text-align: center;
+            }
             pre {
                 overflow: scroll;
                 background-color: #f0f0f0;
@@ -27,10 +30,32 @@
         </style>
     </head>
     <body>
+        <h1>
+            Redux-Time Full Demo<br/>
+        </h1>
+        <h4>
+            <small>Redux-Time is an animation library that computes your state tree as a function of time.</small><br/><br/>
+            Github:&nbsp;
+            <a href="https://github.com/Monadical-SAS/redux-time/">Redux-Time</a>&nbsp;|
+            <a href="https://github.com/Monadical-SAS/redux-time/">Docs</a>&nbsp;|
+            <a href="https://github.com/Monadical-SAS/redux-time/blob/master/examples/demo.js">View Source</a>&nbsp;|
+            <a href="ball.html">Ball Demo</a>
+            <br/>
+        </h4>
+        <hr/>
+        <div>
+            Press the buttons below the orange box to queue up animations.
+            <br/>
+            Then, drag the time slider ⏪ to watch the animations progress forwards and backwards.<br/>
+            <br/>
+            1st State, 2nd State, Green, Red are all instant state changes.  Move and Rotate are JS animations.  Pulse and Blink are CSS keyframe animations.
+        </div><hr/>
+
         <div id="react"></div>
-        <script>
-            window.react_mount = document.getElementById('react')
-        </script>
+        <hr/>
+        <a href="https://monadical.com">Monadical</a>
+        <br/>
+        <small>Want to hack on cool React/Redux animations + Ethereum poker? Come <a href="https://monadical.com/apply">work with us</a>!</small>
 
         <script id="react-js" src="static/demo.js"></script>
     </body>

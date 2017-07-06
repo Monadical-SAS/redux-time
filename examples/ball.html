@@ -2,13 +2,45 @@
     <head>
         <title>Aniamtions Test Page</title>
         <script src="static/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="static/bootstrap.min.css">
+
+        <style>
+            body {
+                text-align: center;
+            }
+            pre {
+                overflow: scroll;
+                background-color: #f0f0f0;
+                border-radius: 3px;
+                padding: 10px;
+                margin: 2px;
+                box-sizing: border-box;
+            }
+        </style>
     </head>
     <body>
+        <h1>
+            Redux-Time Ball Demo<br/>
+        </h1>
+        <h4>
+            <small>Redux-Time is an animation library that computes your state tree as a function of time.</small><br/><br/>
+            Github:&nbsp;
+            <a href="https://github.com/Monadical-SAS/redux-time/">Redux-Time</a>&nbsp;|
+            <a href="https://github.com/Monadical-SAS/redux-time/">Docs</a>&nbsp;|
+            <a href="https://github.com/Monadical-SAS/redux-time/blob/master/examples/demo.js">View Source</a>&nbsp;|
+            <a href="demo.html">Full Demo</a>
+            <br/>
+        </h4>
+        <hr/>
+        <div>
+            Click on the ball to trigger a bounce animation repeated 3 times.
+        </div>
+        <hr/>
         <div id="react"></div>
-        <script>
-            window.react_mount = document.getElementById('react')
-        </script>
-
+        <hr/>
+        <a href="https://monadical.com">Monadical</a>
+        <br/>
+        <small>Want to hack on cool React/Redux animations + Ethereum poker? Come <a href="https://monadical.com/apply">work with us</a>!</small>
         <script id="react-js" src="static/ball.js"></script>
     </body>
 </html>

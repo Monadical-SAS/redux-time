@@ -5,73 +5,90 @@ import {createStore, combineReducers} from 'redux'
 import {Provider, connect} from 'react-redux'
 
 import {animations, AnimationHandler} from '../reducers.js'
-import {Translate, Repeat} from '../animations.js'
+import {Translate, RepeatSequence} from '../animations.js'
+import {AnimationStateVisualizer} from '../state-visualizer.js'
 
 window.initial_state = {
-    ball: {style: {
-        position: 'absolute',
-        top: '45%',
-        left: '45%',
-        backgroundColor: 'red',
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-    }}
+    ball: {
+        style: {
+            position: 'relative',
+            top: '0%',
+            left: '45%',
+            backgroundColor: 'red',
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+        },
+    }
 }
-
 window.store = createStore(combineReducers({animations}))
 window.animations = new AnimationHandler(window.store, window.initial_state)
 
+const BOUNCE_ANIMATION = () =>
+    RepeatSequence([
+        Translate({
+            path: '/ball',
+            amt:  {top: -200, left: 0},
+            duration: 500,
+            curve: 'easeOutQuad',
+        }),
+        Translate({
+            path: '/ball',
+            start_state: {top: -200, left: 0},
+            end_state: {top: 0, left: 0},
+            duration: 500,
+            curve: 'easeInQuad',
+        }),
+        Translate({
+            path: '/ball',
+            amt:  {top: -100, left: 0},
+            duration: 250,
+            curve: 'easeOutQuad',
+        }),
+        Translate({
+            path: '/ball',
+            start_state: {top: -100, left: 0},
+            end_state: {top: 0, left: 0},
+            duration: 250,
+            curve: 'easeInQuad',
+        }),
+        Translate({
+            path: '/ball',
+            amt:  {top: -50, left: 0},
+            duration: 125,
+            curve: 'easeOutQuad',
+        }),
+        Translate({
+            path: '/ball',
+            start_state: {top: -50, left: 0},
+            end_state: {top: 0, left: 0},
+            duration: 125,
+            curve: 'easeInQuad',
+        }),
+    ], 3)
 
-const DemoComponent = ({ball, queue, onClickBall}) =>
-    <div>
-        <h1 style={{textAlign: 'center'}}>Ball Animation Demo</h1>
 
-        <pre style={{width: '50%', float: 'right'}}>
-            State:<br/>
-            {JSON.stringify(ball, null, 4)}
-        </pre>
-        <pre>
-            Animation Queue:<br/>
-            {JSON.stringify(queue, null, 4)}
-        </pre>
 
-        <div className="ball" style={ball.style} onClick={onClickBall}></div>
-    </div>
+const BallComponent = ({ball, queue, animateBallBounce}) =>
+    <div className="ball" style={ball.style} onClick={animateBallBounce}></div>
 
-const mapStateToProps = ({animations}) => ({ball: animations.state.ball, queue: animations.queue})
+const mapStateToProps = ({animations}) => ({ball: animations.state.ball})
 const mapDispatchToProps = (dispatch) => ({
-    onClickBall: () => {
-        // bounce the ball
-        const start_time = (new Date).getTime()
-        dispatch({type: 'ADD_ANIMATION', animation: [
-            Translate({
-                path: '/ball',
-                start_state: {top: 0, left: 0},
-                end_state:  {top: -200, left: 0},
-                start_time: start_time,
-                duration: 1000,
-                unit: 'px',
-                curve: 'easeOutQuad',
-            }),
-            Translate({
-                path: '/ball',
-                start_state: {top: -200, left: 0},
-                end_state: {top: 0, left: 0},
-                start_time: start_time + 1000,
-                duration: 1000,
-                unit: 'px',
-                curve: 'easeInQuad',
-            }),
-        ]})
+    animateBallBounce: () => {
+        dispatch({type: 'ADD_ANIMATION', animation: BOUNCE_ANIMATION()})
     },
 })
 
-const BallDemo = connect(mapStateToProps, mapDispatchToProps)(DemoComponent)
+const Ball = connect(mapStateToProps, mapDispatchToProps)(BallComponent)
 
 ReactDOM.render(
     <Provider store={window.store}>
-        <BallDemo/>
+        <div>
+            <small style={{opacity: 0.2, float: 'right', marginTop: -10, marginRight: 5}}>examples/ball.js</small><br/>
+            <Ball/>
+            <hr/>
+            <AnimationStateVisualizer debug/>
+        </div>
     </Provider>,
-    window.react_mount,
+    document.getElementById('react'),
 )

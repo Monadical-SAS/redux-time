@@ -13,30 +13,36 @@ const base_style = {
     backgroundColor: 'orange',
 }
 
-const AnimationTesterComponent = ({test_state, animateFirstState, animateSecondState, animateGreen, animateRed, animateMove, animateRotate, animatePulse, animateBlink, animateBlinkStop}) =>
-    <div>
-        <pre style={{...base_style, ...test_state.style}}>
+const AnimationTesterComponent = ({text, style, animateFirstState, animateSecondState, animateGreen, animateRed, animateMove, animateRotate, animatePulse, animateBlink, animateBlinkStop, clearAnimations, debug}) =>
+    <div style={{position: 'relative'}}>
+        {debug ? <small style={{opacity: 0.2, position: 'absolute', top: -15, right: 5}}>examples/test-component.js</small>: null}
+        <pre style={{...base_style, ...style}}>
             <br/>
-            {test_state.text}
+            {text}
             <br/><br/>
         </pre><br/>
-        <Button onClick={animateFirstState}>1st state</Button>
-        <Button onClick={animateSecondState}>2nd state</Button>
-        <Button onClick={animateGreen}>Green</Button>
-        <Button onClick={animateRed}>Red</Button>
-        <Button onClick={animateMove}>Move</Button>
-        <Button onClick={animateRotate}>Rotate 3x</Button>
-        <Button onClick={animatePulse}>Pulse</Button>
-        <Button onClick={animateBlink}>Blink Forever</Button>
-        <Button onClick={animateBlinkStop}>Stop Blinking</Button>
+        <Button title="Instant state change" onClick={animateFirstState}>1st state</Button>
+        <Button title="Instant state change" onClick={animateSecondState}>2nd state</Button>
+        <Button title="Instant state change" onClick={animateGreen}>Green</Button>
+        <Button title="Instant state change" onClick={animateRed}>Red</Button>
+        <Button title="Instant state change" onClick={animateMove}>Move</Button>
+        <Button title="Javascript animation" onClick={animateRotate}>Rotate 3x</Button>
+        <Button title="Javascript animation" onClick={animatePulse}>Pulse</Button>
+        <Button title="CSS keyframe animation" onClick={animateBlink}>Blink Forever</Button>
+        <Button title="CSS keyframe animation" onClick={animateBlinkStop}>Stop Blinking</Button>
+        <Button onClick={clearAnimations}>Reset</Button>
     </div>
 
 
 const mapStateToProps = ({animations}) => ({
-    test_state: animations.state.test_state || {},
+    text: animations.state.test_state.text,
+    style: animations.state.test_state.style,
 })
 
 const mapDispatchToProps = (dispatch) => ({
+    clearAnimations: () => {
+        dispatch({type: 'CLEAR_ANIMATIONS'})
+    },
     animateFirstState: () => {
         dispatch({type: 'ADD_ANIMATION', animation: Become({
             path: '/test_state/text',

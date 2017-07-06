@@ -29,6 +29,12 @@ export const EasingFunctions = {
 
 export const mod = (num, amt) => ((num%amt)+amt)%amt
 
+export const range = (num) => [...Array(num).keys()]
+
+export const deepCopy = (obj) => {
+    return $.extend(true, {}, obj)  // TODO: remove jquery
+}
+
 export const flipObj = (obj) =>
     Object.keys(obj).reduce((acc, key) => {
         const val = obj[key]
