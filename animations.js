@@ -1,44 +1,4 @@
-import {EasingFunctions, mod} from './util.js'
-
-export const getCenter = ({width, height, top=0, left=0}) => ({
-    left: left + width / 2,
-    top:  top + height / 2,
-})
-
-export const queryAll = (selector) =>
-    document.querySelectorAll(selector)
-
-
-export const getDimensions = (elem) => {
-    if (typeof(elem) === 'string') {
-        elem = queryAll(elem)[0]
-    } else if (elem.jquery) {
-        elem = elem[0]
-    }
-    if (!elem) {
-        debugger
-    }
-    if (!elem.getBoundingClientRect) {
-        throw `Invalid Element: You must pass a DOM element, css selector, or jQuery element: ${elem}`
-    }
-    return elem.getBoundingClientRect()
-}
-
-export const getElementOffset = (elem) => {
-    const {top, left} = getDimensions(elem)
-    return {top, left}
-}
-
-export const getElementSize = (elem) => {
-    const {width, height} = getDimensions(elem)
-    return {width, height}
-}
-
-export const getElementCenter = (elem) => {
-    const {top, left, width, height} = getDimensions(elem)
-    return getCenter({top, left, width, height})
-}
-
+import {EasingFunctions, mod, range} from './util.js'
 
 const unit_tick = ({start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null}, key) => {
     var {start_state, amt, end_state} = checked_animation_amt({start_state, end_state, amt, key})
@@ -243,16 +203,16 @@ export const AnimateCSS = ({name, path, start_time, end_time, duration=1000, cur
     ]
 }
 
-
 export const Translate = ({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'}) => {
     if (start_time === undefined) start_time = (new Date).getTime()
+    if (start_state === undefined) start_state = {top: 0, left: 0}
     path = `${path}/style/transform/translate`
     const type = 'TRANSLATE'
 
     const animation = {type, path, start_time, end_time, duration, start_state, end_state, amt, curve, unit}
 
-    const left_tick = unit_tick(animation, 'left')  //  TODO: change left => /left to keep state selectors consistent
-    const top_tick =  unit_tick(animation, 'top')
+    const left_tick = unit_tick(animation, 'left', 0)  //  TODO: change left => /left to keep state selectors consistent
+    const top_tick =  unit_tick(animation, 'top', 0)
 
     animation.tick = (delta) => ({
         left: left_tick(delta),
@@ -299,11 +259,12 @@ export const Rotate = ({path, start_time, end_time, duration, start_state, end_s
     return Animate({type, path, start_time, end_time, duration, start_state, end_state, amt, curve, unit})
 }
 
-export const Repeat = (animation, repeat=Infinity) => {
-    if (!Array.isArray(animation)) {
-        animation = [animation]
+// repeat a single animation (which may be composed of several objects)
+export const Repeat = (animations, repeat=Infinity) => {
+    if (!Array.isArray(animations)) {
+        animations = [animations]
     }
-    return animation.map(anim => {
+    return animations.map(anim => {
         let {tick, start_time, duration} = anim
         if (start_time === undefined) start_time = (new Date).getTime()
         const repeated_tick = (delta) => tick(mod(delta, duration))
@@ -315,4 +276,30 @@ export const Repeat = (animation, repeat=Infinity) => {
             tick: repeated_tick,
         }
     })
+}
+
+// make each animation in a sequence start after the last one ends
+export const Sequential = (animations, start_time) => {
+    if (start_time === undefined) start_time = (new Date).getTime()
+    const seq = []
+    let last_end = start_time
+    for (let animation of animations) {
+        seq.push({
+            ...animation,
+            start_time: last_end,
+            end_time: last_end + animation.duration,
+        })
+        last_end = animation.duration == Infinity ?
+            last_end + 1
+          : last_end + animation.duration
+    }
+    return seq
+}
+
+// repeat a sequential list of animations
+export const RepeatSequence = (animations, repeat) => {
+    const repeated = range(repeat).reduce((acc, val) => {
+        return acc = [...acc, ...animations]
+    }, [])
+    return Sequential(repeated)
 }
