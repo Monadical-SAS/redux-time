@@ -91,7 +91,7 @@ export const shouldAnimate = (anim_queue, timestamp, speed) => {
 // window.shouldAnimate = shouldAnimate
 
 
-const transforms = {
+const css_transform_str = {
     scale:          (scale) =>                  `scale(${scale})`,
     perspective:    (px) =>                     `perspective(${px})`,
     translate:      ({left, top}) =>            `translate(${left}, ${top})`,
@@ -103,28 +103,46 @@ const transforms = {
     // TODO: add more css transform types?
 }
 
+const css_animation_str = ({name, duration, curve, delay, playState}) =>
+    `${name} ${duration}ms ${curve} -${delay}ms ${playState}`
+
 
 export const flattenStyles = (state) => {
-    // converts {style: {transform: {translate: {left: '0px', top: '10px'}, rotate: '10deg'}}}
-    //      =>  {style: {transform: 'translate(0px, 10px) rotate(10deg)'}}
-
     // this converts the styles stored as dicts in the state tree, to the strings
-    // that react components expect as style values
-    if (state === undefined || state === null || (Array.isArray(state) && !state.style)) {
+    // that react components expect as CSS style values
+
+    if (state === undefined || state === null || (Array.isArray(state) && !state.style)) {  // TODO: make this also recurse into arrays since vals may have .style
         // don't mess with values that don't have a style key
         return state
     }
-    else if (state && state.transform) {
-        // flatten transform styles from a dict to a string
-        const css_funcs = Object.keys(state.transform).map(key =>
-            transforms[key](state.transform[key]))
+    if (state && state.animation) {
+        // flatten animations from a dict to a string
+        // converts {style: {animations: {blinker: {name: blinker, duration: 1000, curve: 'linear', delay: 767}, ...}}}
+        //      =>  {style: {animation: blinker 1000ms linear -767ms paused, ...}}
+        const css_animation_funcs = Object.keys(state.animation)
+            .filter(key => state.animation[key])
+            .map(key =>
+                css_animation_str(state.animation[key]))
 
-        return {
+        state = {
             ...state,
-            transform: css_funcs.join(' '),
+            animation: css_animation_funcs.join(', '),
         }
     }
-    else if (typeof(state) === 'object') {
+    if (state && state.transform) {
+        // flatten transforms from a dict to a string
+        // converts {style: {transform: {translate: {left: '0px', top: '10px'}, rotate: '10deg'}}}
+        //      =>  {style: {transform: 'translate(0px, 10px) rotate(10deg)'}}
+        const css_transform_funcs = Object.keys(state.transform)
+            .map(key =>
+                css_transform_str[key](state.transform[key]))
+
+        state = {
+            ...state,
+            transform: css_transform_funcs.join(' '),
+        }
+    }
+    if (typeof(state) === 'object' && !(state.animations || state.transform)) {
         // recurse down if value is a dictionary
         return Object.keys(state).reduce((acc, key) => {
             acc[key] = flattenStyles(state[key])

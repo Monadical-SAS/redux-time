@@ -165,41 +165,31 @@ export const AnimateCSS = ({name, path, start_time, end_time, duration=1000, cur
 
     var {start_time, end_time, duration} = checked_animation_duration({start_time, end_time, duration})
 
-    if (name === null) {
-        // stop any currently running animations
-        return [
-            Become({path: `${path}/style/animation`, state: null, start_time, end_time, duration}),
-            Become({path: `${path}/style/animationPlayState`, state: null, start_time, end_time, duration}),
-            Become({path: `${path}/style/animationDelay`, state: '-0ms', start_time, end_time, duration}),   // -0ms instead of null, otherwise animation stops at current frame instead of resetting
-        ]
-    }
+    const start_state = {name, duration, curve, delay: 0, playState: 'paused'}
+    const end_state = {name, duration, curve, delay: duration, playState: 'paused'}
 
-    const css_str = `${name} ${duration}ms ${curve}`  // ${repeat === Infinity ? 'infinite' : repeat}
-
-    return [
-        Become({path: `${path}/style/animation`,          state: css_str,  start_time, end_time, duration}),
-        Become({path: `${path}/style/animationPlayState`, state: 'paused', start_time, end_time, duration}),
-        Animate({
-            type: `CSS_${name ? name.toUpperCase() : 'END'}`,
-            path: `${path}/style/animationDelay`,
-            start_time,
-            end_time,
-            duration,
-            curve,
-            amt: {},
-            tick: (delta) => {
-                if (delta <= 0) {
-                    return '-0ms'
-                }
-                else if (delta >= duration) {
-                    return `-${duration}ms`
-                }
-                else {
-                    return `-${delta}ms`
-                }
-            },
-        }),
-    ]
+    return Animate({
+        type: `CSS_${name ? name.toUpperCase() : 'END'}`,
+        path: `${path}/style/animation/${name}`,
+        start_time,
+        end_time,
+        duration,
+        curve,
+        start_state,
+        end_state,
+        amt: {delay: duration},
+        tick: (delta) => {
+            if (delta <= 0) {
+                return start_state
+            }
+            else if (delta >= duration) {
+                return end_state
+            }
+            else {
+                return {name, duration, curve, delay: delta, playState: 'paused'}
+            }
+        },
+    })
 }
 
 export const Translate = ({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'}) => {
