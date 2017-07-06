@@ -8,7 +8,7 @@ import {AnimationControls} from '../controls.js'
 import {AnimationStateVisualizer} from '../state-visualizer.js'
 import {AnimationTester} from './test-component.js'
 
-import {animations, AnimationHandler} from '../reducers.js'
+import {animations, startAnimation} from '../reducers.js'
 
 
 window.initial_state = {
@@ -19,12 +19,12 @@ window.initial_state = {
 }
 
 window.store = createStore(combineReducers({animations}))
-window.animations = new AnimationHandler(window.store, window.initial_state)
+const getWarpedTime = startAnimation(window.store, window.initial_state)
 
 ReactDOM.render(
     <Provider store={window.store}>
         <div>
-            <AnimationTester debug/>
+            <AnimationTester getTime={getWarpedTime} debug/>
             <hr/>
             <AnimationControls debug/>
             <hr/>
