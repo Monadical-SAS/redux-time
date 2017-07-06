@@ -14,6 +14,8 @@ yarn add redux-time
 ```
 Check it out in action on the [demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.  At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum-backed browser-based poker ([come help us build it](https://monadical.com/apply)!).
 
+<img src="examples/ball_screenshot.png" width="400px" alt="Ball Demo Screenshot"/>
+
 ## Key Features
 
 - all state is a function of the current point in time
@@ -38,12 +40,10 @@ Every tick function is a pure function of the `start_state`, `end_state`, and de
 
 ## Walkthrough Example
 
-![Ball Demo Screenshot](examples/ball_screenshot.png)
-
 1. First we create a redux store, and an `AnimationHandler` with our initial state
 ```javascript
 import {createStore, combineReducers} from 'redux'
-import {animations, AnimationHandler} from 'redux-time'
+import {animations, startAnimations} from 'redux-time'
 
 const initial_state = {
     ball: {
@@ -51,7 +51,7 @@ const initial_state = {
     },
 }
 const store = createStore(combineReducers({animations}))
-const animationHandler = new AnimationHandler(store, initial_state)
+startAnimations(store, initial_state)
 ```
 
 2. Then we create a redux component that uses this state to render
@@ -104,44 +104,6 @@ On the way we tried almost every other solution out there, from using simple jQu
 
 Finally, we settled on the state tree as a function of time approach, and our life has been much better every since!  We feel this is the best way currently available to do fast, videogame-style animations in a declarative React-friendly manner.
 
-## Documentation
-
-Documentation is a work-in-progress, for now refer to the `examples/` to see how the library works.  The code is short, and easy to read!
-
-### Basics
-
-#### Installation
-
-#### Getting Started
-
-#### Rendering Animated State
-
-#### Queueing Animations
-
-### Advanced
-
-#### Time-Travel
-
-#### Writing Javscript Animations
-
-**Composing Existing Animations**
-
-**Custom JS Tick Functions**
-
-#### Writing CSS Animations
-
-**JS Tick + CSS Transform**
-
-**JS Tick + CSS Animation**
-
-#### Optimization
-
-**React Optimization**
-**Redux Optimization**
-**Redux-Time Optimization**
-
-### Troubleshooting
-
 ## Contributing
 
 We'd love see PR's or issues opened if you have questions or suggestions!
@@ -159,7 +121,49 @@ If possible, when submitting an issue report, try to copy one of the `examples/`
 - React.rocks: [animation examples](https://react.rocks/tag/Animation)
 - [Animate.css](https://github.com/daneden/animate.css/blob/master/animate.css): repository of great css animations (usable with redux-time)
 
---
+# Documentation
+
+Documentation is a work-in-progress, for now refer to the `examples/` to see how the library works.  The code is short, and easy to read!
+
+## Basics
+
+### Installation
+
+### Getting Started
+
+### Rendering Animated State
+
+### Queueing Animations
+
+## Advanced
+
+### Time-Travel
+
+### Writing Javscript Animations
+
+**Composing Existing Animations**
+
+**Custom JS Tick Functions**
+
+### Writing CSS Animations
+
+**JS Tick + CSS Transform**
+
+**JS Tick + CSS Animation**
+
+### Optimization
+
+**React Optimization**
+
+**Redux Optimization**
+
+**Redux-Time Optimization**
+
+## Troubleshooting
+
+---
+<img src="examples/static/jeremy.png" height="40px" style="float:right"/>
+
 MIT License | [Monadical](https://monadical.com) SAS 2017 ([we're hiring!](https://monadical.com/apply))
 
-![Jeremy Who](static/jeremy.png)
+
