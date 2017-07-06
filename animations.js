@@ -1,5 +1,4 @@
-import {EasingFunctions} from './util.js'
-
+import {EasingFunctions, mod} from './util.js'
 
 export const getCenter = ({width, height, top=0, left=0}) => ({
     left: left + width / 2,
@@ -39,9 +38,6 @@ export const getElementCenter = (elem) => {
     const {top, left, width, height} = getDimensions(elem)
     return getCenter({top, left, width, height})
 }
-
-
-const mod = (num, amt) => ((num%amt)+amt)%amt
 
 
 const unit_tick = ({start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null}, key) => {

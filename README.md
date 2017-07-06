@@ -7,12 +7,12 @@ Generally, there are two different categories of animations on websites:
  - content transitions (e.g. effects when adding/deleting a list item, hover effects, photo gallery transitions, etc)
  - **full-blown interactive dynamic animations** (like in games)
 
-Redux-time is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) instead. 
+Redux-time is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) instead.
 
 ```bash
 yarn add redux-time
 ```
-Check it out in action on the [demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.
+Check it out in action on the [demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.  At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum-backed browser-based poker ([come help us build it](https://monadical.com/apply)!).
 
 ## Key Features
 
@@ -94,7 +94,7 @@ ball: {
 
 4. Redux re-renders the component automatcially whenever the state changes, so the new state is immediately rendered, and the position of the ball updates on the screen!  This process repeats, and the ball state changes on every `TICK` until the animtion finishes.
 
-See the demo of this code in action here: [ball.html](https://monadical-sas.github.io/redux-time/examples/ball.html), and the full code for the example in [`examples/ball.js`](`https://github.com/Monadical-SaS/redux-time/blob/master/examples/ball.js`)
+See the demo of this code in action here: [ball.html](https://monadical-sas.github.io/redux-time/examples/ball.html), and the full code for the example in [`examples/ball.js`](https://github.com/Monadical-SaS/redux-time/blob/master/examples/ball.js)
 
 ## Info & Motivation
 
