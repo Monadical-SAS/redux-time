@@ -3,7 +3,7 @@ export const prettyJSON = (val) => {
         return '∞ Infinity'
     else if (typeof(val) === 'number')
         return val.toFixed(2)
-    else if (Array.isArray(val) || typeof(val) !== 'object')
+    else if (!val || Array.isArray(val) || typeof(val) !== 'object')
         return JSON.stringify(val)
     else
         return '{' + Object.keys(val).map(key =>

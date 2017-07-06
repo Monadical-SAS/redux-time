@@ -1,6 +1,7 @@
 import {WarpedTime} from './warped-time/main.js'
 
 import {applyPatches, reversed, stackTrace} from './util.js'
+import {Become} from './animations.js'
 
 
 export const pastAnimations = (anim_queue, timestamp) =>
@@ -212,13 +213,23 @@ export const animations = (state=initial_state, action) => {
 
 
 export class AnimationHandler {
-    constructor(store) {
+    constructor(store, initial_state) {
         this.time = new WarpedTime()
         this.time.setSpeed(store.getState().animations.speed)
         this.store = store
         this.animating = false
         this.start_time = 0
         store.subscribe(::this.handleStateChange)
+        this.initState(initial_state)
+    }
+    initState(initial_state) {
+        Object.keys(initial_state).map(key => {
+            this.store.dispatch({type: 'ADD_ANIMATION', animation: Become({
+                path: `/${key}`,
+                state: initial_state[key],
+                start_time: 0,
+            })})
+        })
     }
     handleStateChange() {
         // console.log('RUNNING ANIMATION DISPATCHER')

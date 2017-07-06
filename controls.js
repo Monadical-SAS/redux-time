@@ -48,19 +48,19 @@ export const AnimationControlsComponent = ({state, animations, setTimeWarp, full
                 </div>}
             <pre height="200" style={{width: '100%', display: 'inline-block', verticalAlign: 'top', textAlign: 'left'}}>
                 <b>Active ({active_anims.length})</b><br/>
-                {active_anims.map(a => `${a.start_time.toFixed(0).ljust(5)}->${a.end_time.toFixed(0).ljust(5)} ${a.source_type}:${a.type} /${a.path.split('/').slice(-1)[0].slice(0,10).ljust(10)} ${JSON.stringify(a.amt || a.state).slice(0,10).ljust(10)} ${JSON.stringify(a)}`).join('\n')}
+                {active_anims.map(a => `${a.start_time.toFixed(0).ljust(5)}->${a.end_time.toFixed(0).ljust(5)} ${a.type} /${a.path.split('/').slice(-1)[0].slice(0,10).ljust(10)} ${JSON.stringify(a.amt || a.state).slice(0,10).ljust(10)} ${JSON.stringify(a)}`).join('\n')}
             </pre>
             <pre height="200" style={{width: '33%', display: 'inline-block', verticalAlign: 'top'}}>
                 <b>Past ({past_anims.length})</b><br/>
-                {past_anims.map(a => `${a.source_type}:${a.type} ${Math.round(a.start_time)}->${Math.round(a.end_time)} ${JSON.stringify(a.amt || a.state)} ${a.path.split('/').splice(-1)} ${JSON.stringify(a.path)}`).join('\n')}
+                {past_anims.map(a => `${a.type} ${Math.round(a.start_time)}->${Math.round(a.end_time)} ${JSON.stringify(a.amt || a.state)} ${a.path.split('/').splice(-1)} ${JSON.stringify(a.path)}`).join('\n')}
             </pre>
             <pre height="200" style={{width: '33%', display: 'inline-block', verticalAlign: 'top'}}>
                 <b>Current ({current_anims.length})</b><br/>
-                {current_anims.map(a => `${a.source_type}:${a.type} ${Math.round(a.start_time)}->${Math.round(a.end_time)} ${JSON.stringify(a.amt || a.state)} ${a.path.split('/').splice(-1)} ${JSON.stringify(a.path)}`).join('\n')}
+                {current_anims.map(a => `${a.type} ${Math.round(a.start_time)}->${Math.round(a.end_time)} ${JSON.stringify(a.amt || a.state)} ${a.path.split('/').splice(-1)} ${JSON.stringify(a.path)}`).join('\n')}
             </pre>
             <pre height="200" style={{width: '33%', display: 'inline-block', verticalAlign: 'top'}}>
                 <b>Future ({future_anims.length})</b><br/>
-                {future_anims.map(a => `${a.source_type}:${a.type} ${Math.round(a.start_time)}->${Math.round(a.end_time)} ${JSON.stringify(a.amt || a.state)} ${a.path.split('/').splice(-1)} ${JSON.stringify(a.path)}`).join('\n')}
+                {future_anims.map(a => `${a.type} ${Math.round(a.start_time)}->${Math.round(a.end_time)} ${JSON.stringify(a.amt || a.state)} ${a.path.split('/').splice(-1)} ${JSON.stringify(a.path)}`).join('\n')}
             </pre>
             <pre height="200" style={{textAlign: 'left'}}><b>State</b><br/>{prettyJSON(animations.state)}</pre>
         </div>

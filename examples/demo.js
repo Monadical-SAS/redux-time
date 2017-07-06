@@ -7,23 +7,22 @@ import {createStore, combineReducers} from 'redux'
 import {Provider} from 'react-redux'
 
 
-import {AnimationControls} from './controls.js'
-import {animations, AnimationHandler} from './reducers.js'
-import {Become} from './animations.js'
+import {AnimationControls} from '../controls.js'
+import {animations, AnimationHandler} from '../reducers.js'
+import {Become} from '../animations.js'
 
+window.initial_state = {
+    test_state: {text: 'Animate Me!', style: {color: 'black'}}
+}
 
 window.store = createStore(
     combineReducers({animations}),
 )
 
-window.animations = new AnimationHandler(window.store)
-
-window.store.dispatch({type: 'ADD_ANIMATION', animation: Become({
-    path: '/test_state',
-    state: {text: 'Animate Me!', style: {color: 'black'}},
-    start_time: 0,
-})})
-
+window.animations = new AnimationHandler(
+    window.store,
+    window.initial_state,
+)
 
 ReactDOM.render(
     <Provider store={window.store}>
