@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <title>Redux-Time Stess-Test Demo | Monadical</title>
+        <script src="static/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="static/bootstrap.min.css">
+
+        <style>
+            body {
+                text-align: center;
+            }
+            pre {
+                overflow: scroll;
+                background-color: #f0f0f0;
+                border-radius: 3px;
+                padding: 10px;
+                margin: 2px;
+                box-sizing: border-box;
+            }
+            #footer {
+                position: relative;
+            }
+            #footer img {
+                position: absolute;
+                right: 20;
+                bottom: -20px;
+                height: 70px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>
+            Redux-Time: Stress-Test Demo<br/>
+        </h1>
+        <h4>
+            <small>Redux-Time is an animation library that computes your state tree as a function of time.</small><br/><br/>
+            Github:&nbsp;
+            <a href="https://github.com/Monadical-SAS/redux-time/">Redux-Time</a>&nbsp;|
+            <a href="https://github.com/Monadical-SAS/redux-time/blob/master/README.md#documentation">Docs</a>&nbsp;|
+            <a href="https://github.com/Monadical-SAS/redux-time/blob/master/examples/demo.js">View Source</a>&nbsp;|
+            <a href="demo.html">Full Demo</a>&nbsp;|
+            <a href="ball.html">Ball Demo</a>
+            <br/>
+        </h4>
+        <hr/>
+        <div>
+            Keep clicking the button to add animations until the frame-rate drops below ~30FPS.<br/>
+        </div>
+        <hr/>
+        <div id="react"></div>
+        <hr/>
+        <div id="footer">
+            <img src="static/jeremy.jpg" class="footer-img">
+            Made by <a href="https://monadical.com">Monadical</a> SAS in Medellin, Colombia.
+            <br/>
+            <small>Want to hack on cool React/Redux animations + Ethereum poker? Come <a href="https://monadical.com/apply">work with us</a>!</small>
+        </div>
+        <script id="react-js" src="static/stress-test.js"></script>
+    </body>
+</html>
