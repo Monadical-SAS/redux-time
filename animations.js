@@ -60,7 +60,7 @@ const unit_tick = ({start_time, end_time, duration, start_state, end_state, amt,
 }
 
 const checked_animation_duration = ({start_time, duration, end_time}) => {
-    if ([start_time, end_time, duration].filter(a => typeof(a) !== 'number').length > 1) {
+    if ([start_time, end_time, duration].filter(a => typeof(a) == 'number').length < 2) {
         console.log({start_time, end_time, duration})
         throw 'Need at least 2/3 to calculate animation: start_time, end_time, duration'
     }
@@ -82,7 +82,7 @@ const checked_animation_duration = ({start_time, duration, end_time}) => {
 
 const checked_animation_amt = ({key, start_state, end_state, amt}) => {
     if (typeof(start_state) === 'number') {
-        if ([start_state, end_state, amt].filter(a => typeof(a) !== 'number').length > 1) {
+        if ([start_state, end_state, amt].filter(a => typeof(a) == 'number').length < 2) {
             console.log({start_state, end_state, amt})
             throw 'Need at least 2/3 to calculate animation: start_state, end_state, amt'
         }
@@ -141,6 +141,8 @@ const KeyedAnimation = ({type, path, key, start_time, end_time, duration, start_
 
 
 export const Become = ({path, state, start_time=null, end_time=Infinity, duration=Infinity}) => {
+    if (start_time === undefined) start_time = (new Date).getTime()
+
     var {start_time, end_time, duration} = checked_animation_duration({start_time, end_time, duration})
     if (start_time === undefined || path === undefined) {
         console.log({path, state, start_time, end_time, duration})
@@ -163,6 +165,8 @@ export const Become = ({path, state, start_time=null, end_time=Infinity, duratio
 }
 
 export const Animate = ({type, path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null, tick=null}) => {
+    if (start_time === undefined) start_time = (new Date).getTime()
+
     let animation = {
         type: type ? type : 'ANIMATE',
         path,
@@ -172,6 +176,7 @@ export const Animate = ({type, path, start_time, end_time, duration, start_state
         unit,
         tick,
     }
+
     if (path === undefined) {
         console.log(animation)
         throw 'Animate animation must have a path defined.'
@@ -197,6 +202,8 @@ export const Animate = ({type, path, start_time, end_time, duration, start_state
 }
 
 export const AnimateCSS = ({name, path, start_time, end_time, duration=1000, curve='linear'}) => {
+    if (start_time === undefined) start_time = (new Date).getTime()
+
     var {start_time, end_time, duration} = checked_animation_duration({start_time, end_time, duration})
 
     if (name === null) {
@@ -238,6 +245,7 @@ export const AnimateCSS = ({name, path, start_time, end_time, duration=1000, cur
 
 
 export const Translate = ({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'}) => {
+    if (start_time === undefined) start_time = (new Date).getTime()
     path = `${path}/style/transform/translate`
     const type = 'TRANSLATE'
 
@@ -296,7 +304,8 @@ export const Repeat = (animation, repeat=Infinity) => {
         animation = [animation]
     }
     return animation.map(anim => {
-        const {tick, start_time, duration} = anim
+        let {tick, start_time, duration} = anim
+        if (start_time === undefined) start_time = (new Date).getTime()
         const repeated_tick = (delta) => tick(mod(delta, duration))
         return {
             ...anim,

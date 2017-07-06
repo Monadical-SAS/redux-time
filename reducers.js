@@ -182,11 +182,25 @@ export const animations = (state=initial_state, action) => {
                 // )
                 queue = trimmedAnimationQueue(queue, state.max_time_travel)
             }
-
-            if (Array.isArray(action.animation))
-                return {...state, queue: [...queue, ...action.animation]}
+            let new_animations
+            if (Array.isArray(action.animations))
+                new_animations = action.animations
+            else if (Array.isArray(action.animation))
+                new_animations = action.animation
+            else if (action.animation)
+                new_animations = [action.animation]
             else
-                return {...state, queue: [...queue, action.animation]}
+                throw 'action.animation is missing!'
+
+            // Set start_time to now if it's undefined
+            new_animations = new_animations.map(anim => ({
+                ...anim,
+                start_time: anim.start_time === undefined ?
+                    (new Date).getTime()
+                  : anim.start_time
+            }))
+
+            return {...state, queue: [...queue, ...new_animations]}
 
         case 'SET_ANIMATION_SPEED':
             return {...state, speed: action.speed, last_timestamp: state.current_timestamp}

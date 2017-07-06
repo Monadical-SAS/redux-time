@@ -1,16 +1,3 @@
-export const prettyJSON = (val) => {
-    if (val === Infinity)
-        return '∞ Infinity'
-    else if (typeof(val) === 'number')
-        return val.toFixed(2)
-    else if (!val || Array.isArray(val) || typeof(val) !== 'object')
-        return JSON.stringify(val)
-    else
-        return '{' + Object.keys(val).map(key =>
-            `${key}: ${prettyJSON(val[key])}`).join('\n') + '}'
-}
-
-
 export const EasingFunctions = {
     // no easing, no acceleration
     linear: (t) => (t),
@@ -39,6 +26,8 @@ export const EasingFunctions = {
     // acceleration until halfway, then deceleration
     easeInOutQuint: (t) => (t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t),
 }
+
+export const mod = (num, amt) => ((num%amt)+amt)%amt
 
 export const flipObj = (obj) =>
     Object.keys(obj).reduce((acc, key) => {
