@@ -99,7 +99,7 @@ const KeyedAnimation = ({type, path, key, start_time, end_time, duration, start_
 }
 
 
-export const Become = ({path, state, start_time=null, end_time=Infinity, duration=Infinity}) => {
+export const Become = ({path, state, start_time, end_time=Infinity, duration=Infinity}) => {
     if (start_time === undefined) start_time = (new Date).getTime()
 
     var {start_time, end_time, duration} = checked_animation_duration({start_time, end_time, duration})
@@ -142,10 +142,10 @@ export const Animate = ({type, path, start_time, end_time, duration, start_state
     }
 
     try {
-        if (start_state || end_state || amt) {
+        if (typeof(start_state) === 'number' || typeof(end_state) === 'number' || typeof(amt) === 'number') {
             animation = {...animation, ...checked_animation_amt({start_state, end_state, amt})}
         }
-        if (start_time || end_time || duration) {
+        if (typeof(start_time) === 'number' || typeof(end_time) === 'number' || typeof(duration) === 'number') {
             animation = {...animation, ...checked_animation_duration({start_time, end_time, duration})}
         }
         if (!animation.tick) {
