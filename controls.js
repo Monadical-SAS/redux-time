@@ -9,6 +9,7 @@ import {TimeControlsComponent} from './warped-time/controls.js'
 const mapStateToProps = ({animations}) => ({
     speed: animations.speed,
     current_timestamp: animations.current_timestamp,
+    last_timestamp: animations.last_timestamp,
 })
 
 const mapDispatchToProps = (dispatch) => ({

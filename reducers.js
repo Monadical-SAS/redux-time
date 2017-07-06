@@ -288,7 +288,7 @@ export class AnimationHandler {
         const timestamp = this.time.getWarpedTime()
 
         if (!this.animating && shouldAnimate(animations.queue, timestamp, this.time.speed)) {
-            console.log('Starting Animation.')
+            // console.log('Starting Animation.')
             this.tick()
         }
     }

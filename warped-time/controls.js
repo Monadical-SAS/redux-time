@@ -1,11 +1,22 @@
 import React from 'react'
 import {Button} from 'react-bootstrap'
 
-export const TimeControlsComponent = ({current_timestamp, speed, setSpeed, debug}) => {
-    return <div>
-        {debug ? <small style={{opacity: 0.2, position: 'absolute', top: -15, right: 5}}>controls.js</small>: null}
+const source_tag = <small style={{opacity: 0.2, position: 'absolute', top: -15, right: 5}}>
+    <a href="https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/controls.js">controls.js</a>
+</small>
 
-        Speed of Time: {speed} | 🕐 {current_timestamp}<br/>
+const FPS = (speed, current_timestamp, last_timestamp) =>
+    Math.round((speed * 1000)/(current_timestamp - last_timestamp))
+
+export const TimeControlsComponent = ({current_timestamp, last_timestamp, speed, setSpeed, debug}) => {
+    return <div style={{position: 'relative'}}>
+        {debug ? source_tag : null}
+
+        Speed of Time: {speed}x |
+        Warped 🕐 {Math.round(current_timestamp, 0)} |
+        Actual 🕰 {(new Date).getTime()} {speed == 0 ? '(updating paused)' : ''} |&nbsp;
+        {FPS(speed, current_timestamp, last_timestamp)} FPS
+        <br/>
         Reverse ⏪
         <input
             type="range"
@@ -39,7 +50,8 @@ export class TimeControls extends React.Component {
         this.time = this.props.time || window.time
         this.state = {
             speed: this.time.speed,
-            current_timestamp: this.time.getWarpedTime()
+            current_timestamp: this.time.getWarpedTime(),
+            last_timestamp: this.time.getWarpedTime() - 20,
         }
     }
     componentDidMount() {
@@ -50,9 +62,13 @@ export class TimeControls extends React.Component {
         this.animating = false
     }
     tick() {
-        this.setState({current_timestamp: this.props.time.getWarpedTime()})
-        if (this.animating)
+        this.setState({
+            current_timestamp: this.props.time.getWarpedTime(),
+            last_timestamp: this.state.current_timestamp,
+        })
+        if (this.animating) {
             window.requestAnimationFrame(::this.tick)
+        }
     }
     setSpeed(speed) {
         this.time.setSpeed(speed)
@@ -62,6 +78,7 @@ export class TimeControls extends React.Component {
         return <TimeControlsComponent
             speed={this.state.speed}
             current_timestamp={this.state.current_timestamp}
+            last_timestamp={this.state.last_timestamp}
             setSpeed={::this.setSpeed}
             debug={this.props.debug}/>
     }
