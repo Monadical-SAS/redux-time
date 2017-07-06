@@ -1,11 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Button} from 'react-bootstrap'
-
 
 import {createStore, combineReducers} from 'redux'
 import {Provider} from 'react-redux'
-
 
 import {AnimationControls} from '../controls.js'
 import {animations, AnimationHandler} from '../reducers.js'
