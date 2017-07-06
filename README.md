@@ -14,7 +14,7 @@ yarn add redux-time
 ```
 Check it out in action on the [demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.  At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum-backed browser-based poker ([come help us build it](https://monadical.com/apply)!).
 
-<img src="examples/ball_screenshot.png" width="400px" alt="Ball Demo Screenshot"/>
+<img src="examples/ball_screenshot.png" width="600px" alt="Ball Demo Screenshot"/>
 
 ## Key Features
 
@@ -162,7 +162,7 @@ Documentation is a work-in-progress, for now refer to the `examples/` to see how
 ## Troubleshooting
 
 ---
-<img src="examples/static/jeremy.png" height="40px" style="float:right"/>
+<img src="examples/static/jeremy.jpg" height="40px" style="float:right"/>
 
 MIT License | [Monadical](https://monadical.com) SAS 2017 ([we're hiring!](https://monadical.com/apply))
 
