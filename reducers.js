@@ -178,6 +178,19 @@ export const initial_state = {
 
 export const animations = (state=initial_state, action) => {
     switch (action.type) {
+        case 'CLEAR_ANIMATIONS':
+            const only_initial_state = state.queue.filter(anim => anim.start_time === 0)
+            return {
+                ...initial_state,
+                current_timestamp: state.current_timestamp,
+                last_timestamp: state.last_timestamp,
+                queue: only_initial_state,
+                state: computeAnimatedState(
+                    only_initial_state,
+                    state.current_timestamp,
+                    state.last_timestamp,
+                )
+            }
         case 'ADD_ANIMATION':
             let queue = state.queue
             if (queue.length > state.max_time_travel) {
