@@ -8,18 +8,28 @@
             body {
                 text-align: center;
             }
+            #footer {
+                position: relative;
+            }
+            #footer img {
+                position: absolute;
+                right: 20;
+                bottom: -20px;
+                height: 70px;
+            }
         </style>
     </head>
     <body>
         <h1>
-            Warped-Time Demo<br/>
+            Warped-Time: Demo<br/>
         </h1>
         <h4>
             <small>Warped-Time is a helper library that provides an equivalent to (new Date).getTime() with variable progression speed.</small><br/><br/>
             Github:&nbsp;
             <a href="https://github.com/Monadical-SAS/warped-time/">Warped-Time</a>&nbsp;|
             <a href="https://github.com/Monadical-SAS/warped-time/blob/master/README.md#documentation">Docs</a>&nbsp;|
-            <a href="https://github.com/Monadical-SAS/warped-time/blob/master/examples/demo.js">View Source</a>
+            <a href="https://github.com/Monadical-SAS/warped-time/blob/master/examples/demo.js">View Source</a>&nbsp;|
+            <a href="../../examples/demo.html">Redux-Time Demo</a>
             <br/>
         </h4>
         <hr/>
@@ -29,10 +39,12 @@
 
         <div id="react"></div>
         <hr/>
-        Made by <a href="https://monadical.com">Monadical</a> SAS in Medellin, Colombia.
-        <br/>
-        <small>Want to hack on cool React/Redux animations + Ethereum poker? Come <a href="https://monadical.com/apply">work with us</a>!</small>
-
+        <div id="footer">
+            <img src="static/jeremy.jpg" class="footer-img">
+            Made by <a href="https://monadical.com">Monadical</a> SAS in Medellin, Colombia.
+            <br/>
+            <small>Want to hack on cool React/Redux animations + Ethereum poker? Come <a href="https://monadical.com/apply">work with us</a>!</small>
+        </div>
         <script id="react-js" src="static/demo.js"></script>
     </body>
 </html>

@@ -36,6 +36,10 @@ const AnimationList = ({animations, verbose=true, style}) =>
         </tbody>
     </table>
 
+const source_tag = <small style={{opacity: 0.2, position: 'absolute', top: -15, right: 5}}>
+    <a href="https://github.com/Monadical-SAS/redux-time/blob/master/state-visualizer.js">state-visualizer.js</a>
+</small>
+
 
 const AnimationStateVisualizerComponent = ({animations, path, debug}) => {
     const {queue, current_timestamp, last_timestamp} = animations
@@ -47,7 +51,7 @@ const AnimationStateVisualizerComponent = ({animations, path, debug}) => {
 
     const col_style = {width: '32.5%', display: 'inline-block', verticalAlign: 'top'}
     return <div style={{position: 'relative'}}>
-        {debug ? <small style={{opacity: 0.2, position: 'absolute', top: -15, right: 5}}>state-visualizer.js</small>: null}
+        {debug ? source_tag : null}
         <pre height="200" style={{width: '98%', display: 'inline-block', verticalAlign: 'top', textAlign: 'left', overflow: 'scroll'}}>
             <b>Active Animations ({active_anims.length})</b><br/>
             <AnimationList animations={active_anims} style={{width: '100%'}}/>

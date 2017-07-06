@@ -16,11 +16,20 @@
                 margin: 2px;
                 box-sizing: border-box;
             }
+            #footer {
+                position: relative;
+            }
+            #footer img {
+                position: absolute;
+                right: 20;
+                bottom: -20px;
+                height: 70px;
+            }
         </style>
     </head>
     <body>
         <h1>
-            Redux-Time Ball Demo<br/>
+            Redux-Time: Ball Demo<br/>
         </h1>
         <h4>
             <small>Redux-Time is an animation library that computes your state tree as a function of time.</small><br/><br/>
@@ -28,19 +37,24 @@
             <a href="https://github.com/Monadical-SAS/redux-time/">Redux-Time</a>&nbsp;|
             <a href="https://github.com/Monadical-SAS/redux-time/blob/master/README.md#documentation">Docs</a>&nbsp;|
             <a href="https://github.com/Monadical-SAS/redux-time/blob/master/examples/demo.js">View Source</a>&nbsp;|
-            <a href="demo.html">Full Demo</a>
+            <a href="demo.html">Full Demo</a>&nbsp;|
+            <a href="stress-test.html">Stress-Test Demo</a>
             <br/>
         </h4>
         <hr/>
         <div>
-            Click on the ball to trigger a bounce animation repeated 3 times.
+            Left click on the ball to trigger a bounce animation repeated 3 times.<br/>
+            Right click on the ball to have it follow your mouse around the screen.
         </div>
         <hr/>
         <div id="react"></div>
         <hr/>
-        Made by <a href="https://monadical.com">Monadical</a> SAS in Medellin, Colombia.
-        <br/>
-        <small>Want to hack on cool React/Redux animations + Ethereum poker? Come <a href="https://monadical.com/apply">work with us</a>!</small>
+        <div id="footer">
+            <img src="static/jeremy.jpg" class="footer-img">
+            Made by <a href="https://monadical.com">Monadical</a> SAS in Medellin, Colombia.
+            <br/>
+            <small>Want to hack on cool React/Redux animations + Ethereum poker? Come <a href="https://monadical.com/apply">work with us</a>!</small>
+        </div>
         <script id="react-js" src="static/ball.js"></script>
     </body>
 </html>
