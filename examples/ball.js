@@ -9,6 +9,11 @@ import {AnimationControls} from '../controls.js'
 import {Become, Animate, Translate, RepeatSequence} from '../animations.js'
 import {AnimationStateVisualizer} from '../state-visualizer.js'
 
+import {ExpandableSection} from '../section.js'
+
+
+const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/examples/ball.js"
+
 
 window.initial_state = {
     ball: {
@@ -98,12 +103,14 @@ const FOLLOW_ANIMATION = () => {
 
 
 const BallComponent = ({ball, queue, animateBallBounce, animateBallFollow, getTime}) =>
-    <div
-        className="ball"
-        style={ball.style}
-        onClick={() => animateBallBounce(getTime())}
-        onContextMenu={animateBallFollow}>
-    </div>
+    <ExpandableSection name="Ball" source={SOURCE} expanded>
+        <div
+            className="ball"
+            style={ball.style}
+            onClick={() => animateBallBounce(getTime())}
+            onContextMenu={animateBallFollow}>
+        </div>
+    </ExpandableSection>
 
 const mapStateToProps = ({animations}) => ({ball: animations.state.ball})
 const mapDispatchToProps = (dispatch) => ({
@@ -119,18 +126,11 @@ const mapDispatchToProps = (dispatch) => ({
 const Ball = connect(mapStateToProps, mapDispatchToProps)(BallComponent)
 
 
-const source_tag = <small style={{opacity: 0.2, float: 'right', marginTop: -10, marginRight: 5}}>
-    <a href="https://github.com/Monadical-SAS/redux-time/blob/master/examples/ball.js">examples/ball.js</a>
-</small>
-
 ReactDOM.render(
     <Provider store={window.store}>
         <div>
-            {source_tag}<br/>
-            <Ball getTime={getWarpedTime}/>
-            <hr/>
-            <AnimationControls debug/>
-            <hr/>
+            <Ball getTime={getWarpedTime} expanded/>
+            <AnimationControls debug expanded/>
             <AnimationStateVisualizer debug/>
         </div>
     </Provider>,

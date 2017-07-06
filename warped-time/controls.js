@@ -1,17 +1,17 @@
 import React from 'react'
 import {Button} from 'react-bootstrap'
 
-const source_tag = <small style={{opacity: 0.2, position: 'absolute', top: -15, right: 5}}>
-    <a href="https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/controls.js">controls.js</a>
-</small>
+import {ExpandableSection} from './section.js'
+
+
+const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/controls.js"
+
 
 const FPS = (speed, current_timestamp, last_timestamp) =>
     Math.round((speed * 1000)/(current_timestamp - last_timestamp))
 
-export const TimeControlsComponent = ({current_timestamp, last_timestamp, speed, setSpeed, debug}) => {
-    return <div style={{position: 'relative'}}>
-        {debug ? source_tag : null}
-
+export const TimeControlsComponent = ({current_timestamp, last_timestamp, speed, setSpeed, debug, expanded}) => {
+    return <ExpandableSection name="Time Controls" source={debug && SOURCE} expanded={expanded}>
         Speed of Time: {speed}x |
         Warped 🕐 {Math.round(current_timestamp, 0)} |
         Actual 🕰 {(new Date).getTime()} {speed == 0 ? '(updating paused)' : ''} |&nbsp;
@@ -40,7 +40,7 @@ export const TimeControlsComponent = ({current_timestamp, last_timestamp, speed,
         <Button onClick={setSpeed.bind(this, 1)}>1x</Button> &nbsp;
         <Button onClick={setSpeed.bind(this, 10)}>+10x</Button> &nbsp;
         <Button onClick={setSpeed.bind(this, 100)}>+100x</Button>
-    </div>
+    </ExpandableSection>
 }
 
 
@@ -80,6 +80,7 @@ export class TimeControls extends React.Component {
             current_timestamp={this.state.current_timestamp}
             last_timestamp={this.state.last_timestamp}
             setSpeed={::this.setSpeed}
-            debug={this.props.debug}/>
+            debug={this.props.debug}
+            expanded={this.props.expanded}/>
     }
 }

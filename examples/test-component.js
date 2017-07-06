@@ -5,6 +5,10 @@ import {connect} from 'react-redux'
 
 import {Become, Repeat, Animate, Translate, AnimateCSS} from '../animations.js'
 
+import {ExpandableSection} from '../section.js'
+
+const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/examples/test-component.js"
+
 const base_style = {
     width: 200,
     margin: 'auto',
@@ -13,13 +17,8 @@ const base_style = {
     backgroundColor: 'orange',
 }
 
-const source_tag = <small style={{opacity: 0.2, position: 'absolute', top: -15, right: 5}}>
-    <a href="https://github.com/Monadical-SAS/redux-time/blob/master/examples/test-component.js">examples/test-component.js</a>
-</small>
-
 const AnimationTesterComponent = ({getTime, text, style, animateFirstState, animateSecondState, animateGreen, animateRed, animateMove, animateRotate, animatePulse, animateBlink, animateBlinkStop, clearAnimations, debug}) =>
-    <div style={{position: 'relative'}}>
-        {debug ? source_tag : null}
+    <ExpandableSection name="Animation Test" source={debug && SOURCE} expanded>
         <pre style={{...base_style, ...style}}>
             <br/>
             {text}
@@ -35,7 +34,7 @@ const AnimationTesterComponent = ({getTime, text, style, animateFirstState, anim
         <Button title="CSS keyframe animation" onClick={animateBlink.bind(this, getTime())}>Blink Forever</Button>
         <Button title="CSS keyframe animation" onClick={animateBlinkStop.bind(this, getTime())}>Stop Blinking</Button>
         <Button onClick={clearAnimations}>Reset</Button>
-    </div>
+    </ExpandableSection>
 
 
 const mapStateToProps = ({animations}) => ({

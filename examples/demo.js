@@ -25,9 +25,7 @@ ReactDOM.render(
     <Provider store={window.store}>
         <div>
             <AnimationTester getTime={getWarpedTime} debug/>
-            <hr/>
             <AnimationControls debug/>
-            <hr/>
             <AnimationStateVisualizer path="test_state" debug/>
         </div>
     </Provider>,

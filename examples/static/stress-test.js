@@ -469,7 +469,7 @@ var RepeatSequence = exports.RepeatSequence = function RepeatSequence(animations
     return Sequential(repeated, start_time);
 };
 
-},{"./util.js":519,"babel-runtime/core-js/get-iterator":5,"babel-runtime/core-js/object/keys":12,"babel-runtime/helpers/extends":21,"babel-runtime/helpers/toConsumableArray":26,"babel-runtime/helpers/typeof":27}],2:[function(require,module,exports){
+},{"./util.js":520,"babel-runtime/core-js/get-iterator":5,"babel-runtime/core-js/object/keys":12,"babel-runtime/helpers/extends":21,"babel-runtime/helpers/toConsumableArray":26,"babel-runtime/helpers/typeof":27}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -508,7 +508,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 var AnimationControls = exports.AnimationControls = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_controls.TimeControlsComponent);
 
-},{"./warped-time/controls.js":520,"react":500,"react-bootstrap":303,"react-redux":469}],3:[function(require,module,exports){
+},{"./warped-time/controls.js":521,"react":500,"react-bootstrap":303,"react-redux":469}],3:[function(require,module,exports){
 'use strict';
 
 var _extends2 = require('babel-runtime/helpers/extends');
@@ -551,7 +551,11 @@ var _stateVisualizer = require('../state-visualizer.js');
 
 var _util = require('../util.js');
 
+var _section = require('../section.js');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/examples/stress-test.js";
 
 window.initial_state = { balls: {} };
 
@@ -566,7 +570,11 @@ var StessTesterComponent = function StessTesterComponent(_ref) {
 
     var keys = (0, _keys2.default)(balls);
     var len = keys.length;
-    return (0, _jsx3.default)('div', {}, void 0, (0, _jsx3.default)(_reactBootstrap.Button, {
+    return (0, _jsx3.default)(_section.ExpandableSection, {
+        name: 'Stress Tester',
+        source: SOURCE,
+        expanded: true
+    }, void 0, (0, _jsx3.default)(_reactBootstrap.Button, {
         onClick: function onClick() {
             return addBalls(getTime());
         }
@@ -592,22 +600,22 @@ var ball_style = {
     zIndex: 10
 };
 
-window.num_balls = 0;
+var num_balls = 0;
 
 var ADD_BALLS_ANIMATION = function ADD_BALLS_ANIMATION(start_time, num) {
     var width = window.innerWidth;
     var new_anims = [];
-    (0, _util.range)(num).map(function (_) {
-        window.num_balls += 1;
+    (0, _util.range)(num).map(function (idx) {
+        num_balls += 1;
         new_anims = [].concat((0, _toConsumableArray3.default)(new_anims), [(0, _animations.Become)({
-            path: '/balls/' + window.num_balls + '/style',
+            path: '/balls/' + num_balls + '/style',
             start_time: start_time,
             state: (0, _extends3.default)({}, ball_style, {
                 top: Math.random() * 600,
                 left: Math.random() * width
             })
         })], (0, _toConsumableArray3.default)((0, _animations.RepeatSequence)([(0, _animations.Translate)({
-            path: '/balls/' + window.num_balls,
+            path: '/balls/' + num_balls,
             start_time: start_time,
             start_state: { top: 0, left: 0 },
             end_state: { top: 0, left: Math.random() * width - width / 2 },
@@ -634,17 +642,14 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 var StessTester = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(StessTesterComponent);
 
-var source_tag = (0, _jsx3.default)('small', {
-    style: { opacity: 0.2, float: 'right', marginTop: -10, marginRight: 5, marginLeft: -200 }
-}, void 0, (0, _jsx3.default)('a', {
-    href: 'https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/examples/stress-test.js'
-}, void 0, 'examples/stress-test.js'));
-
 _reactDom2.default.render((0, _jsx3.default)(_reactRedux.Provider, {
     store: window.store
-}, void 0, (0, _jsx3.default)('div', {}, void 0, source_tag, (0, _jsx3.default)(StessTester, {
+}, void 0, (0, _jsx3.default)('div', {}, void 0, (0, _jsx3.default)(StessTester, {
     getTime: getWarpedTime
-}), (0, _jsx3.default)('hr', {}), (0, _jsx3.default)(_controls.AnimationControls, {
+}), (0, _jsx3.default)(_controls.AnimationControls, {
+    debug: true,
+    expanded: true
+}), (0, _jsx3.default)(_stateVisualizer.AnimationStateVisualizer, {
     debug: true
 }))), document.getElementById('react'));
 
@@ -653,7 +658,7 @@ window.onmousemove = function (e) {
     window.mouseX = e.pageX;
 };
 
-},{"../animations.js":1,"../controls.js":2,"../reducers.js":517,"../state-visualizer.js":518,"../util.js":519,"babel-runtime/core-js/object/keys":12,"babel-runtime/helpers/extends":21,"babel-runtime/helpers/jsx":23,"babel-runtime/helpers/toConsumableArray":26,"react":500,"react-bootstrap":303,"react-dom":314,"react-redux":469,"redux":506}],4:[function(require,module,exports){
+},{"../animations.js":1,"../controls.js":2,"../reducers.js":517,"../section.js":518,"../state-visualizer.js":519,"../util.js":520,"babel-runtime/core-js/object/keys":12,"babel-runtime/helpers/extends":21,"babel-runtime/helpers/jsx":23,"babel-runtime/helpers/toConsumableArray":26,"react":500,"react-bootstrap":303,"react-dom":314,"react-redux":469,"redux":506}],4:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/array/from"), __esModule: true };
 },{"core-js/library/fn/array/from":30}],5:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/get-iterator"), __esModule: true };
@@ -44150,7 +44155,7 @@ var css_transform_str = {
         var x = _ref5.x,
             y = _ref5.y,
             z = _ref5.z;
-        return 'translate3d(' + x + ', ' + y + ')';
+        return 'translate3d(' + x + ', ' + y + ', ' + z + ')';
     },
     rotate: function rotate(rotation) {
         return 'rotate(' + rotation + ')';
@@ -44159,7 +44164,7 @@ var css_transform_str = {
         var x = _ref6.x,
             y = _ref6.y,
             z = _ref6.z;
-        return 'rotate3d(' + x + ', ' + y + ')';
+        return 'rotate3d(' + x + ', ' + y + ', ' + z + ')';
     },
     skew: function skew(_ref7) {
         var x = _ref7.x,
@@ -44170,7 +44175,7 @@ var css_transform_str = {
         var x = _ref8.x,
             y = _ref8.y,
             z = _ref8.z;
-        return 'scale3d(' + x + ', ' + y + ')';
+        return 'scale3d(' + x + ', ' + y + ', ' + z + ')';
     }
     // TODO: add more css transform types?
 };
@@ -44288,7 +44293,7 @@ var initial_state = exports.initial_state = {
     speed: 1,
     last_timestamp: 0,
     current_timestamp: 0,
-    max_time_travel: 10000, // maximum length of the queue before items get trimmed
+    max_time_travel: 3000, // maximum length of the queue before items get trimmed
     queue: [],
     state: {}
 };
@@ -44428,7 +44433,92 @@ var startAnimation = exports.startAnimation = function startAnimation(store, ini
     return handler.time.getWarpedTime.bind(handler.time);
 };
 
-},{"./animations.js":1,"./util.js":519,"./warped-time/main.js":521,"babel-runtime/core-js/get-iterator":5,"babel-runtime/core-js/object/keys":12,"babel-runtime/core-js/set":15,"babel-runtime/helpers/classCallCheck":19,"babel-runtime/helpers/createClass":20,"babel-runtime/helpers/extends":21,"babel-runtime/helpers/toConsumableArray":26,"babel-runtime/helpers/typeof":27}],518:[function(require,module,exports){
+},{"./animations.js":1,"./util.js":520,"./warped-time/main.js":522,"babel-runtime/core-js/get-iterator":5,"babel-runtime/core-js/object/keys":12,"babel-runtime/core-js/set":15,"babel-runtime/helpers/classCallCheck":19,"babel-runtime/helpers/createClass":20,"babel-runtime/helpers/extends":21,"babel-runtime/helpers/toConsumableArray":26,"babel-runtime/helpers/typeof":27}],518:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ExpandableSection = undefined;
+
+var _jsx2 = require('babel-runtime/helpers/jsx');
+
+var _jsx3 = _interopRequireDefault(_jsx2);
+
+var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _possibleConstructorReturn2 = require('babel-runtime/helpers/possibleConstructorReturn');
+
+var _possibleConstructorReturn3 = _interopRequireDefault(_possibleConstructorReturn2);
+
+var _inherits2 = require('babel-runtime/helpers/inherits');
+
+var _inherits3 = _interopRequireDefault(_inherits2);
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var ExpandableSection = exports.ExpandableSection = function (_React$Component) {
+    (0, _inherits3.default)(ExpandableSection, _React$Component);
+
+    function ExpandableSection(props) {
+        (0, _classCallCheck3.default)(this, ExpandableSection);
+
+        var _this = (0, _possibleConstructorReturn3.default)(this, (ExpandableSection.__proto__ || (0, _getPrototypeOf2.default)(ExpandableSection)).call(this, props));
+
+        _this.state = { expanded: props.expanded };
+        return _this;
+    }
+
+    (0, _createClass3.default)(ExpandableSection, [{
+        key: 'toggleSection',
+        value: function toggleSection() {
+            this.setState({ expanded: !this.state.expanded });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _props = this.props,
+                name = _props.name,
+                source = _props.source,
+                children = _props.children;
+            var expanded = this.state.expanded;
+
+            var classname = name.replace(' ', '-').toLowerCase();
+
+            return (0, _jsx3.default)('div', {
+                className: 'section-' + classname,
+                style: { position: 'relative', minHeight: 25 }
+            }, void 0, (0, _jsx3.default)('hr', {}), source ? (0, _jsx3.default)('small', {
+                style: { opacity: 0.2, position: 'absolute', top: 3, right: 5 }
+            }, void 0, (0, _jsx3.default)('a', {
+                href: source
+            }, void 0, source.split('/master/').slice(-1)[0])) : null, (0, _jsx3.default)('a', {
+                href: '#' + classname,
+                onClick: this.toggleSection.bind(this),
+                name: classname
+            }, void 0, (0, _jsx3.default)('h5', {
+                style: { position: 'absolute', top: -7, left: 5 }
+            }, void 0, expanded ? '▼' : '▶', ' ', name)), expanded ? (0, _jsx3.default)('div', {}, void 0, children) : null);
+        }
+    }]);
+    return ExpandableSection;
+}(_react2.default.Component);
+
+},{"babel-runtime/core-js/object/get-prototype-of":11,"babel-runtime/helpers/classCallCheck":19,"babel-runtime/helpers/createClass":20,"babel-runtime/helpers/inherits":22,"babel-runtime/helpers/jsx":23,"babel-runtime/helpers/possibleConstructorReturn":25,"react":500}],519:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -44456,7 +44546,11 @@ var _reactRedux = require('react-redux');
 
 var _reducers = require('./reducers.js');
 
+var _section = require('./section.js');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/state-visualizer.js";
 
 var AnimationList = function AnimationList(_ref) {
     var animations = _ref.animations,
@@ -44472,16 +44566,12 @@ var AnimationList = function AnimationList(_ref) {
     })));
 };
 
-var source_tag = (0, _jsx3.default)('small', {
-    style: { opacity: 0.2, position: 'absolute', top: -15, right: 5 }
-}, void 0, (0, _jsx3.default)('a', {
-    href: 'https://github.com/Monadical-SAS/redux-time/blob/master/state-visualizer.js'
-}, void 0, 'state-visualizer.js'));
-
 var AnimationStateVisualizerComponent = function AnimationStateVisualizerComponent(_ref2) {
     var animations = _ref2.animations,
         path = _ref2.path,
-        debug = _ref2.debug;
+        expanded = _ref2.expanded,
+        _ref2$debug = _ref2.debug,
+        debug = _ref2$debug === undefined ? false : _ref2$debug;
     var queue = animations.queue,
         current_timestamp = animations.current_timestamp,
         last_timestamp = animations.last_timestamp;
@@ -44493,9 +44583,12 @@ var AnimationStateVisualizerComponent = function AnimationStateVisualizerCompone
     var future_anims = (0, _reducers.sortedAnimations)((0, _reducers.futureAnimations)(queue, current_timestamp, last_timestamp));
 
     var col_style = { width: '32.5%', display: 'inline-block', verticalAlign: 'top' };
-    return (0, _jsx3.default)('div', {
-        style: { position: 'relative' }
-    }, void 0, debug ? source_tag : null, (0, _jsx3.default)('pre', {
+
+    return (0, _jsx3.default)(_section.ExpandableSection, {
+        name: 'State Visualizer',
+        source: debug && SOURCE,
+        expanded: expanded
+    }, void 0, (0, _jsx3.default)('pre', {
         height: '200',
         style: { width: '98%', display: 'inline-block', verticalAlign: 'top', textAlign: 'left', overflow: 'scroll' }
     }, void 0, (0, _jsx3.default)('b', {}, void 0, 'Active Animations (', active_anims.length, ')'), (0, _jsx3.default)('br', {}), (0, _jsx3.default)(AnimationList, {
@@ -44534,7 +44627,7 @@ var mapStateToProps = function mapStateToProps(_ref3) {
 
 var AnimationStateVisualizer = exports.AnimationStateVisualizer = (0, _reactRedux.connect)(mapStateToProps)(AnimationStateVisualizerComponent);
 
-},{"./reducers.js":517,"babel-runtime/core-js/json/stringify":6,"babel-runtime/helpers/extends":21,"babel-runtime/helpers/jsx":23,"react":500,"react-redux":469}],519:[function(require,module,exports){
+},{"./reducers.js":517,"./section.js":518,"babel-runtime/core-js/json/stringify":6,"babel-runtime/helpers/extends":21,"babel-runtime/helpers/jsx":23,"react":500,"react-redux":469}],520:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -44905,7 +44998,7 @@ function applyPatches(obj, patches) {
     return output;
 }
 
-},{"babel-runtime/core-js/get-iterator":5,"babel-runtime/core-js/object/keys":12,"babel-runtime/core-js/set":15,"babel-runtime/helpers/toConsumableArray":26,"babel-runtime/helpers/typeof":27,"babel-runtime/regenerator":28}],520:[function(require,module,exports){
+},{"babel-runtime/core-js/get-iterator":5,"babel-runtime/core-js/object/keys":12,"babel-runtime/core-js/set":15,"babel-runtime/helpers/toConsumableArray":26,"babel-runtime/helpers/typeof":27,"babel-runtime/regenerator":28}],521:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -44947,13 +45040,11 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactBootstrap = require('react-bootstrap');
 
+var _section = require('./section.js');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var source_tag = (0, _jsx3.default)('small', {
-    style: { opacity: 0.2, position: 'absolute', top: -15, right: 5 }
-}, void 0, (0, _jsx3.default)('a', {
-    href: 'https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/controls.js'
-}, void 0, 'controls.js'));
+var SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/controls.js";
 
 var FPS = function FPS(speed, current_timestamp, last_timestamp) {
     return Math.round(speed * 1000 / (current_timestamp - last_timestamp));
@@ -44964,11 +45055,14 @@ var TimeControlsComponent = exports.TimeControlsComponent = function TimeControl
         last_timestamp = _ref.last_timestamp,
         speed = _ref.speed,
         setSpeed = _ref.setSpeed,
-        debug = _ref.debug;
+        debug = _ref.debug,
+        expanded = _ref.expanded;
 
-    return (0, _jsx3.default)('div', {
-        style: { position: 'relative' }
-    }, void 0, debug ? source_tag : null, 'Speed of Time: ', speed, 'x | Warped \uD83D\uDD50 ', Math.round(current_timestamp, 0), ' | Actual \uD83D\uDD70 ', new Date().getTime(), ' ', speed == 0 ? '(updating paused)' : '', ' |\xA0', FPS(speed, current_timestamp, last_timestamp), ' FPS', (0, _jsx3.default)('br', {}), 'Reverse \u23EA', (0, _jsx3.default)('input', {
+    return (0, _jsx3.default)(_section.ExpandableSection, {
+        name: 'Time Controls',
+        source: debug && SOURCE,
+        expanded: expanded
+    }, void 0, 'Speed of Time: ', speed, 'x | Warped \uD83D\uDD50 ', Math.round(current_timestamp, 0), ' | Actual \uD83D\uDD70 ', new Date().getTime(), ' ', speed == 0 ? '(updating paused)' : '', ' |\xA0', FPS(speed, current_timestamp, last_timestamp), ' FPS', (0, _jsx3.default)('br', {}), 'Reverse \u23EA', (0, _jsx3.default)('input', {
         type: 'range',
         onChange: function onChange(e) {
             return setSpeed(e.target.value);
@@ -45060,14 +45154,15 @@ var TimeControls = exports.TimeControls = function (_React$Component) {
                 current_timestamp: this.state.current_timestamp,
                 last_timestamp: this.state.last_timestamp,
                 setSpeed: this.setSpeed.bind(this),
-                debug: this.props.debug
+                debug: this.props.debug,
+                expanded: this.props.expanded
             });
         }
     }]);
     return TimeControls;
 }(_react2.default.Component);
 
-},{"babel-runtime/core-js/object/get-prototype-of":11,"babel-runtime/helpers/classCallCheck":19,"babel-runtime/helpers/createClass":20,"babel-runtime/helpers/extends":21,"babel-runtime/helpers/inherits":22,"babel-runtime/helpers/jsx":23,"babel-runtime/helpers/possibleConstructorReturn":25,"react":500,"react-bootstrap":303}],521:[function(require,module,exports){
+},{"./section.js":518,"babel-runtime/core-js/object/get-prototype-of":11,"babel-runtime/helpers/classCallCheck":19,"babel-runtime/helpers/createClass":20,"babel-runtime/helpers/extends":21,"babel-runtime/helpers/inherits":22,"babel-runtime/helpers/jsx":23,"babel-runtime/helpers/possibleConstructorReturn":25,"react":500,"react-bootstrap":303}],522:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -45139,7 +45234,7 @@ var WarpedTime = exports.WarpedTime = function () {
      
      */
 
-},{"./reducers.js":522,"babel-runtime/helpers/classCallCheck":19,"babel-runtime/helpers/createClass":20}],522:[function(require,module,exports){
+},{"./reducers.js":523,"babel-runtime/helpers/classCallCheck":19,"babel-runtime/helpers/createClass":20}],523:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

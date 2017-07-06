@@ -11,6 +11,10 @@ import {AnimationControls} from '../controls.js'
 import {AnimationStateVisualizer} from '../state-visualizer.js'
 import {range} from '../util.js'
 
+import {ExpandableSection} from '../section.js'
+
+const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/examples/stress-test.js"
+
 window.initial_state = {balls: {}}
 
 window.store = createStore(combineReducers({animations}))
@@ -19,7 +23,7 @@ const getWarpedTime = startAnimation(window.store, window.initial_state)
 const StessTesterComponent = ({balls, addBalls, fps, getTime}) => {
     const keys = Object.keys(balls)
     const len = keys.length
-    return <div>
+    return <ExpandableSection name="Stress Tester" source={SOURCE} expanded>
         <Button onClick={() => addBalls(getTime())}>Add 100 Balls</Button> &nbsp;
         {len} balls animating @ {fps} FPS  🖥
         <br/><br/>
@@ -33,7 +37,7 @@ const StessTesterComponent = ({balls, addBalls, fps, getTime}) => {
                     Further optimization is needed to render more than ~{len} elements.
                 </div> : ''}
         </div>
-    </div>
+    </ExpandableSection>
 }
 
 const ball_style = {
@@ -47,17 +51,17 @@ const ball_style = {
     zIndex: 10,
 }
 
-window.num_balls = 0
+let num_balls = 0
 
 const ADD_BALLS_ANIMATION = (start_time, num) => {
     const width = window.innerWidth
     let new_anims = []
-    range(num).map(_ => {
-        window.num_balls += 1
+    range(num).map(idx => {
+        num_balls += 1
         new_anims = [
             ...new_anims,
             Become({
-                path: `/balls/${window.num_balls}/style`,
+                path: `/balls/${num_balls}/style`,
                 start_time,
                 state: {
                     ...ball_style,
@@ -66,7 +70,7 @@ const ADD_BALLS_ANIMATION = (start_time, num) => {
                 },
             }),
             ...RepeatSequence([Translate({
-                path: `/balls/${window.num_balls}`,
+                path: `/balls/${num_balls}`,
                 start_time,
                 start_state: {top: 0, left: 0},
                 end_state: {top: 0, left: Math.random() * width - width/2},
@@ -90,17 +94,12 @@ const mapDispatchToProps = (dispatch) => ({
 const StessTester = connect(mapStateToProps, mapDispatchToProps)(StessTesterComponent)
 
 
-const source_tag = <small style={{opacity: 0.2, float: 'right', marginTop: -10, marginRight: 5, marginLeft: -200}}>
-    <a href="https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/examples/stress-test.js">examples/stress-test.js</a>
-</small>
-
 ReactDOM.render(
     <Provider store={window.store}>
         <div>
-            {source_tag}
             <StessTester getTime={getWarpedTime}/>
-            <hr/>
-            <AnimationControls debug/>
+            <AnimationControls debug expanded/>
+            <AnimationStateVisualizer debug/>
         </div>
     </Provider>,
     document.getElementById('react'),

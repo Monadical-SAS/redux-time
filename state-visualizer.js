@@ -10,6 +10,10 @@ import {
     activeAnimations,
 } from './reducers.js'
 
+import {ExpandableSection} from './section.js'
+
+const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/state-visualizer.js"
+
 
 const AnimationList = ({animations, verbose=true, style}) =>
     <table style={{width: '100%', minWidth: '1500px', fontSize: '85%', overflow: 'scroll', ...(style || {})}}>
@@ -36,12 +40,8 @@ const AnimationList = ({animations, verbose=true, style}) =>
         </tbody>
     </table>
 
-const source_tag = <small style={{opacity: 0.2, position: 'absolute', top: -15, right: 5}}>
-    <a href="https://github.com/Monadical-SAS/redux-time/blob/master/state-visualizer.js">state-visualizer.js</a>
-</small>
 
-
-const AnimationStateVisualizerComponent = ({animations, path, debug}) => {
+const AnimationStateVisualizerComponent = ({animations, path, expanded, debug=false}) => {
     const {queue, current_timestamp, last_timestamp} = animations
     const active_anims = activeAnimations(queue, current_timestamp, last_timestamp)
 
@@ -50,8 +50,8 @@ const AnimationStateVisualizerComponent = ({animations, path, debug}) => {
     const future_anims = sortedAnimations(futureAnimations(queue, current_timestamp, last_timestamp))
 
     const col_style = {width: '32.5%', display: 'inline-block', verticalAlign: 'top'}
-    return <div style={{position: 'relative'}}>
-        {debug ? source_tag : null}
+
+    return <ExpandableSection name="State Visualizer" source={debug && SOURCE} expanded={expanded}>
         <pre height="200" style={{width: '98%', display: 'inline-block', verticalAlign: 'top', textAlign: 'left', overflow: 'scroll'}}>
             <b>Active Animations ({active_anims.length})</b><br/>
             <AnimationList animations={active_anims} style={{width: '100%'}}/>
@@ -72,7 +72,7 @@ const AnimationStateVisualizerComponent = ({animations, path, debug}) => {
             <b>Animated State {path ? `(animations.state.${path})` : ''}</b><br/>
             {JSON.stringify(path ? animations.state[path] : animations.state, null, 4)}
         </pre>
-    </div>
+    </ExpandableSection>
 }
 
 const mapStateToProps = ({animations}) => ({
