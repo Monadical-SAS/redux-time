@@ -10,12 +10,13 @@
 
  - Ball: [live demo](https://monadical-sas.github.io/redux-time/examples/ball.html) [`examples/ball.js`](ball.js)
     A basic demonstration of interactive animations, including:
-        - left-click dispatching a bounce animation
-        - right-click making the ball follow the mouse around in real-time
+        - left-click dispatches a bounce animation
+        - right-click makes the ball follow the mouse around in real-time
         - time travel
 
  - Stress Test: [live demo](https://monadical-sas.github.io/redux-time/examples/stress-test.html) [`examples/stress-test.js`](stress-test.js)
     A frame with a button to incrementally add more elements while watching the frame-rate, demonstrates:
+        - cpu use is low until many elements are added
         - library is easily capable of running 1000+ simulatneous animations
         - render speed is limited by React & the browser before redux-time
         - time travel doesn't affect render speed negatively
