@@ -286,9 +286,10 @@ export const Sequential = (animations, start_time) => {
 }
 
 // repeat a sequential list of animations
-export const RepeatSequence = (animations, repeat) => {
+export const RepeatSequence = (animations, repeat, start_time) => {
+    if (!Array.isArray(animations)) animations = [animations]
     const repeated = range(repeat).reduce((acc, val) => {
         return acc = [...acc, ...animations]
     }, [])
-    return Sequential(repeated)
+    return Sequential(repeated, start_time)
 }
