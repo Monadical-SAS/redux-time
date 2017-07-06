@@ -12,7 +12,7 @@ Redux-time is designed for the second case.  If you want simple CSS content tran
 ```bash
 yarn add redux-time
 ```
-Check it out in action on the [demo](https://monadical-sas.github.io/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.
+Check it out in action on the [demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.
 
 ## Key Features
 
