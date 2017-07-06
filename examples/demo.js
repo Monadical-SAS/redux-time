@@ -29,3 +29,9 @@ ReactDOM.render(
     </Provider>,
     window.react_mount,
 )
+
+window.onload = function() {
+    // add example code here
+
+
+}
