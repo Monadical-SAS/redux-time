@@ -189,7 +189,7 @@ export const initial_state = {
     speed: 1,
     last_timestamp: 0,
     current_timestamp: 0,
-    max_time_travel: 10000,   // maximum length of the queue before items get trimmed
+    max_time_travel: 3000,   // maximum length of the queue before items get trimmed
     queue: [],
     state: {},
 }

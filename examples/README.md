@@ -1,6 +1,6 @@
 # Redux-Time Examples:
 
- - Full: [live demo](https://monadical-sas.github.io/redux-time/examples/demo.html) [`examples/demo.js`](demo.js)
+ - Full Demo Page: [live demo](https://monadical-sas.github.io/redux-time/examples/demo.html) [`examples/demo.js`](demo.js)
     A fully featured example page that demonstrates the usage of:
         - instant state transitions
         - javscript animations
@@ -8,7 +8,7 @@
         - time travel
         - animation composition
 
- - Ball: [live demo](https://monadical-sas.github.io/redux-time/examples/ball.html) [`examples/ball.js`](ball.js)
+ - Interactive Ball Demo: [live demo](https://monadical-sas.github.io/redux-time/examples/ball.html) [`examples/ball.js`](ball.js)
     A basic demonstration of interactive animations, including:
         - left-click dispatches a bounce animation
         - right-click makes the ball follow the mouse around in real-time
@@ -28,3 +28,7 @@
         - jumping to various speeds from -100x to +100x
         - difference in progression between actual time and warped time
         - framerate-calucation accounts for warped time properly 
+
+---
+
+![Ball Demo Screenshot](ball_screenshot.png)

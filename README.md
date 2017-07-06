@@ -104,6 +104,50 @@ On the way we tried almost every other solution out there, from using simple jQu
 
 Finally, we settled on the state tree as a function of time approach, and our life has been much better every since!  We feel this is the best way currently available to do fast, videogame-style animations in a declarative React-friendly manner.
 
+## Documentation
+
+Documentation is a work-in-progress, for now refer to the `examples/` to see how the library works.  The code is short, and easy to read!
+
+### Basics
+
+#### Installation
+
+#### Getting Started
+
+#### Rendering Animated State
+
+#### Queueing Animations
+
+### Advanced
+
+#### Time-Travel
+
+#### Writing Javscript Animations
+
+**Composing Existing Animations**
+
+**Custom JS Tick Functions**
+
+#### Writing CSS Animations
+
+**JS Tick + CSS Transform**
+
+**JS Tick + CSS Animation**
+
+#### Optimization
+
+**React Optimization**
+**Redux Optimization**
+**Redux-Time Optimization**
+
+### Troubleshooting
+
+## Contributing
+
+We'd love see PR's or issues opened if you have questions or suggestions!
+
+If possible, when submitting an issue report, try to copy one of the `examples/` files and modify it to illustrate your reproduceable error.
+
 ## Links
 
 - [React Docs on Animation](https://facebook.github.io/react/docs/animation.html)
@@ -114,3 +158,8 @@ Finally, we settled on the state tree as a function of time approach, and our li
 - [react-animate](https://www.npmjs.com/package/react-animate) library for defining component transitions by extending the React.Component class
 - React.rocks: [animation examples](https://react.rocks/tag/Animation)
 - [Animate.css](https://github.com/daneden/animate.css/blob/master/animate.css): repository of great css animations (usable with redux-time)
+
+--
+MIT License | [Monadical](https://monadical.com) SAS 2017 ([we're hiring!](https://monadical.com/apply))
+
+![Jeremy Who](static/jeremy.png)
