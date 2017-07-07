@@ -102,11 +102,11 @@ See the demo of this code in action here: [ball.html](https://monadical-sas.gith
 
 ## Info & Motivation
 
-After spending almost a year contemplating how to do React animations cleanly at [Monadical](https://monadical.com) (we're [hiring](https://monadical.com/apply)!), we realized that all state can be represented as composed functions that depend only on a delta from their start time.
+After spending almost a year contemplating how to do declarative animations cleanly at [Monadical](https://monadical.com), we realized that all state can be represented as composed functions that depend only on a delta from their start time.
 
-On the way we tried almost every other solution out there, from using simple jQuery animations, to react-transition-group, to janky approaches in-between using `setTimout`.  Since all those are designed with content transitions in mind, nothing really "clicked" and felt like a clean way to do interactive game animations.
+On the way we tried many other solutions from using jQuery animations, to react-transition-group, to janky manual approaches w/ `setTimout`.  Since all those are designed with content transitions in mind, nothing really "clicked" and felt like a clean way to do interactive game animations.
 
-Finally, we settled on the state tree as a function of time approach, and our life has been much better every since!  We feel this is the best way currently available to do fast, videogame-style animations in a declarative React-friendly manner.
+Finally, we settled on the state tree as a function of time approach, and wrote some common animation definition functions, then ported our old UI over!  We feel this library is worth taking a look at if you want to do videogame-style animations in a declarative React-friendly manner.
 
 ## Contributing
 
