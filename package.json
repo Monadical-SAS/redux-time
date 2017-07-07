@@ -1,10 +1,11 @@
 {
   "name": "redux-time",
   "version": "0.0.1",
-  "description": "Redux animations library",
-  "main": "index.js",
+  "description": "Redux animation library that renders your state tree at a given point in time.",
+  "main": "main.js",
   "license": "MIT",
-  "dependencies": {
+  "dependencies": {},
+  "devDependencies": {
     "aliasify": "^2.1.0",
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
