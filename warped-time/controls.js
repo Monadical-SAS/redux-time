@@ -8,7 +8,8 @@ const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/warped-t
 
 
 const FPS = (speed, current_timestamp, last_timestamp) =>
-    Math.round((speed * 1000)/(current_timestamp - last_timestamp))
+    Math.round((speed * 1000)/(current_timestamp - last_timestamp)) || 0
+
 
 export const TimeControlsComponent = ({current_timestamp, last_timestamp, speed, setSpeed, debug, expanded}) => {
     return <ExpandableSection name="Time Controls" source={debug && SOURCE} expanded={expanded}>
@@ -43,7 +44,7 @@ export const TimeControlsComponent = ({current_timestamp, last_timestamp, speed,
     </ExpandableSection>
 }
 
-
+// auto-self-updating TimeControls component using requestAnimationFrame
 export class TimeControls extends React.Component {
     constructor(props) {
         super(props)

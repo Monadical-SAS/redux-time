@@ -20,7 +20,7 @@ window.initial_state = {balls: {}}
 window.store = createStore(combineReducers({animations}))
 const getWarpedTime = startAnimation(window.store, window.initial_state)
 
-const StessTesterComponent = ({balls, addBalls, fps, getTime}) => {
+const StessTesterComponent = ({balls, addBalls, fps, speed, getTime}) => {
     const keys = Object.keys(balls)
     const len = keys.length
     return <ExpandableSection name="Stress Tester" source={SOURCE} expanded>
@@ -32,7 +32,7 @@ const StessTesterComponent = ({balls, addBalls, fps, getTime}) => {
             {keys.map(idx =>
                 <div style={balls[idx].style}></div>)}
             {!len ? 'Click "Add 100 Balls" to start stress-testing.' : ''}
-            {fps < 20 ?
+            {(fps < 20 && speed != 0) ?
                 <div style={{position: 'absolute', left: '5%', zIndex: 20, width: '90%', backgroundColor: 'red', padding: 20}}>
                     Further optimization is needed to render more than ~{len} elements.
                 </div> : ''}
@@ -78,12 +78,18 @@ const ADD_BALLS_ANIMATION = (start_time, num) => {
             })], 6),
         ]
     })
+    console.log(num_balls)
     return new_anims
 }
 
+const FPS = (speed, current_timestamp, last_timestamp) =>
+    Math.round((speed * 1000)/(current_timestamp - last_timestamp)) || 0
+
+
 const mapStateToProps = ({animations}) => ({
     balls: animations.state.balls,
-    fps: Math.round(1000/(animations.current_timestamp - animations.last_timestamp)),
+    fps: FPS(animations.speed, animations.current_timestamp, animations.last_timestamp),
+    speed: animations.speed,
 })
 const mapDispatchToProps = (dispatch) => ({
     addBalls: (start_time) => {

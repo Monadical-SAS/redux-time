@@ -566,6 +566,7 @@ var StessTesterComponent = function StessTesterComponent(_ref) {
     var balls = _ref.balls,
         addBalls = _ref.addBalls,
         fps = _ref.fps,
+        speed = _ref.speed,
         getTime = _ref.getTime;
 
     var keys = (0, _keys2.default)(balls);
@@ -584,7 +585,7 @@ var StessTesterComponent = function StessTesterComponent(_ref) {
         return (0, _jsx3.default)('div', {
             style: balls[idx].style
         });
-    }), !len ? 'Click "Add 100 Balls" to start stress-testing.' : '', fps < 20 ? (0, _jsx3.default)('div', {
+    }), !len ? 'Click "Add 100 Balls" to start stress-testing.' : '', fps < 20 && speed != 0 ? (0, _jsx3.default)('div', {
         style: { position: 'absolute', left: '5%', zIndex: 20, width: '90%', backgroundColor: 'red', padding: 20 }
     }, void 0, 'Further optimization is needed to render more than ~', len, ' elements.') : ''));
 };
@@ -622,14 +623,20 @@ var ADD_BALLS_ANIMATION = function ADD_BALLS_ANIMATION(start_time, num) {
             duration: 10000
         })], 6)));
     });
+    console.log(num_balls);
     return new_anims;
+};
+
+var FPS = function FPS(speed, current_timestamp, last_timestamp) {
+    return Math.round(speed * 1000 / (current_timestamp - last_timestamp)) || 0;
 };
 
 var mapStateToProps = function mapStateToProps(_ref2) {
     var animations = _ref2.animations;
     return {
         balls: animations.state.balls,
-        fps: Math.round(1000 / (animations.current_timestamp - animations.last_timestamp))
+        fps: FPS(animations.speed, animations.current_timestamp, animations.last_timestamp),
+        speed: animations.speed
     };
 };
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
@@ -45047,7 +45054,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/controls.js";
 
 var FPS = function FPS(speed, current_timestamp, last_timestamp) {
-    return Math.round(speed * 1000 / (current_timestamp - last_timestamp));
+    return Math.round(speed * 1000 / (current_timestamp - last_timestamp)) || 0;
 };
 
 var TimeControlsComponent = exports.TimeControlsComponent = function TimeControlsComponent(_ref) {
@@ -45100,6 +45107,8 @@ var TimeControlsComponent = exports.TimeControlsComponent = function TimeControl
         onClick: setSpeed.bind(undefined, 100)
     }, void 0, '+100x'));
 };
+
+// auto-self-updating TimeControls component using requestAnimationFrame
 
 var TimeControls = exports.TimeControls = function (_React$Component) {
     (0, _inherits3.default)(TimeControls, _React$Component);
