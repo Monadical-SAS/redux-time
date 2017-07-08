@@ -2,7 +2,6 @@ import React from 'react'
 import {Button} from 'react-bootstrap'
 
 import {connect} from 'react-redux'
-
 import {TimeControlsComponent} from 'warped-time'
 
 

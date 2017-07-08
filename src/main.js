@@ -35,7 +35,7 @@ class AnimationHandler {
         this.animating = false
         this.start_time = 0
         store.subscribe(::this.handleStateChange)
-        this.initState(initial_state)
+        this.initState(initial_state || {})
     }
     initState(initial_state) {
         Object.keys(initial_state).map(key => {
@@ -89,7 +89,7 @@ class AnimationHandler {
 
 const startAnimation = (store, initial_state) => {
     const handler = new AnimationHandler(store, initial_state)
-    return handler.time.getWarpedTime.bind(handler.time)
+    return handler.time
 }
 
 

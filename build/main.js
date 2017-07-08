@@ -44239,7 +44239,7 @@ var AnimationHandler = function () {
         this.animating = false;
         this.start_time = 0;
         store.subscribe(this.handleStateChange.bind(this));
-        this.initState(initial_state);
+        this.initState(initial_state || {});
     }
 
     (0, _createClass3.default)(AnimationHandler, [{
@@ -44307,7 +44307,7 @@ var AnimationHandler = function () {
 
 var startAnimation = function startAnimation(store, initial_state) {
     var handler = new AnimationHandler(store, initial_state);
-    return handler.time.getWarpedTime.bind(handler.time);
+    return handler.time;
 };
 
 exports.animations = _reducers.animations;
