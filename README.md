@@ -121,7 +121,8 @@ ball: {
 },
 ```
 
-4. Redux re-renders the component automatcially whenever the state changes, so the new state is immediately rendered, and the position of the ball updates on the screen!  This process repeats, and the ball state changes on every `TICK` until the animtion finishes.
+Redux re-renders components automatcially whenever the state they subscribe to with `mapStateToProps` changes.  New animated state is immediately rendered after the `animations` reducer returns, and the position of the ball updates on the screen!
+This process repeats on every animation frame, and the ball state changes on every `TICK` until the animtion finishes.
 
 ## Contributing
 
