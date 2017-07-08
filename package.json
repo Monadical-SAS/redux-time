@@ -1,11 +1,40 @@
 {
   "name": "redux-time",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "Redux animation library that renders your state tree at a given point in time.",
-  "main": "main.js",
+  "author": "Nick Sweeting <git@nicksweeting.com>",
   "license": "MIT",
+  "homepage": "https://github.com/Monadical-SAS/redux-time/",
+  "bugs": {
+    "url": "https://github.com/Monadical-SAS/redux-time/issues",
+    "email": "redux-time-bugs@monadical.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Monadical-SAS/redux-time.git"
+  },
+  "directories": {
+    "example": "examples"
+  },
+  "keywords": [
+    "animation",
+    "animations",
+    "time",
+    "time-travel",
+    "warped",
+    "react",
+    "redux",
+    "games",
+    "game-engine"
+  ],
+  "main": "src/main.js",
   "dependencies": {
-    "warped-time": "^0.0.1"
+    "warped-time": "^0.0.6",
+    "redux": "^3.6.0",
+    "redux-devtools-extension": "^2.13.2",
+    "react": "^15.6.1",
+    "react-bootstrap": "^0.31.0",
+    "react-redux": "^5.0.5"
   },
   "devDependencies": {
     "aliasify": "^2.1.0",
@@ -29,12 +58,9 @@
     "flow-bin": "^0.32.0",
     "lodash": "^4.17.4",
     "minifyify": "^7.3.5",
-    "moment": "^2.14.1",
-    "react": "^15.5.4",
+    "react": "^15.6.1",
     "react-bootstrap": "^0.31.0",
-    "react-bootstrap-daterangepicker": "^3.1.0",
-    "react-daterange-picker": "^1.1.0",
-    "react-dom": "^15.5.4",
+    "react-dom": "^15.6.1",
     "react-redux": "^5.0.5",
     "react-select": "^1.0.0-beta14",
     "redux": "^3.6.0",

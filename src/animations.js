@@ -8,11 +8,15 @@ const unit_tick = ({start_time, end_time, duration, start_state, end_state, amt,
 
     return (delta) => {
         let new_state
+        // These over-boundary cases happen because we need to render
+        // an extra frame before/after start/end times to finish off
+        // animations who's (durations) % (frame rate) != 0.
         if (delta < 0) {
             new_state = start_state
         } else if (delta >= duration) {
             new_state = end_state
         } else {
+            // tick progression function, the core math at the heart of animation
             new_state = start_state + curve_func(delta/duration)*amt
         }
         return unit ? `${new_state}${unit}` : new_state
@@ -34,7 +38,7 @@ const checked_animation_duration = ({start_time, duration, end_time}) => {
 
     if (start_time + duration != end_time) {
         console.log({start_time, end_time, duration})
-        throw 'Animation end_time != start_time + duration'
+        throw 'Conflicting values, Animation end_time != start_time + duration'
     }
     return {start_time, duration, end_time}
 }
@@ -56,7 +60,7 @@ const checked_animation_amt = ({key, start_state, end_state, amt}) => {
 
         if (start_state + amt != end_state) {
             console.log({start_state, end_state, amt})
-            throw 'Animation end_state != start + amt'
+            throw 'Conflicting values, Animation end_state != start + amt'
         }
 
         return {start_state, end_state, amt}
@@ -69,7 +73,7 @@ const checked_animation_amt = ({key, start_state, end_state, amt}) => {
             return checked_animation_amt({start_state: start_state[key], end_state: end_state[key], amt: amt[key]})
 
         if (typeof(start_state) !== 'object' || typeof(end_state) !== 'object' || typeof(amt) !== 'object') {
-            throw 'Incompatible types passed as {start_state, end_state, amt}, must all be dict or numbers'
+            throw 'Incompatible types passed as {start_state, end_state, amt}, must all be objects or numbers'
         }
 
         let keys = Object.keys(start_state)
@@ -250,9 +254,7 @@ export const Rotate = ({path, start_time, end_time, duration, start_state, end_s
 
 // repeat a single animation (which may be composed of several objects)
 export const Repeat = (animations, repeat=Infinity) => {
-    if (!Array.isArray(animations)) {
-        animations = [animations]
-    }
+    if (!Array.isArray(animations)) animations = [animations]
     return animations.map(anim => {
         let {tick, start_time, duration} = anim
         if (start_time === undefined) start_time = (new Date).getTime()
@@ -266,6 +268,26 @@ export const Repeat = (animations, repeat=Infinity) => {
         }
     })
 }
+
+// reverse a single animation (which may be composed of several objects)
+export const Reverse = (animations) => {
+    if (!Array.isArray(animations)) animations = [animations]
+    return animations.map(anim => {
+        let {tick, start_time, duration} = anim
+        if (start_time === undefined) start_time = (new Date).getTime()
+        return {
+            ...anim,
+            start_time: end_time
+            end_time: start_time,
+            tick: (delta) => tick(duration - delta),
+        }
+    })
+}
+
+// reverse a sequence of animations
+// export const ReverseSequence = (animations) => {
+    // TODO
+// }
 
 // make each animation in a sequence start after the last one ends
 export const Sequential = (animations, start_time) => {
