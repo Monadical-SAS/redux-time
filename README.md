@@ -1,6 +1,6 @@
 # Redux-Time: Javascript animations made easy.
 
-▶️ [Intro](#intro) | [Walkthrough](#walkthrough-example) | [Info & Motivation](#info--motivation) | [Links](#links) | [Documentation](#documentation) | [Examples](https://monadical-sas.github.io/redux-time/examples/)
+▶️ [Intro](#intro) | [Walkthrough](#walkthrough-example) | [Info & Motivation](#info--motivation) | [Links](#links) | [Documentation](#documentation) | [Examples](https://monadical-sas.github.io/redux-time/examples/) | [Source](https://github.com/Monadical-SaS/redux-time/)
 
 **[LIVE DEMOS](https://monadical-sas.github.io/redux-time/examples/)**
 
@@ -45,6 +45,7 @@ Every tick function is a pure function of the `start_state`, `end_state`, and de
 ## Walkthrough Example
 
 1. First we create a redux store, and start the animation runloop with our initial state
+
 ```javascript
 import {createStore, combineReducers} from 'redux'
 import {animations, startAnimation} from 'redux-time'
@@ -57,6 +58,7 @@ window.time = startAnimation(store, initial_state)
 ```
 
 2. Then we create a component to render our state
+
 ```javascript
 import React from 'react'
 import {connect} from 'react-redux'
@@ -73,6 +75,7 @@ const Ball = connect(mapStateToProps)(BallComponent)
 ```
 
 3. Then we dispatch an animation to move the ball
+
 ```javascript
 import {Translate} from 'redux-time/src/animations'
 
@@ -152,6 +155,33 @@ Documentation is a work-in-progress, for now refer to the `examples/` to see how
 ### Getting Started
 
 ### Rendering Animated State
+
+### Animations
+
+Animations are defined in `redux-time` as normal JS objects with the following keys:
+
+```javascript
+{
+    type,        // human readable description, e.g. TRANSLATE or OPACITY
+    path,        // an RFC-6902 style javascript patch path, e.g. /ball/style/top or /path/to/array/0
+    start_time,  // ddetermines when animation is active, defaults to immediately (new Date).getTime()
+    duration,    // duration of the animation in ms
+    end_time,    // optional instead of duration
+    start_state, // initial state of the animation, e.g. {top: 0, left:0}
+    amt,         // total amount to add to the start_state, e.g. {top: 10, left: 0}
+    end_state,   // optional instead of amt
+    curve,       // timing interpolation curve, can be a custom function like bezier() or 'linear', 'easeInOutQuad', etc.
+    unit,        // defaults to 'px', can also be 'vw', '%', 'em', null, etc.
+    tick,        // function that takes delta from start_time and returns a computed state at that point in time, defaults to:
+                 //  tick: (delta) => {
+                 //      const progress = start_state + curve_func(delta/duration)*amt        
+                 //      return `${progress}${unit}`
+                 //  }      
+}
+```
+
+On each frame, `computeAnimatedState` in `reducers.js` runs through all the animation `tick` functions,
+and applies the computed results as patches to the specified location `path` in the state tree.
 
 ### Queueing Animations
 
