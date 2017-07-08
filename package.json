@@ -1,10 +1,9 @@
 {
   "name": "redux-time",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Redux animation library that renders your state tree at a given point in time.",
   "author": "Nick Sweeting <git@nicksweeting.com>",
   "license": "MIT",
-
   "homepage": "https://github.com/Monadical-SAS/redux-time/",
   "bugs": {
     "url": "https://github.com/Monadical-SAS/redux-time/issues",
@@ -14,7 +13,6 @@
     "type": "git",
     "url": "git+https://github.com/Monadical-SAS/redux-time.git"
   },
-
   "directories": {
     "example": "examples"
   },
@@ -29,7 +27,6 @@
     "games",
     "game-engine"
   ],
-
   "main": "src/main.js",
   "dependencies": {
     "warped-time": "^0.0.6",
