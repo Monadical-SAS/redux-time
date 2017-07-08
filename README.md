@@ -52,12 +52,15 @@ import {animations, startAnimation} from 'redux-time'
 const initial_state = {
     ball: {style: {top: 0, left: 0}},
 }
-const store = createStore(combineReducers({animations}))
-const time = startAnimation(store, initial_state)
+window.store = createStore(combineReducers({animations}))
+window.time = startAnimation(store, initial_state)
 ```
 
 2. Then we create a component to render our state
 ```javascript
+import React from 'react'
+import {connect} from 'react-redux'
+
 const BallComponent = ({ball}) =>
     <div className="ball" style={ball.style}></div>
 
@@ -85,7 +88,7 @@ const move_ball = [
     })
 ]
 
-store.dispatch({type: 'ADD_ANIMATION', animation: move_ball})
+window.store.dispatch({type: 'ADD_ANIMATION', animation: move_ball})
 ```
 
 **You're done!** The proper intermediate state is calculated from the animation and rendered on every tick, and the ball moves on the screen!
