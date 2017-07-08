@@ -62,7 +62,7 @@ window.time = startAnimation(store, initial_state)
 ```javascript
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {connect} from 'react-redux'
+import {connect, Provider} from 'react-redux'
 
 const BallComponent = ({ball}) =>
     <div className="ball" style={ball.style}></div>
