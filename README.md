@@ -183,13 +183,63 @@ Animations are defined in `redux-time` as normal JS objects with the following k
 On each frame, `computeAnimatedState` in `reducers.js` runs through all the animation `tick` functions,
 and applies the computed results as patches to the specified location `path` in the state tree.
 
+Typically, you wont create animaitons objects by hand, but rather use some of the provided animation functions.
+
+```javascript
+import {...} from 'redux-time/src/animations' 
+
+// Basics
+
+    // set some state without animating.  not everything is animates, some stuff you want to have 
+    // snap into place instantly. Become is the most common "animation" of all.
+    Become({path, state, start_time, end_time=Infinity, duration=Infinity})
+
+    // the building block of all others, just interpolates a raw value or object
+    // over some time, at the specified path, with the specified tick function
+    Animate({type, path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null, tick=null})
+
+// CSS Animations
+
+    // animate an animation defined in CSS  .e.g  @keyframes blinker {from {opacity: 1.0;} to {opacity: 0.0;}}
+    AnimateCSS({name="blinker", path, start_time, end_time, duration=1000, curve='linear'})
+
+// JS Animations
+
+    // move an element relative to its current position, using transform: translate(x, y)
+    Translate({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'})
+
+    // move an element's absolute or fixed position using {top, left}
+    TranslateTo({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'})
+
+    // aniamte an element changing opacity
+    Opacity({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null})
+
+    // rotate an element using transform: rotate(deg)
+    Rotate({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit='deg'})
+
+// Composable Higher-Order Animations (aka functions)
+
+    // make each animation in a sequence start after the last one ends
+    Sequential(animations, start_time)
+
+    // repeat a single animation or set of animations simultaneously
+    Repeat(animations, repeat=Infinity)
+    
+    // repeat a sequential list of animations
+    RepeatSequence(animations, repeat, start_time)
+
+    // reverse a single animation or set of animations simultaneously
+    Reverse(animations)
+    
+    // reverse a sequence of animations in order
+    ReverseSequence(animations, start_time)
+```
+
 ### Queueing Animations
 
 ## Advanced
 
-### Time-Travel
-
-### Writing Javscript Animations
+### Custom Animations
 
 **Composing Existing Animations**
 
