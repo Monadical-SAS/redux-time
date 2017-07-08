@@ -1,6 +1,6 @@
 {
   "name": "redux-time",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Redux animation library that renders your state tree at a given point in time.",
   "main": "src/main.js",
   "license": "MIT",
