@@ -2773,7 +2773,7 @@ react-select@^1.0.0-beta14:
     prop-types "^15.5.8"
     react-input-autosize "^1.1.3"
 
-react@16.6.1, react@^15.6.1:
+react@15.6.1, react@^15.6.1:
   version "15.6.1"
   resolved "https://registry.yarnpkg.com/react/-/react-15.6.1.tgz#baa8434ec6780bde997cdc380b79cd33b96393df"
   dependencies:
@@ -3389,12 +3389,12 @@ warning@^3.0.0:
   dependencies:
     loose-envify "^1.0.0"
 
-warped-time@^0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/warped-time/-/warped-time-0.0.5.tgz#1ba174cbd124bb2e187c9af1c524b0c5f4ce4a95"
+warped-time@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/warped-time/-/warped-time-0.0.6.tgz#a420c1f464a73513a3df1420da20c7a6872c981e"
   dependencies:
     monadical-react-components "^0.0.4"
-    react "16.6.1"
+    react "15.6.1"
     react-bootstrap "^0.31.0"
 
 watchify@^3.9.0:
