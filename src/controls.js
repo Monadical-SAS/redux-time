@@ -3,7 +3,7 @@ import {Button} from 'react-bootstrap'
 
 import {connect} from 'react-redux'
 
-import {TimeControlsComponent} from './warped-time/controls.js'
+import {TimeControlsComponent} from 'warped-time'
 
 
 const mapStateToProps = ({animations}) => ({

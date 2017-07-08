@@ -41,7 +41,7 @@ const AnimationList = ({animations, verbose=true, style}) =>
     </table>
 
 
-const AnimationStateVisualizerComponent = ({animations, path, expanded, debug=false}) => {
+export const AnimationStateVisualizerComponent = ({animations, path, expanded, debug=false}) => {
     const {queue, current_timestamp, last_timestamp} = animations
     const active_anims = activeAnimations(queue, current_timestamp, last_timestamp)
 
