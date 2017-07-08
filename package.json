@@ -1,13 +1,13 @@
 {
   "name": "redux-time",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Redux animation library that renders your state tree at a given point in time.",
   "main": "src/main.js",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Monadical-SAS/redux-time.git"
-},
+  },
   "dependencies": {
     "warped-time": "^0.0.5",
     "redux": "^3.6.0",
