@@ -61,6 +61,7 @@ window.time = startAnimation(store, initial_state)
 
 ```javascript
 import React from 'react'
+import ReactDOM from 'react-dom'
 import {connect} from 'react-redux'
 
 const BallComponent = ({ball}) =>
@@ -72,6 +73,13 @@ const mapStateToProps = ({animations}) => ({
 })
 
 const Ball = connect(mapStateToProps)(BallComponent)
+
+ReactDOM.render(
+    <Provider store={window.store}>
+        <Ball/>
+    </Provider>,
+    document.getElementById('react')
+)
 ```
 
 3. Then we dispatch an animation to move the ball
