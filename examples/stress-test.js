@@ -40,7 +40,7 @@ const StessTesterComponent = ({balls, addBalls, fps, speed, getTime}) => {
             {keys.map(idx =>
                 <div style={balls[idx].style}></div>)}
             {!len ? 'Click "Add 100 Balls" to start stress-testing.' : ''}
-            {(fps < 20 && speed != 0) ?
+            {(fps && fps < 28 && speed != 0) ?
                 <div style={{position: 'absolute', left: '5%', zIndex: 20, width: '90%', backgroundColor: 'red', padding: 20}}>
                     Further optimization is needed to render more than ~{len} elements.
                 </div> : ''}
