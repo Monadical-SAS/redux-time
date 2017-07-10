@@ -83,5 +83,10 @@
       "transform-runtime",
       "transform-flow-strip-types"
     ]
+  },
+  "scripts" : {
+    "lint": "eslint src",
+    "watch": "watchify src/main.js > build/main.js; watchify examples/demo.js -o examples/static/demo.js; watchify examples/ball.js -o examples/static/ball.js; browserify examples/stress-test.js -o examples/static/stress-test.js",
+    "build": "eslint src; browserify src/main.js > build/main.js; browserify examples/demo.js -o examples/static/demo.js; browserify examples/ball.js -o examples/static/ball.js; browserify examples/stress-test.js -o examples/static/stress-test.js"
   }
 }

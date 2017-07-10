@@ -236,7 +236,7 @@ const flattenAnimation = (animation) => {
 
     let css_animation_funcs = []
     for (let key of animation_funcs) {
-        if (transform[key] === null) continue
+        if (animation[key] === null) continue
         css_animation_funcs.push(css_animation_str(animation[key]))
     }
 
