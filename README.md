@@ -165,7 +165,30 @@ If possible, when submitting an issue report, try to copy one of the `examples/`
 
 # Documentation
 
-Documentation is a work-in-progress, for now refer to the `examples/` to see how the library works.  The code is short, and easy to read!
+Documentation is a work-in-progress, if you see anything unclear or incorrect, please submit a PR or issue!
+
+We encourage you to follow along with the demos in `examples/` to see how the library works.  The examples are short and fairly easy to read!
+
+- [Basics](#basics)
+    + [Installation](#installation)
+    + [Getting Started][#getting-started]
+    + [Rendering Animated State](#rendering-animated-state)
+    + [Animations](#animations)
+        * What is an animation?
+        * What is an animation sequence?
+        * Library-provided animations
+        * Running & Queueing Animations
+        * Delayed Animations
+- [Advanced](#advanced)
+    + [Writing JS Animations](#custom-animations)
+        * Composing animations
+        * Custom tick functions
+        * Interactive animations
+    + [Writing CSS Animations](#writing-css-animations)
+        * CSS `transform` (very advanced)
+        * CSS `animate` (very advanced)
+- [Optimization](#optimization)
+- [Troubleshooting](#troubleshooting)
 
 ## Basics
 
