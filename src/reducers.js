@@ -12,6 +12,7 @@ export const pastAnimations = (anim_queue, timestamp) =>
     anim_queue.filter(({start_time, duration}) => (start_time + duration < timestamp))
 
 export const currentAnimations = (anim_queue, from_timestamp, to_timestamp) =>
+    // find all animations which began before current_time, and end after the last_timestamp (crucial to render final frame of animations)
     anim_queue.filter(({start_time, duration}) => (
         (start_time <= from_timestamp) && (start_time + duration >= to_timestamp)
     ))
@@ -68,9 +69,21 @@ export const uniqueAnimations = (anim_queue) => {
 }
 
 export const activeAnimations = (anim_queue, current_timestamp, last_timestamp, uniqueify=true) => {
-    const anims = sortedAnimations(currentAnimations(anim_queue, current_timestamp, last_timestamp))
+    if (current_timestamp === undefined || last_timestamp === undefined) {
+        throw 'Both current_timestamp and last_timestamp must be passed to get activeAnimations'
+    }
+    let anims
+    if (last_timestamp < current_timestamp) {
+        // when playing forwards, find all animations which began before current_time, and end after the time of the last frame
+        anims = sortedAnimations(currentAnimations(anim_queue, current_timestamp, last_timestamp))
+    } else if (last_timestamp >= current_timestamp) {
+        // when playing in reverse, flip the two times to keep start/end time calculation math the same
+        anims = sortedAnimations(currentAnimations(anim_queue, last_timestamp, current_timestamp))
+    }
+
     if (uniqueify)
-        return uniqueAnimations(anims)
+        anims = uniqueAnimations(anims)
+
     return anims
 }
 

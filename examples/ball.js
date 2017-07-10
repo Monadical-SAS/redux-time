@@ -42,7 +42,8 @@ const BOUNCE_ANIMATIONS = (start_time) =>
         // high bounce
         Translate({
             path: '/ball',
-            amt:  {top: -200, left: 0},
+            start_state: {top: 0, left: 0},
+            end_state:  {top: -200, left: 0},
             duration: 500,
             curve: 'easeOutQuad',
             // start_time: window.time.getWarpedTime(),         //  optional, defaults to now
@@ -59,7 +60,8 @@ const BOUNCE_ANIMATIONS = (start_time) =>
         // medium bounce
         Translate({
             path: '/ball',
-            amt:  {top: -100, left: 0},
+            start_state: {top: 0, left: 0},
+            end_state:  {top: -100, left: 0},
             duration: 250,
             curve: 'easeOutQuad',
         }),
@@ -74,7 +76,8 @@ const BOUNCE_ANIMATIONS = (start_time) =>
         // low bounce
         Translate({
             path: '/ball',
-            amt:  {top: -50, left: 0},
+            start_state: {top: 0, left: 0},
+            end_state:  {top: -50, left: 0},
             duration: 125,
             curve: 'easeOutQuad',
         }),
@@ -120,10 +123,12 @@ const BallComponent = ({ball, queue, animateBallBounce, animateBallFollow, getTi
 const mapStateToProps = ({animations}) => ({ball: animations.state.ball})
 const mapDispatchToProps = (dispatch) => ({
     animateBallBounce: (start_time) => {
+        console.log(BOUNCE_ANIMATIONS(start_time))
         dispatch({type: 'ANIMATE', animations: BOUNCE_ANIMATIONS(start_time)})
     },
     animateBallFollow: (e) => {
         e.preventDefault()
+        console.log(FOLLOW_ANIMATIONS())
         dispatch({type: 'ANIMATE', animations: FOLLOW_ANIMATIONS()})
     },
 })

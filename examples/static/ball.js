@@ -49,7 +49,8 @@ var BOUNCE_ANIMATIONS = function BOUNCE_ANIMATIONS(start_time) {
     // high bounce
     (0, _animations.Translate)({
         path: '/ball',
-        amt: { top: -200, left: 0 },
+        start_state: { top: 0, left: 0 },
+        end_state: { top: -200, left: 0 },
         duration: 500,
         curve: 'easeOutQuad'
         // start_time: window.time.getWarpedTime(),         //  optional, defaults to now
@@ -65,7 +66,8 @@ var BOUNCE_ANIMATIONS = function BOUNCE_ANIMATIONS(start_time) {
     // medium bounce
     (0, _animations.Translate)({
         path: '/ball',
-        amt: { top: -100, left: 0 },
+        start_state: { top: 0, left: 0 },
+        end_state: { top: -100, left: 0 },
         duration: 250,
         curve: 'easeOutQuad'
     }), (0, _animations.Translate)({
@@ -79,7 +81,8 @@ var BOUNCE_ANIMATIONS = function BOUNCE_ANIMATIONS(start_time) {
     // low bounce
     (0, _animations.Translate)({
         path: '/ball',
-        amt: { top: -50, left: 0 },
+        start_state: { top: 0, left: 0 },
+        end_state: { top: -50, left: 0 },
         duration: 125,
         curve: 'easeOutQuad'
     }), (0, _animations.Translate)({
@@ -137,10 +140,12 @@ var mapStateToProps = function mapStateToProps(_ref2) {
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return {
         animateBallBounce: function animateBallBounce(start_time) {
+            console.log(BOUNCE_ANIMATIONS(start_time));
             dispatch({ type: 'ANIMATE', animations: BOUNCE_ANIMATIONS(start_time) });
         },
         animateBallFollow: function animateBallFollow(e) {
             e.preventDefault();
+            console.log(FOLLOW_ANIMATIONS());
             dispatch({ type: 'ANIMATE', animations: FOLLOW_ANIMATIONS() });
         }
     };
@@ -44426,11 +44431,14 @@ var pastAnimations = exports.pastAnimations = function pastAnimations(anim_queue
 };
 
 var currentAnimations = exports.currentAnimations = function currentAnimations(anim_queue, from_timestamp, to_timestamp) {
-    return anim_queue.filter(function (_ref2) {
-        var start_time = _ref2.start_time,
-            duration = _ref2.duration;
-        return start_time <= from_timestamp && start_time + duration >= to_timestamp;
-    });
+    return (
+        // find all animations which began before current_time, and end after the last_timestamp (crucial to render final frame of animations)
+        anim_queue.filter(function (_ref2) {
+            var start_time = _ref2.start_time,
+                duration = _ref2.duration;
+            return start_time <= from_timestamp && start_time + duration >= to_timestamp;
+        })
+    );
 };
 
 var futureAnimations = exports.futureAnimations = function futureAnimations(anim_queue, timestamp) {
@@ -44533,8 +44541,20 @@ var uniqueAnimations = exports.uniqueAnimations = function uniqueAnimations(anim
 var activeAnimations = exports.activeAnimations = function activeAnimations(anim_queue, current_timestamp, last_timestamp) {
     var uniqueify = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
-    var anims = sortedAnimations(currentAnimations(anim_queue, current_timestamp, last_timestamp));
-    if (uniqueify) return uniqueAnimations(anims);
+    if (current_timestamp === undefined || last_timestamp === undefined) {
+        throw 'Both current_timestamp and last_timestamp must be passed to get activeAnimations';
+    }
+    var anims = void 0;
+    if (last_timestamp < current_timestamp) {
+        // when playing forwards, find all animations which began before current_time, and end after the time of the last frame
+        anims = sortedAnimations(currentAnimations(anim_queue, current_timestamp, last_timestamp));
+    } else if (last_timestamp >= current_timestamp) {
+        // when playing in reverse, flip the two times to keep start/end time calculation math the same
+        anims = sortedAnimations(currentAnimations(anim_queue, last_timestamp, current_timestamp));
+    }
+
+    if (uniqueify) anims = uniqueAnimations(anims);
+
     return anims;
 };
 

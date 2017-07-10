@@ -44411,11 +44411,14 @@ var pastAnimations = exports.pastAnimations = function pastAnimations(anim_queue
 };
 
 var currentAnimations = exports.currentAnimations = function currentAnimations(anim_queue, from_timestamp, to_timestamp) {
-    return anim_queue.filter(function (_ref2) {
-        var start_time = _ref2.start_time,
-            duration = _ref2.duration;
-        return start_time <= from_timestamp && start_time + duration >= to_timestamp;
-    });
+    return (
+        // find all animations which began before current_time, and end after the last_timestamp (crucial to render final frame of animations)
+        anim_queue.filter(function (_ref2) {
+            var start_time = _ref2.start_time,
+                duration = _ref2.duration;
+            return start_time <= from_timestamp && start_time + duration >= to_timestamp;
+        })
+    );
 };
 
 var futureAnimations = exports.futureAnimations = function futureAnimations(anim_queue, timestamp) {
@@ -44518,8 +44521,20 @@ var uniqueAnimations = exports.uniqueAnimations = function uniqueAnimations(anim
 var activeAnimations = exports.activeAnimations = function activeAnimations(anim_queue, current_timestamp, last_timestamp) {
     var uniqueify = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
-    var anims = sortedAnimations(currentAnimations(anim_queue, current_timestamp, last_timestamp));
-    if (uniqueify) return uniqueAnimations(anims);
+    if (current_timestamp === undefined || last_timestamp === undefined) {
+        throw 'Both current_timestamp and last_timestamp must be passed to get activeAnimations';
+    }
+    var anims = void 0;
+    if (last_timestamp < current_timestamp) {
+        // when playing forwards, find all animations which began before current_time, and end after the time of the last frame
+        anims = sortedAnimations(currentAnimations(anim_queue, current_timestamp, last_timestamp));
+    } else if (last_timestamp >= current_timestamp) {
+        // when playing in reverse, flip the two times to keep start/end time calculation math the same
+        anims = sortedAnimations(currentAnimations(anim_queue, last_timestamp, current_timestamp));
+    }
+
+    if (uniqueify) anims = uniqueAnimations(anims);
+
     return anims;
 };
 
