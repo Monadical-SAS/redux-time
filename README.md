@@ -16,7 +16,7 @@ Generally, there are two different categories of animations on websites:
 `redux-time` is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) instead.
 
 ```bash
-yarn add redux-time    # 🎂🎉
+yarn add redux-time    # 🎂
 ```
 Check it out in action on the [full demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.  
 At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum-backed browser-based poker ([come help us build it](https://monadical.com/apply)!).
