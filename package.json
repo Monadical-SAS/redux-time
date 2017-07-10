@@ -1,6 +1,6 @@
 {
   "name": "redux-time",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Redux animation library that renders your state tree at a given point in time.",
   "author": "Nick Sweeting <git@nicksweeting.com>",
   "license": "MIT",
@@ -84,7 +84,7 @@
       "transform-flow-strip-types"
     ]
   },
-  "scripts" : {
+  "scripts": {
     "lint": "eslint src",
     "watch": "watchify src/main.js > build/main.js; watchify examples/demo.js -o examples/static/demo.js; watchify examples/ball.js -o examples/static/ball.js; browserify examples/stress-test.js -o examples/static/stress-test.js",
     "build": "eslint src; browserify src/main.js > build/main.js; browserify examples/demo.js -o examples/static/demo.js; browserify examples/ball.js -o examples/static/ball.js; browserify examples/stress-test.js -o examples/static/stress-test.js"
