@@ -178,7 +178,7 @@ npm install --add redux-time
 ```
 
 Then add this to your page's entry point, next to `createStore`:
-```
+```javascript
 import {animations, startAnimation} from 'redux-time'
 
 // add animations to your reducers
@@ -513,9 +513,9 @@ const blink = [
 store.dispatch({type: 'ANIMATE', animations: blink})
 ```
 
-**JS Tick + CSS Transform**
+#### Manual Animations for CSS `transform`
 
-You can animate CSS transform functions by using one of the provided animation functions like `Rotate` or `Translate`.
+You can animate CSS transform functions by using one of the provided animation functions like `Rotate` or `Translate`.  The following is only for **advanced** manual control over the CSS transform strings produced.
 
 To manually animate a transform value, specify a path like so:
 
@@ -526,9 +526,9 @@ Animate({
     ... 
 })
 ```
-All patches are stored internally as a dictionary of {transform_function_name: value}, but they get converted to strings when the animated state is calculated on every `TICK`.
+All patches are stored internally as a dictionary of `{transform_function_name: value}`, but they get converted to strings when the animated state is calculated on every `TICK`.
 
-Your component will receive `style={transform: 'translate3d(x, y, z)}` as a valid CSS string, so you can plug it right in with `style={style}`` and it will work.
+Your component will receive `style={transform: 'translate3d(x, y, z)}` as a valid CSS string, so you can plug it right in with `style={style}` and it will work.
 
 You can also animate multiple transform functions to be applied at once:
 ```javascript
@@ -551,9 +551,9 @@ style={transform: 'translate3d(0px, 0px, 0px) rotate3d(0deg, 0deg, 0deg)'}
 
 The function wich merges all the transform functions into a final string is called `flattenTransform` in `src/util.js`.
 
-**JS Tick + CSS Animation**
+#### Manual Animations for CSS `animation`
 
-You can animate CSS animations by using `AnimateCSS`.  The following is only for **advanced** manual control over CSS animations.
+You can animate CSS animations normally by using `AnimateCSS`.  The following is only for **advanced** manual control over the CSS animation strings produced.
 
 To manually set or animate a CSS animation value, specify a path like so:
 
@@ -568,9 +568,9 @@ Become({
     }
 })
 ```
-All CSS animations are stored internally as a dictionary of {css_animation_name: {name, duration, delay, playState}}, but they get converted to strings when the animated state is calculated on every `TICK`.
+All CSS animations are stored internally as a dictionary of `{css_animation_name: {name, duration, delay, playState}}`, but they get converted to strings when the animated state is calculated on every `TICK`.
 
-Your component will receive `style={animation: 'blink 1000ms linear -25ms paused'}` as a valid CSS string, so you can plug it right in with `style={style}`` and it will work.
+Your component will receive `style={animation: 'blink 1000ms linear -25ms paused'}` as a valid CSS string, so you can plug it right in with `style={style}` and it will work.
 
 You can also set multiple css animations to be applied at once:
 ```javascript
@@ -590,11 +590,13 @@ Which gives a string like this to your component:
 style={animation: 'fadeInRed 1000ms -25ms paused, flipInX 1000ms -25ms paused'}
 ```
 
+`paused` is used with negative delays to let us step through the animation frame-by-frame instead of letting the GPU render it continuously on another thread.  It's needed in order to let `TICK` render each specific frame when needed via javascript.
+
 The function which merges all the animation functions into a final string is called `flattenAnimation` in `src/util.js`.
 
 ### Optimization
 
-In our [benchmarks](https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/examples/stress-test.js) `redux-time` can compute state for 100 animations in about 0.5ms.  This means that the bottneck for computing animations is usually going to be in React and the DOM (recalculating styles, pain, etc), not `redux-time`.
+In our [benchmarks](https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/examples/stress-test.js) `redux-time` can compute state for 100 animations in about 0.5ms.  This means that the bottneck for computing animations is usually going to be in React and the DOM (recalculating styles, paint, etc), not `redux-time`.
 
 These are some great articles on optimizing react/redux code in general:
 - https://marmelab.com/blog/2017/02/06/react-is-slow-react-is-fast.html
@@ -603,7 +605,7 @@ These are some great articles on optimizing react/redux code in general:
 
 **React Optimization**
 
-Step one is to make sure you've taken care of all the low-hanging-fruit react optimization.
+Step one is to make sure you've taken care of all the low-hanging-fruit react optimization in the articles above.
 
 **Redux Optimization**
 
@@ -620,6 +622,8 @@ If you encounter high memory use, try reducing `animations.max_time_travel` to s
 If you see a particular slowdown that you think is in `redux-time`, please submit an issue and we'll gladly take a look!
 
 ## Troubleshooting
+
+WIP
 
 ---
 <img src="examples/static/jeremy.jpg" height="40px" style="float:right"/>
