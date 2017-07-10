@@ -29,6 +29,7 @@ Check it out in action on the [demo](https://monadical-sas.github.io/redux-time/
 - seamlessly animate existing React + Redux codebase without major changes
 - animate any state tree value manually, or use provided Animation functions for common animations e.g.: `Translate`, `Rotate`, `Opacity`
 - works in all browsers with `requestAnimationFrame` and in node with `setTimemout`
+- it's fast! computing state takes about `0.5ms` per 100 active animations (the bottleneck is usually React & the DOM, check out [Inferno] + canvas if you really want speed!)
 
 ## Intro
 
