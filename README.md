@@ -2,27 +2,33 @@
     <img src="logo.png" height="80px" alt="redux-time logo"/>
 </p>
 
-# redux-time: Functional, declarative, redux animations  [![npm version](https://badge.fury.io/js/redux-time.svg)](https://badge.fury.io/js/redux-time)  [![Github Stars](https://img.shields.io/github/stars/Monadical-SAS/redux-time.svg)](https://github.com/Monadical-SAS/redux-time) [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/thesquashSH)
+# redux-time: Functional, declarative, redux animation  [![npm version](https://badge.fury.io/js/redux-time.svg)](https://badge.fury.io/js/redux-time)  [![Github Stars](https://img.shields.io/github/stars/Monadical-SAS/redux-time.svg)](https://github.com/Monadical-SAS/redux-time) [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/thesquashSH)
 
 ▶️ [Intro](#intro) | [Walkthrough](#walkthrough-example) | [Info & Motivation](#info--motivation) | [Links](#links) | [Documentation](#documentation) | [Examples](https://monadical-sas.github.io/redux-time/examples/) | [Source](https://github.com/Monadical-SaS/redux-time/)
 
-**[LIVE DEMOS](https://monadical-sas.github.io/redux-time/examples/)**
-
-Redux-Time is a library that allows you to compute your state tree as a function of time.  It's primarily used for animations, but it can also be used for generically changing any redux state as time progresses.
+`redux-time` is a library that allows you to compute your state tree as a function of time.  It's primarily used for animations, but it can also be used for generically changing any redux state as time progresses.
 
 Generally, there are two different categories of animations on websites:
 
  - content transitions (e.g. effects when adding/deleting a list item, hover effects, photo gallery transitions, etc)
  - **full-blown interactive dynamic animations** (like in games)
 
-Redux-time is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) instead.
+`redux-time` is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) instead.
 
 ```bash
-yarn add redux-time
+yarn add redux-time    # 🎂🎉
 ```
-Check it out in action on the [demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.  At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum-backed browser-based poker ([come help us build it](https://monadical.com/apply)!).
+Check it out in action on the [full demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.  
+At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum-backed browser-based poker ([come help us build it](https://monadical.com/apply)!).
 
-<img src="examples/ball_screenshot.png" width="600px" alt="Ball Demo Screenshot"/>
+<p align="center">
+    <a href="https://monadical-sas.github.io/redux-time/examples/ball.html">
+        <img src="examples/ball_screenshot.png" width="600px" alt="Ball Demo Screenshot"/><br/>
+        Bouncing Ball Demo
+    </a>
+</p>
+
+**[MORE LIVE DEMOS](https://monadical-sas.github.io/redux-time/examples/)**
 
 ## Key Features
 
@@ -34,6 +40,7 @@ Check it out in action on the [demo](https://monadical-sas.github.io/redux-time/
 - animate any state tree value manually, or use provided Animation functions for common animations e.g.: `Translate`, `Rotate`, `Opacity`
 - works in all browsers with `requestAnimationFrame` and in node with `setTimemout`
 - it's fast! computing state takes about `0.5ms` per 100 active animations (the bottleneck is usually React & the DOM, check out [Inferno] + canvas if you really want speed!)
+- fully compatible with CSS animation libraries like [Animate.css](https://daneden.github.io/animate.css/), you already have access to 1000s of pre-written animations out there that plug right into `redux-time`!
 
 ## Intro
 
@@ -42,8 +49,6 @@ Redux-time makes complex, interactive, composable animations possible by using t
 Redux is already capable of time-travel currently, however you cant slow down the speed of time, reverse time, or jump to a specific point in time since redux only knows about the list of actions and has no first-class conept of time.  This library makes time a first-class concept, and gives you careful control over its progression.
 
 What that means specifically, is that every time a `TICK` action is dispatched with a `current_timestamp` parameter, the `animations` reducer looks through the active animations in `animations.queue`, calls their respective `tick` functions with a `delta` parameter, and uses their output to render a state tree at that point in time.
-
-The `AnimationHandler` dispatches a `TICK` action on every `requestAnimationFrame`, and as long as all your active tick functions complete in <20ms, the page can render thousands of simultaneous animations smoothly.  When used with `node` outside of a browser it uses `setTimout`, though you can easily turn off time progression and call `TICK` manually instead.
 
 Every tick function is a pure function of the `start_state`, `end_state`, and delta from `start_time`.  This makes animations really easy to reason about compared to traditional solutions.  Debugging is also drastically simpler, since you can slow down and even **reverse** the flow of time to carefully inspect animtion progress!
 
@@ -146,7 +151,7 @@ We'd love see PR's or issues opened if you have questions or suggestions!
 
 If possible, when submitting an issue report, try to copy one of the `examples/` files and modify it to illustrate your reproduceable error.
 
-## Links
+## Further-Reading Links
 
 - [React Docs on Animation](https://facebook.github.io/react/docs/animation.html)
 - [React-Transition-Group](https://github.com/reactjs/react-transition-group/tree/v1-stable) library to add component lifecycle CSS transitions
@@ -240,6 +245,9 @@ import {...} from 'redux-time/src/animations'
     // animate an animation defined in CSS  .e.g  @keyframes blinker {from {opacity: 1.0;} to {opacity: 0.0;}}
     AnimateCSS({name="blinker", path, start_time, end_time, duration=1000, curve='linear'})
 
+    // check out Animate.css for awesome animations to use with this ^
+    // https://github.com/daneden/animate.css
+
 // JS Animations
 
     // move an element relative to its current position, using transform: translate(x, y)
@@ -253,6 +261,9 @@ import {...} from 'redux-time/src/animations'
 
     // rotate an element using transform: rotate(deg)
     Rotate({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit='deg'})
+
+    // have an idea? contribute an animation by submitting a PR to src/animation.js
+    // .e.g Wobble({...}), Bounce({...})
 
 // Composable Higher-Order Animations (aka functions)
 
