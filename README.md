@@ -1,24 +1,34 @@
-# redux-time: Functional, declarative, redux animations  [![npm version](https://badge.fury.io/js/redux-time.svg)](https://badge.fury.io/js/redux-time)  [![Github Stars](https://img.shields.io/github/stars/Monadical-SAS/redux-time.svg)](https://github.com/Monadical-SAS/redux-time) [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/thesquashSH)
+<p align="center">
+    <img src="logo.png" height="80px" alt="redux-time logo"/>
+</p>
+
+# redux-time: Functional, declarative, redux animation  [![npm version](https://badge.fury.io/js/redux-time.svg)](https://badge.fury.io/js/redux-time)  [![Github Stars](https://img.shields.io/github/stars/Monadical-SAS/redux-time.svg)](https://github.com/Monadical-SAS/redux-time) [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/thesquashSH)
 
 ▶️ [Intro](#intro) | [Walkthrough](#walkthrough-example) | [Info & Motivation](#info--motivation) | [Links](#links) | [Documentation](#documentation) | [Examples](https://monadical-sas.github.io/redux-time/examples/) | [Source](https://github.com/Monadical-SaS/redux-time/)
 
-**[LIVE DEMOS](https://monadical-sas.github.io/redux-time/examples/)**
-
-Redux-Time is a library that allows you to compute your state tree as a function of time.  It's primarily used for animations, but it can also be used for generically changing any redux state as time progresses.
+`redux-time` is a library that allows you to compute your state tree as a function of time.  It's primarily used for animations, but it can also be used for generically changing any redux state as time progresses.
 
 Generally, there are two different categories of animations on websites:
 
  - content transitions (e.g. effects when adding/deleting a list item, hover effects, photo gallery transitions, etc)
  - **full-blown interactive dynamic animations** (like in games)
 
-Redux-time is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) instead.
+`redux-time` is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) instead.
 
 ```bash
-yarn add redux-time
+yarn add redux-time    # 🎂
 ```
-Check it out in action on the [demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.  At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum-backed browser-based poker ([come help us build it](https://monadical.com/apply)!).
+Check it out in action on the [full demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.  
+At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum-backed browser-based poker ([come help us build it](https://monadical.com/apply)!).
 
-<img src="examples/ball_screenshot.png" width="600px" alt="Ball Demo Screenshot"/>
+<p align="center">
+    <a href="https://monadical-sas.github.io/redux-time/examples/ball.html">
+        <img src="examples/ball_screenshot.png" width="600px" alt="Ball Demo Screenshot"/><br/>
+        Bouncing Ball Demo
+    </a>
+</p>
+
+**[MORE LIVE DEMOS](https://monadical-sas.github.io/redux-time/examples/)**
 
 ## Key Features
 
@@ -30,6 +40,7 @@ Check it out in action on the [demo](https://monadical-sas.github.io/redux-time/
 - animate any state tree value manually, or use provided Animation functions for common animations e.g.: `Translate`, `Rotate`, `Opacity`
 - works in all browsers with `requestAnimationFrame` and in node with `setTimemout`
 - it's fast! computing state takes about `0.5ms` per 100 active animations (the bottleneck is usually React & the DOM, check out [Inferno] + canvas if you really want speed!)
+- fully compatible with CSS animation libraries like [Animate.css](https://daneden.github.io/animate.css/), you already have access to 1000s of pre-written animations out there that plug right into `redux-time`!
 
 ## Intro
 
@@ -38,8 +49,6 @@ Redux-time makes complex, interactive, composable animations possible by using t
 Redux is already capable of time-travel currently, however you cant slow down the speed of time, reverse time, or jump to a specific point in time since redux only knows about the list of actions and has no first-class conept of time.  This library makes time a first-class concept, and gives you careful control over its progression.
 
 What that means specifically, is that every time a `TICK` action is dispatched with a `current_timestamp` parameter, the `animations` reducer looks through the active animations in `animations.queue`, calls their respective `tick` functions with a `delta` parameter, and uses their output to render a state tree at that point in time.
-
-The `AnimationHandler` dispatches a `TICK` action on every `requestAnimationFrame`, and as long as all your active tick functions complete in <20ms, the page can render thousands of simultaneous animations smoothly.  When used with `node` outside of a browser it uses `setTimout`, though you can easily turn off time progression and call `TICK` manually instead.
 
 Every tick function is a pure function of the `start_state`, `end_state`, and delta from `start_time`.  This makes animations really easy to reason about compared to traditional solutions.  Debugging is also drastically simpler, since you can slow down and even **reverse** the flow of time to carefully inspect animtion progress!
 
@@ -109,11 +118,11 @@ See the demo of this code in action here: [ball.html](https://monadical-sas.gith
 
 ## Info & Motivation
 
-After spending almost a year contemplating how to do declarative animations cleanly at [Monadical](https://monadical.com), we realized that all state can be represented as composed functions that depend only on a delta from their start time.
+After spending almost a year contemplating how to do declarative animations cleanly at [Monadical](https://monadical.com), we realized that all state can be represented as layered patches that are a function of time.
 
-On the way we tried many other solutions from using jQuery animations, to react-transition-group, to janky manual approaches w/ `setTimout`.  Since all those are designed with content transitions in mind, nothing really "clicked" and felt like a clean way to do interactive game animations.
+On the way we tried many other solutions from using jQuery animations, to `react-transition-group`, to janky manual approaches w/ `setTimout`.  Since all those are designed with content transitions in mind, nothing really "clicked" and felt like a clean way to do interactive game animations.
 
-Finally, we settled on the state tree as a function of time approach, and wrote some common animation definition functions, then ported our old UI over!  We feel this library is worth taking a look at if you want to do game-style animations in a declarative, React-friendly manner.
+Finally, we settled on the state tree as a function of time approach, and wrote some common animation definition functions, then ported our old UI over!  Given its drastic improvement on our codebase and productivity, we feel this library is worth taking a look at if you want to do game-style animations in a declarative, React-friendly manner.
 
 ## How it works
 
@@ -123,14 +132,15 @@ Finally, we settled on the state tree as a function of time approach, and wrote 
 The dictionary is returned as the new `animations.state`, and redux then rerenders any components that got new values.
 
 ```javascript
-// happens on every requestAnimationFrame
+// redux-time dispatches this for you on every requestAnimationFrame
 store.dispatch({type: 'TICK', current_timestamp: 1499000000})
 
-// animatons reducer uses the Translate animation.tick(delta) to calculate its animated state, e.g.:
-
-ball: {
-    style: {top: 55, left: 0},
-},
+// then the redux-time animatons reducer uses your Translate's animation.tick(delta) func to calculate the animated state:
+const new_state = {
+    ball: {
+        style: {top: 55, left: 0},
+    },
+}
 ```
 
 Redux re-renders components automatcially whenever the state they subscribe to with `mapStateToProps` changes.  New animated state is immediately rendered after the `animations` reducer returns, and the position of the ball updates on the screen!
@@ -142,7 +152,7 @@ We'd love see PR's or issues opened if you have questions or suggestions!
 
 If possible, when submitting an issue report, try to copy one of the `examples/` files and modify it to illustrate your reproduceable error.
 
-## Links
+## Further-Reading Links
 
 - [React Docs on Animation](https://facebook.github.io/react/docs/animation.html)
 - [React-Transition-Group](https://github.com/reactjs/react-transition-group/tree/v1-stable) library to add component lifecycle CSS transitions
@@ -161,10 +171,94 @@ Documentation is a work-in-progress, for now refer to the `examples/` to see how
 
 ### Installation
 
+```bash
+yarn add redux-time
+# OR
+npm install --add redux-time
+```
+
+Then add this to your page's entry point, next to `createStore`:
+```javascript
+import {animations, startAnimation} from 'redux-time'
+
+// add animations to your reducers
+window.store = createStore(combineReducers({..., animations}))  
+
+// start the animation runloop off with your initial_state
+window.initial_state = {ball: {text: 'Hello world!'}}
+window.time = startAnimation(window.store, window.initial_state)
+```
+
 ### Getting Started
+
+```javascript
+// change some state value instantly
+window.store.dispatch({type: 'ANIMATE', animation: Become({
+    path: '/ball/text',
+    state: 'An instant state change happened!',
+    // start_time: (new Date).getTime(),     // optional, default is now
+    // duration: Infinity,                   // optional milliseconds duration
+})})
+
+// animate some state value over time
+window.store.dispatch({type: 'ANIMATE', animation: Animate({
+    path: '/ball/text',
+    start_state: 0,
+    end_state: 100,
+    start_time: (new Date).getTime() + 1000,  // begins after 1000ms
+    duration: 10000,
+    curve: 'easeInOutQuad',
+})})
+
+// use a provided JS animation
+window.store.dispatch({type: 'ANIMATE', animation: Rotate({
+    path: '/ball',
+    start_state: 0,
+    end_state: 360,
+    duration: 10000,
+})})
+
+// use a CSS keyframe animation
+window.store.dispatch({type: 'ANIMATE', animation: AnimateCSS({
+    path: '/ball',
+    name: 'blinker',
+    duration: 10000,
+    curve: 'linear',
+})})
+```
+
+Follow the [Walkthrough Example](#walkthrough-example) above for a detailed guide, or jump right into the docs below!
 
 ### Rendering Animated State
 
+Animated state is just normal state that lives under `animations.state` in your store's state tree.  To render a component that uses animated state, write a container that fetches the props it needs from the animated state tree.
+
+```javascript
+import React from 'react'
+import {connect} from 'react-redux'
+
+const SquareComponent = ({style}) =>
+    <div style={style}>This square may blink</div>
+
+const mapStateToProps = ({animations}) => ({
+    style: animations.state.ball.style    
+})
+
+const Square = connect(mapStateToProps)(SquareComponent)
+```
+
+If you have some components that are not entirely animated and rely on some parts of your normal state tree, you can merge/mix-and-match the animated state with your normal state in `mapStateToProps`.
+
+```javascript
+const mapStateToProps = ({animations, users}) => ({
+    style: animations.state.ball.style,
+    text: (animations.state.ball.text
+            ? animations.state.ball.text    // use animated state if present
+            : `Hello ${users.logged_in_user.username}!`),  // default if not
+})
+```
+
+Most animations will add `/style` to the path you provide in order to animate any CSS style values.  Make sure your component uses the `style` state produced in `animations.state`, otherwise nothing will move on your screen, even though the animations are working!
 
 ### Animations
 
@@ -175,8 +269,8 @@ An "animation" in `redux-time` is defined as an Array of normal JS objects with 
     type,        // human readable description, e.g. TRANSLATE or OPACITY
     path,        // an RFC-6902 style javascript patch path, e.g. /ball/style/top or /path/to/array/0
     start_time,  // ddetermines when animation is active, defaults to immediately (new Date).getTime()
-    duration,    // duration of the animation in ms
-    end_time,    // optional instead of duration
+    duration,    // duration of the animation in ms (Infinity is allowed)
+    end_time,    // optional instead of duration (Infinity is allowed)
     start_state, // initial state of the animation, e.g. {top: 0, left:0}
     amt,         // total amount to add to the start_state, e.g. {top: 10, left: 0}
     end_state,   // optional instead of amt
@@ -200,8 +294,9 @@ for cases such as `TRANSLATE_TO`, which is animation comprised of two animation 
 An "animation sequence" in `redux-time` is a list of several animations, defined as an Array of the Arrays above like so:
 ```javascript
 [
-    [{type: ROTATE}], 
-    [{type: TRANSLATE_TO_LEFT}, {type: TRANSLATE_TO_TOP}]],
+    [{type: ROTATE, ...}], 
+    [{type: TRANSLATE_TO_LEFT, ...}, {type: TRANSLATE_TO_TOP, ...}]],
+    ...,
 ]
 ```
 
@@ -217,6 +312,8 @@ In practice, the double-nesting for sequences is seamless, because all functions
 operate on only their expected types, and throw helpful errors if you pass the wrong type.
 
 Typically, you wont create animations objects by hand, but rather use some of the provided animation functions.
+
+#### Provided Animation Functions
 
 ```javascript
 import {...} from 'redux-time/src/animations' 
@@ -236,6 +333,9 @@ import {...} from 'redux-time/src/animations'
     // animate an animation defined in CSS  .e.g  @keyframes blinker {from {opacity: 1.0;} to {opacity: 0.0;}}
     AnimateCSS({name="blinker", path, start_time, end_time, duration=1000, curve='linear'})
 
+    // check out Animate.css for awesome animations to use with this ^
+    // https://github.com/daneden/animate.css
+
 // JS Animations
 
     // move an element relative to its current position, using transform: translate(x, y)
@@ -249,6 +349,9 @@ import {...} from 'redux-time/src/animations'
 
     // rotate an element using transform: rotate(deg)
     Rotate({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit='deg'})
+
+    // have an idea? contribute an animation by submitting a PR to src/animation.js
+    // .e.g Wobble({...}), Bounce({...})
 
 // Composable Higher-Order Animations (aka functions)
 
@@ -268,31 +371,259 @@ import {...} from 'redux-time/src/animations'
     ReverseSequence(animations, start_time)
 ```
 
-### Queueing Animations
+#### Running & Queueing Animations
+
+To up queue an animation that you want to run, dispatch the `ANIMATE` action:
+```javascript
+// for a single animation, use animation:
+store.dispatch({type: 'ANIMATE', animation: Become({...})})
+
+// for a sequence of animations (most common), use animations:
+store.dispatch({type: 'ANIMATE', animations: [...]})
+```
+
+**Delayed Animations**
+
+To queue an animation that you don't want to have start immediately, just set the `start_time` of your animation to something before you dispatch it:
+
+```javascript
+const delayed_rotate = Rotate({
+    path: '/square',
+    start_time: (new Date).getTime() + 1000,   // to start 1sec from now
+    duration: 1000,
+    start_state: 0,
+    amt: 360,
+})
+store.dispatch({type: 'ANIMATE', animation: delayed_rotate})
+```
+
+You can use `start_time` to build up a sequence of animations that overlap or run in a particular order.  You can also use the [`Sequence`](#composing-existing-animations) function to create a list of sequential animations that run one by one.
 
 ## Advanced
 
 ### Custom Animations
 
-**Composing Existing Animations**
+#### Composing Existing Animations
 
-**Custom JS Tick Functions**
+We provide several `animations.js` functions that operate on "animation sequences", a.k.a lists of animations, but you can also write your own.
+
+- `Sequential`: play a list of animations one after another (so you dont have to do math on `start_time` manually)
+- `Repeat`: repeat an animation or list of animations
+- `RepeatSequence`: repeat a list of animations in order
+- `Reverse`: reverse the direction of a single animation
+- `ReverseSequence`: reverse a list of animations in order
+
+Here's an example of using `Sequential` and `RepeatSequence` together:
+```javascript
+const bounce_ball = Sequential([
+    Translate({
+        path: '/ball',
+        start_state: {top: 0, left: 0},
+        end_state: {top: 100, left: 0},
+        duration: 500,
+    }),
+    Translate({
+        path: '/ball',
+        start_state: {top: 100, left: 0},
+        end_state: {top: 0, left: 0},
+        duration: 500,
+    }),
+])
+store.dispatch({type: 'ANIMATE', animations: RepeatSequence(bounce_ball, 10)})
+```
+
+#### Custom JS Tick Functions
+
+If you don't want to use one of the provided animations in `animations.js`, or if you want to write your own, just pass a custom tick function to `Animate()`.
+```javascript
+store.dispatch({type: 'ANIMATE', animation: Animate({
+    path: '/path/to/your/state/value',
+    duration: 1000,
+    start_state: 0,
+    amt: 100,
+    tick: (delta) => {
+        // e.g. stepped value instead of smoothly changing continuous value
+        if (delta <= 0) return 0
+        if (delta <= 250) return 25
+        if (delta <= 500) return 50
+        if (delta <= 750) return 75
+        if (delta <= 1000) return 100
+    }
+})})
+```
+
+#### Interactive Animations
+
+You can also use custom tick functions to do interactive animations, e.g. [a ball that follows the user's mouse](https://monadical-sas.github.io/redux-time/examples/ball.html).  Interactive animations are by definition impure (since they depend on real-time user input), so time travel will not work to rewind/fast-forward them.
+
+```javascript
+window.onmousemove = (e) => {
+    window.mouseY = e.pageY
+    window.mouseX = e.pageX
+}
+store.dispatch({type: 'ANIMATE', animations: [
+    Animate({
+        path: '/ball/style/top',
+        duration: Infinity,
+        tick: () => window.mouseY - 50
+    }),
+    Animate({
+        path: '/ball/style/left',
+        duration: Infinity,
+        tick: () => window.mouseX - 50
+    }),
+]})
+```
 
 ### Writing CSS Animations
 
-**JS Tick + CSS Transform**
+To write a custom CSS animation, first define a `@keyframe` animation in your CSS file:
+```css
+@keyframes blinker {
+    from  {opacity: 1.0;}
+    to    {opacity: 0.0;}
+}
+```
 
-**JS Tick + CSS Animation**
+Then write a component to render:
+```javascript
+import React from 'react'
+import {connect} from 'react-redux'
+
+const SquareComponent = ({style}) =>
+    <div style={style}>This square will blink</div>
+
+const mapStateToProps = ({animations}) => ({
+    style: animations.state.ball.style    
+})
+
+const Square = connect(mapStateToProps)(SquareComponent)
+```
+
+Then, dispatch an `AnimateCSS` animation to use your `@keyframe` animation:
+```javascript
+const blink = [
+    AnimateCSS({
+        path: '/ball',     // AnimateCSS will set /ball/style/animation/blinker
+        name: 'blinker',   // name of the keyframe animation above
+        duration: 1000,    // duration of the animation in milliseconds
+        curve: 'linear',   // see all options in src/util.js: EasingFunctions
+    })
+]
+store.dispatch({type: 'ANIMATE', animations: blink})
+```
+
+#### Manual Animations for CSS `transform`
+
+You can animate CSS transform functions by using one of the provided animation functions like `Rotate` or `Translate`.  The following is only for **advanced** manual control over the CSS transform strings produced.
+
+To manually animate a transform value, specify a path like so:
+
+```javascript
+Animate({
+    path: '/ball/style/transform/translate3d',   
+    start_state: {x: 0, y: 0, z: 0},
+    ... 
+})
+```
+All patches are stored internally as a dictionary of `{transform_function_name: value}`, but they get converted to strings when the animated state is calculated on every `TICK`.
+
+Your component will receive `style={transform: 'translate3d(x, y, z)}` as a valid CSS string, so you can plug it right in with `style={style}` and it will work.
+
+You can also animate multiple transform functions to be applied at once:
+```javascript
+Animate({
+    path: '/ball/style/transform/translate3d',
+    start_state: {x: 0, y: 0, z: 0, order: 0},   // lower order key comes first
+    ... 
+})
+Animate({
+    path: '/ball/style/transform/rotate3d',
+    start_state: {x: 0, y: 0, z: 0, order: 1},
+    unit: 'deg',
+    ... 
+})
+```
+Which gives a string like this to your component:
+```javascript
+style={transform: 'translate3d(0px, 0px, 0px) rotate3d(0deg, 0deg, 0deg)'}
+```
+
+The function wich merges all the transform functions into a final string is called `flattenTransform` in `src/util.js`.
+
+#### Manual Animations for CSS `animation`
+
+You can animate CSS animations normally by using `AnimateCSS`.  The following is only for **advanced** manual control over the CSS animation strings produced.
+
+To manually set or animate a CSS animation value, specify a path like so:
+
+```javascript
+Become({
+    path: '/ball/style/animation/css_animation_name',  // name of the @keyframe
+    state: {
+        name: css_animation_name,
+        duration: 1000,
+        delay: 100,
+        playState: 'paused',
+    }
+})
+```
+All CSS animations are stored internally as a dictionary of `{css_animation_name: {name, duration, delay, playState}}`, but they get converted to strings when the animated state is calculated on every `TICK`.
+
+Your component will receive `style={animation: 'blink 1000ms linear -25ms paused'}` as a valid CSS string, so you can plug it right in with `style={style}` and it will work.
+
+You can also set multiple css animations to be applied at once:
+```javascript
+Become({
+    path: '/ball/style/animate/fadeInRed',
+    start_state: {..., order: 0},   // lower order key comes first
+    ... 
+})
+Become({
+    path: '/ball/style/animate/flipInX',
+    start_state: {..., order: 1},
+    ... 
+})
+```
+Which gives a string like this to your component:
+```javascript
+style={animation: 'fadeInRed 1000ms -25ms paused, flipInX 1000ms -25ms paused'}
+```
+
+`paused` is used with negative delays to let us step through the animation frame-by-frame instead of letting the GPU render it continuously on another thread.  It's needed in order to let `TICK` render each specific frame when needed via javascript.
+
+The function which merges all the animation functions into a final string is called `flattenAnimation` in `src/util.js`.
 
 ### Optimization
 
+In our [benchmarks](https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/examples/stress-test.js) `redux-time` can compute state for 100 animations in about 0.5ms.  This means that the bottneck for computing animations is usually going to be in React and the DOM (recalculating styles, paint, etc), not `redux-time`.
+
+These are some great articles on optimizing react/redux code in general:
+- https://marmelab.com/blog/2017/02/06/react-is-slow-react-is-fast.html
+- https://reactrocket.com/post/react-redux-optimization/
+- http://redux.js.org/docs/recipes/ComputingDerivedData.html
+
 **React Optimization**
+
+Step one is to make sure you've taken care of all the low-hanging-fruit react optimization in the articles above.
 
 **Redux Optimization**
 
+Make your React components purely functional, and use `mapStateToProps` to compute all the state needed for rendering.  That way components only re-render when their parameters actually change.
+
+Make sure you understand how `shallowEquals` works in `react-redux`, and make sure that your props values have the same reference if they haven't changed, and a different reference if they have.  Mutation is the root of all evil!
+
 **Redux-Time Optimization**
 
+We take care of most of the optimization for you.  Animations are only computed if they aren't overwritten by other animations, and patches are only computed for the currently active animations.  Our internal functions are memoized and optimized to be JIT-ed.
+
+If you encounter high memory use, try reducing `animations.max_time_travel` to something low such as `100`.  This will prevent you from going as far forwards/back in time, but it will use less memory.
+
+If you see a particular slowdown that you think is in `redux-time`, please submit an issue and we'll gladly take a look!
+
 ## Troubleshooting
+
+WIP
 
 ---
 <img src="examples/static/jeremy.jpg" height="40px" style="float:right"/>
