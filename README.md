@@ -1,6 +1,6 @@
-<div style="text-align:center">
+<p align="center">
     <img src="logo.png" height="80px" alt="redux-time logo"/>
-</div>
+</p>
 
 # redux-time: Functional, declarative, redux animations  [![npm version](https://badge.fury.io/js/redux-time.svg)](https://badge.fury.io/js/redux-time)  [![Github Stars](https://img.shields.io/github/stars/Monadical-SAS/redux-time.svg)](https://github.com/Monadical-SAS/redux-time) [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/thesquashSH)
 
