@@ -171,9 +171,9 @@ We encourage you to follow along with the demos in `examples/` to see how the li
 
 - [Basics](#basics)
     + [Installation](#installation)
-    + [Getting Started][#getting-started]
+    + [Getting Started](#getting-started)
     + [Rendering Animated State](#rendering-animated-state)
-    + [Animations](#animations)
+    + [Animations API](#animations)
         * What is an animation?
         * What is an animation sequence?
         * Library-provided animations
