@@ -152,35 +152,35 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
             dispatch({ type: 'CLEAR_ANIMATIONS' });
         },
         animateFirstState: function animateFirstState(start_time) {
-            dispatch({ type: 'ADD_ANIMATION', animation: (0, _animations.Become)({
+            dispatch({ type: 'ANIMATE', animation: (0, _animations.Become)({
                     path: '/test_state/text',
                     state: '1st state',
                     start_time: start_time
                 }) });
         },
         animateSecondState: function animateSecondState(start_time) {
-            dispatch({ type: 'ADD_ANIMATION', animation: (0, _animations.Become)({
+            dispatch({ type: 'ANIMATE', animation: (0, _animations.Become)({
                     path: '/test_state/text',
                     state: '2nd state',
                     start_time: start_time
                 }) });
         },
         animateGreen: function animateGreen(start_time) {
-            dispatch({ type: 'ADD_ANIMATION', animation: (0, _animations.Become)({
+            dispatch({ type: 'ANIMATE', animation: (0, _animations.Become)({
                     path: '/test_state/style/color',
                     state: 'green',
                     start_time: start_time
                 }) });
         },
         animateRed: function animateRed(start_time) {
-            dispatch({ type: 'ADD_ANIMATION', animation: (0, _animations.Become)({
+            dispatch({ type: 'ANIMATE', animation: (0, _animations.Become)({
                     path: '/test_state/style/color',
                     state: 'red',
                     start_time: start_time
                 }) });
         },
         animateMove: function animateMove(start_time) {
-            dispatch({ type: 'ADD_ANIMATION', animation: (0, _animations.Translate)({
+            dispatch({ type: 'ANIMATE', animation: (0, _animations.Translate)({
                     path: '/test_state',
                     start_state: { top: 0, left: 0 },
                     end_state: { top: 100, left: 100 },
@@ -190,18 +190,19 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
                 }) });
         },
         animateRotate: function animateRotate(start_time) {
-            dispatch({ type: 'ADD_ANIMATION', animation: (0, _animations.Repeat)((0, _animations.Animate)({
-                    path: '/test_state/style/transform/rotate',
-                    start_state: 0,
-                    end_state: 360,
-                    duration: 3000,
-                    curve: 'linear',
-                    unit: 'deg',
-                    start_time: start_time
-                }), 3) });
+            var Spin = (0, _animations.Animate)({
+                path: '/test_state/style/transform/rotate',
+                start_state: 0,
+                end_state: 360,
+                duration: 3000,
+                curve: 'linear',
+                unit: 'deg',
+                start_time: start_time
+            });
+            dispatch({ type: 'ANIMATE', animation: (0, _animations.Repeat)(Spin, 3) });
         },
         animatePulse: function animatePulse(start_time) {
-            dispatch({ type: 'ADD_ANIMATION', animation: (0, _animations.AnimateCSS)({
+            dispatch({ type: 'ANIMATE', animation: (0, _animations.AnimateCSS)({
                     path: '/test_state',
                     name: 'pulse',
                     duration: 2000,
@@ -209,15 +210,16 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
                 }) });
         },
         animateBlink: function animateBlink(start_time) {
-            dispatch({ type: 'ADD_ANIMATION', animation: (0, _animations.Repeat)((0, _animations.AnimateCSS)({
-                    path: '/test_state',
-                    name: 'blinker',
-                    duration: 1000,
-                    start_time: start_time
-                }), Infinity) });
+            var Blink = (0, _animations.AnimateCSS)({
+                path: '/test_state',
+                name: 'blinker',
+                duration: 1000,
+                start_time: start_time
+            });
+            dispatch({ type: 'ANIMATE', animation: (0, _animations.Repeat)(Blink, Infinity) });
         },
         animateBlinkStop: function animateBlinkStop(start_time) {
-            dispatch({ type: 'ADD_ANIMATION', animation: (0, _animations.Become)({
+            dispatch({ type: 'ANIMATE', animation: (0, _animations.Become)({
                     path: '/test_state/style/animation/blinker',
                     state: null,
                     start_time: start_time
@@ -43739,13 +43741,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RepeatSequence = exports.Sequential = exports.Reverse = exports.Repeat = exports.Rotate = exports.Opacity = exports.TranslateTo = exports.Translate = exports.AnimateCSS = exports.Animate = exports.Become = undefined;
 
-var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
-
-var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
-
 var _getIterator2 = require('babel-runtime/core-js/get-iterator');
 
 var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
+
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
@@ -43888,11 +43890,13 @@ var KeyedAnimation = function KeyedAnimation(_ref4) {
         amt = _ref4.amt,
         curve = _ref4.curve,
         unit = _ref4.unit;
-
-    path = path + '/' + key;
     return Animate({
-        type: type, path: path, key: key,
-        start_time: start_time, end_time: end_time, duration: duration,
+        type: type,
+        path: path + '/' + key,
+        key: key,
+        start_time: start_time,
+        end_time: end_time,
+        duration: duration,
         start_state: start_state && start_state[key],
         end_state: end_state && end_state[key],
         amt: amt && amt[key],
@@ -43920,7 +43924,7 @@ var Become = exports.Become = function Become(_ref5) {
         console.log({ path: path, state: state, start_time: start_time, end_time: end_time, duration: duration });
         throw 'Become animation must have a start_time and path defined.';
     }
-    return {
+    return [{
         type: 'BECOME',
         path: path,
         state: state,
@@ -43930,7 +43934,7 @@ var Become = exports.Become = function Become(_ref5) {
         tick: function tick(delta) {
             if (start_time + delta >= start_time && delta < duration) return state;else return undefined;
         }
-    };
+    }];
 };
 
 var Animate = exports.Animate = function Animate(_ref6) {
@@ -43982,7 +43986,7 @@ var Animate = exports.Animate = function Animate(_ref6) {
     }
 
     // console.log(animation.type, animation)
-    return animation;
+    return [animation];
 };
 
 var AnimateCSS = exports.AnimateCSS = function AnimateCSS(_ref7) {
@@ -44074,27 +44078,26 @@ var TranslateTo = exports.TranslateTo = function TranslateTo(_ref9) {
         _ref9$unit = _ref9.unit,
         unit = _ref9$unit === undefined ? 'px' : _ref9$unit;
 
-    path = path + '/style';
     var anims = [];
     if (start_state.left || end_state.left || amt.left) {
-        anims.push(KeyedAnimation({
+        anims = [].concat((0, _toConsumableArray3.default)(KeyedAnimation({
             type: 'TRANSLATE_TO_LEFT',
-            path: path,
+            path: path + '/style',
             key: 'left',
             start_time: start_time, end_time: end_time, duration: duration,
             start_state: start_state, end_state: end_state, amt: amt,
             curve: curve, unit: unit
-        }));
+        })));
     }
     if (start_state.top || end_state.top || amt.top) {
-        anims.push(KeyedAnimation({
+        anims = [].concat((0, _toConsumableArray3.default)(anims), (0, _toConsumableArray3.default)(KeyedAnimation({
             type: 'TRANSLATE_TO_TOP',
-            path: path,
+            path: path + '/style',
             key: 'top',
             start_time: start_time, end_time: end_time, duration: duration,
             start_state: start_state, end_state: end_state, amt: amt,
             curve: curve, unit: unit
-        }));
+        })));
     }
     return anims;
 };
@@ -44111,10 +44114,18 @@ var Opacity = exports.Opacity = function Opacity(_ref10) {
         curve = _ref10$curve === undefined ? 'linear' : _ref10$curve,
         _ref10$unit = _ref10.unit,
         unit = _ref10$unit === undefined ? null : _ref10$unit;
-
-    path = path + '/style/opacity';
-    var type = 'OPACITY';
-    return Animate({ type: type, path: path, start_time: start_time, end_time: end_time, duration: duration, start_state: start_state, end_state: end_state, amt: amt, curve: curve, unit: unit });
+    return Animate({
+        type: 'OPACITY',
+        path: path + '/style/opacity',
+        start_time: start_time,
+        end_time: end_time,
+        duration: duration,
+        start_state: start_state,
+        end_state: end_state,
+        amt: amt,
+        curve: curve,
+        unit: unit
+    });
 };
 
 var Rotate = exports.Rotate = function Rotate(_ref11) {
@@ -44129,18 +44140,26 @@ var Rotate = exports.Rotate = function Rotate(_ref11) {
         curve = _ref11$curve === undefined ? 'linear' : _ref11$curve,
         _ref11$unit = _ref11.unit,
         unit = _ref11$unit === undefined ? 'deg' : _ref11$unit;
-
-    path = path + '/style/transform/rotate';
-    var type = 'ROTATE';
-    return Animate({ type: type, path: path, start_time: start_time, end_time: end_time, duration: duration, start_state: start_state, end_state: end_state, amt: amt, curve: curve, unit: unit });
+    return Animate({
+        type: 'ROTATE',
+        path: path + '/style/transform/rotate',
+        start_time: start_time,
+        end_time: end_time,
+        duration: duration,
+        start_state: start_state,
+        end_state: end_state,
+        amt: amt,
+        curve: curve,
+        unit: unit
+    });
 };
 
 // repeat a single animation (which may be composed of several objects)
-var Repeat = exports.Repeat = function Repeat(animations) {
+var Repeat = exports.Repeat = function Repeat(animation) {
     var repeat = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Infinity;
 
-    if (!Array.isArray(animations)) animations = [animations];
-    return animations.map(function (anim) {
+    (0, _util.checkIsValidAnimation)(animation);
+    return (0, _util.flattened)(animation).map(function (anim) {
         var tick = anim.tick,
             start_time = anim.start_time,
             duration = anim.duration;
@@ -44159,9 +44178,9 @@ var Repeat = exports.Repeat = function Repeat(animations) {
 };
 
 // reverse a single animation (which may be composed of several objects)
-var Reverse = exports.Reverse = function Reverse(animations) {
-    if (!Array.isArray(animations)) animations = [animations];
-    return animations.map(function (anim) {
+var Reverse = exports.Reverse = function Reverse(animation) {
+    (0, _util.checkIsValidAnimation)(animation);
+    return (0, _util.flattened)(animation).map(function (anim) {
         var _tick = anim.tick,
             start_time = anim.start_time,
             duration = anim.duration;
@@ -44184,6 +44203,7 @@ var Reverse = exports.Reverse = function Reverse(animations) {
 
 // make each animation in a sequence start after the last one ends
 var Sequential = exports.Sequential = function Sequential(animations, start_time) {
+    (0, _util.checkIsValidSequence)(animations);
     if (start_time === undefined) start_time = new Date().getTime();
     var seq = [];
     var last_end = start_time;
@@ -44193,13 +44213,39 @@ var Sequential = exports.Sequential = function Sequential(animations, start_time
 
     try {
         for (var _iterator = (0, _getIterator3.default)(animations), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var animation = _step.value;
+            var animation_set = _step.value;
 
-            seq.push((0, _extends3.default)({}, animation, {
-                start_time: last_end,
-                end_time: last_end + animation.duration
-            }));
-            last_end = animation.duration == Infinity ? last_end + 1 : last_end + animation.duration;
+            var single_anim = [];
+            var _iteratorNormalCompletion2 = true;
+            var _didIteratorError2 = false;
+            var _iteratorError2 = undefined;
+
+            try {
+                for (var _iterator2 = (0, _getIterator3.default)(animation_set), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                    var animation = _step2.value;
+
+                    single_anim.push((0, _extends3.default)({}, animation, {
+                        start_time: last_end,
+                        end_time: last_end + animation.duration
+                    }));
+                    last_end = animation.duration == Infinity ? last_end + 1 : last_end + animation.duration;
+                }
+            } catch (err) {
+                _didIteratorError2 = true;
+                _iteratorError2 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                        _iterator2.return();
+                    }
+                } finally {
+                    if (_didIteratorError2) {
+                        throw _iteratorError2;
+                    }
+                }
+            }
+
+            seq.push(single_anim);
         }
     } catch (err) {
         _didIteratorError = true;
@@ -44216,12 +44262,14 @@ var Sequential = exports.Sequential = function Sequential(animations, start_time
         }
     }
 
+    (0, _util.checkIsValidSequence)(seq);
     return seq;
 };
 
 // repeat a sequential list of animations
 var RepeatSequence = exports.RepeatSequence = function RepeatSequence(animations, repeat, start_time) {
-    if (!Array.isArray(animations)) animations = [animations];
+    (0, _util.checkIsValidSequence)(animations);
+
     var repeated = (0, _util.range)(repeat).reduce(function (acc, val) {
         return acc = [].concat((0, _toConsumableArray3.default)(acc), (0, _toConsumableArray3.default)(animations));
     }, []);
@@ -44338,7 +44386,7 @@ var AnimationHandler = function () {
             var _this = this;
 
             (0, _keys2.default)(initial_state).map(function (key) {
-                _this.store.dispatch({ type: 'ADD_ANIMATION', animation: (0, _animations.Become)({
+                _this.store.dispatch({ type: 'ANIMATE', animation: (0, _animations.Become)({
                         path: '/' + key,
                         state: initial_state[key],
                         start_time: 0
@@ -44632,8 +44680,11 @@ var flattenStyles = exports.flattenStyles = function flattenStyles(state) {
         // converts {style: {animations: {blinker: {name: blinker, duration: 1000, curve: 'linear', delay: 767}, ...}}}
         //      =>  {style: {animation: blinker 1000ms linear -767ms paused, ...}}
         var css_animation_funcs = (0, _keys2.default)(state.animation).filter(function (key) {
-            return state.animation[key];
-        }).map(function (key) {
+            return state.animation[key] !== null;
+        }).sort(function (a, b) {
+            return state.animation[a].order - state.animation[b].order;
+        }) // deterministic ordering
+        .map(function (key) {
             return css_animation_str(state.animation[key]);
         });
 
@@ -44645,7 +44696,12 @@ var flattenStyles = exports.flattenStyles = function flattenStyles(state) {
         // flatten transforms from a dict to a string
         // converts {style: {transform: {translate: {left: '0px', top: '10px'}, rotate: '10deg'}}}
         //      =>  {style: {transform: 'translate(0px, 10px) rotate(10deg)'}}
-        var css_transform_funcs = (0, _keys2.default)(state.transform).map(function (key) {
+        var css_transform_funcs = (0, _keys2.default)(state.transform).filter(function (key) {
+            return state.transform[key] !== null;
+        }).sort(function (a, b) {
+            return state.transform[a].order - state.transform[b].order;
+        }) // deterministic ordering
+        .map(function (key) {
             return css_transform_str[key](state.transform[key]);
         });
 
@@ -44704,18 +44760,35 @@ var computeAnimatedState = exports.computeAnimatedState = function computeAnimat
     return flattenStyles((0, _util.applyPatches)({}, patches));
 };
 
+// limit anim_queue to max_time_travel length
 var trimmedAnimationQueue = function trimmedAnimationQueue(anim_queue, max_time_travel) {
-    var keep_from = anim_queue.length - max_time_travel;
-    var keep_to = -1;
+    if (anim_queue.length > max_time_travel) {
+        // console.log(
+        //     '%c[i] Trimmed old animations from animations.queue', 'color:orange',
+        //     `(queue was longer than ${max_time_travel} items)`
+        // )
+        var keep_from = anim_queue.length - max_time_travel;
+        var keep_to = -1;
 
-    var new_queue = anim_queue.slice(keep_from, keep_to);
+        var new_queue = anim_queue.slice(keep_from, keep_to);
 
-    // always keep first BECOME animation
-    if ((keep_from != 0 || new_queue.length == 0) && anim_queue.length) {
-        new_queue = [anim_queue[0]].concat((0, _toConsumableArray3.default)(new_queue));
+        // always keep first BECOME animation
+        if ((keep_from != 0 || new_queue.length == 0) && anim_queue.length) {
+            new_queue = [anim_queue[0]].concat((0, _toConsumableArray3.default)(new_queue));
+        }
+
+        return new_queue;
     }
+    return anim_queue;
+};
 
-    return new_queue;
+// Set start_time to now if it's undefined
+var startTimeOrNow = function startTimeOrNow(anim_queue) {
+    return anim_queue.map(function (anim) {
+        return (0, _extends3.default)({}, anim, {
+            start_time: anim.start_time === undefined ? new Date().getTime() : anim.start_time
+        });
+    });
 };
 
 var initial_state = exports.initial_state = {
@@ -44742,35 +44815,39 @@ var animations = exports.animations = function animations() {
                 queue: only_initial_state,
                 state: computeAnimatedState(only_initial_state, state.current_timestamp, state.last_timestamp)
             });
-        case 'ADD_ANIMATION':
-            var queue = state.queue;
-            if (queue.length > state.max_time_travel) {
-                // console.log(
-                //     '%c[i] Trimmed old animations from animations.queue', 'color:orange',
-                //     `(queue was longer than ${state.max_time_travel} items)`
-                // )
-                queue = trimmedAnimationQueue(queue, state.max_time_travel);
-            }
-            var new_animations = void 0;
-            if (Array.isArray(action.animations)) new_animations = action.animations;else if (Array.isArray(action.animation)) new_animations = action.animation;else if (action.animation) new_animations = [action.animation];else throw 'action.animation is missing!';
 
-            // Set start_time to now if it's undefined
-            new_animations = new_animations.map(function (anim) {
-                return (0, _extends3.default)({}, anim, {
-                    start_time: anim.start_time === undefined ? new Date().getTime() : anim.start_time
-                });
+        case 'ANIMATE':
+            var anim_objs = void 0;
+            if (action.animation && !action.animations) {
+                (0, _util.checkIsValidAnimation)(action.animation);
+                anim_objs = action.animation;
+            } else if (action.animations && !action.animation) {
+                (0, _util.checkIsValidSequence)(action.animations);
+                anim_objs = (0, _util.flattened)(action.animations);
+            } else {
+                console.log('%cINVALID ANIMATE ACTION:', action);
+                throw 'ANIMATE action must be passed either animations: [[], [], ...] or animation: [{}, {}, ...]';
+            }
+            var trimmed_queue = trimmedAnimationQueue(state.queue, state.max_time_travel);
+            var new_animation_objs = startTimeOrNow(anim_objs);
+            return (0, _extends3.default)({}, state, {
+                queue: [].concat((0, _toConsumableArray3.default)(trimmed_queue), (0, _toConsumableArray3.default)(new_animation_objs))
             });
 
-            return (0, _extends3.default)({}, state, { queue: [].concat((0, _toConsumableArray3.default)(queue), (0, _toConsumableArray3.default)(new_animations)) });
-
         case 'SET_ANIMATION_SPEED':
-            return (0, _extends3.default)({}, state, { speed: action.speed, last_timestamp: state.current_timestamp });
+            return (0, _extends3.default)({}, state, {
+                speed: action.speed,
+                last_timestamp: state.current_timestamp
+            });
 
         case 'TICK':
-            var anim_state = computeAnimatedState(state.queue, action.current_timestamp, action.last_timestamp);
+            if (action.current_timestamp === undefined || action.last_timestamp === undefined) {
+                throw 'TICK action must have a current_timestamp and last_timestamp';
+            }
+            var animated_state = computeAnimatedState(state.queue, action.current_timestamp, action.last_timestamp);
 
             return (0, _extends3.default)({}, state, {
-                state: anim_state,
+                state: animated_state,
                 speed: action.speed || state.speed,
                 current_timestamp: action.current_timestamp,
                 last_timestamp: action.last_timestamp
@@ -44896,11 +44973,7 @@ var AnimationStateVisualizer = exports.AnimationStateVisualizer = (0, _reactRedu
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.setDifference = exports.setIntersection = exports.flattened = exports.flipObj = exports.deepCopy = exports.range = exports.mod = exports.EasingFunctions = undefined;
-
-var _getIterator2 = require('babel-runtime/core-js/get-iterator');
-
-var _getIterator3 = _interopRequireDefault(_getIterator2);
+exports.setDifference = exports.setIntersection = exports.flattened = exports.flipObj = exports.deepCopy = exports.range = exports.mod = exports.EasingFunctions = exports.checkIsValidSequence = exports.checkIsValidAnimation = undefined;
 
 var _set = require('babel-runtime/core-js/set');
 
@@ -44922,6 +44995,10 @@ var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
 var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 
+var _getIterator2 = require('babel-runtime/core-js/get-iterator');
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
 exports.reversed = reversed;
 exports.isBaseType = isBaseType;
 exports.deepMerge = deepMerge;
@@ -44932,6 +45009,68 @@ exports.applyPatches = applyPatches;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _marked = [reversed].map(_regenerator2.default.mark);
+
+var checkIsValidAnimation = exports.checkIsValidAnimation = function checkIsValidAnimation(animation) {
+    if (!Array.isArray(animation)) {
+        console.log('%cINVALID ANIMATION:', 'color:red', animation);
+        console.log('Got something other than an array.');
+        throw 'Animation must be passed in as an array of Animation objects!';
+    }
+    if (animation.length && Array.isArray(animation[0])) {
+        console.log('%cINVALID ANIMATION:', 'color:red', animation);
+        console.log('Got double-nested animation array instead of just an array of objects.');
+        throw 'Animation must be passed in as an array of Animation objects!';
+    }
+    if (animation.length && !animation[0].path) {
+        console.log('%cINVALID ANIMATION :', 'color:red', animation);
+        console.log('Animations object is missing a path, is it a real animation?');
+        throw 'Animation must be passed in as an array of Animation objects!';
+    }
+};
+
+var checkIsValidSequence = exports.checkIsValidSequence = function checkIsValidSequence(animations) {
+    if (!Array.isArray(animations)) {
+        console.log('%cINVALID ANIMATION SEQUENCE:', 'color:red', animations);
+        console.log('Got something other than an array.');
+        throw 'Animation sequence must be passed in as an array of Animation object arrays!';
+    }
+    if (animations.length && !Array.isArray(animations[0])) {
+        console.log('%cINVALID ANIMATION SEQUENCE:', 'color:red', animations);
+        console.log('Got an array of objects instead of an array of arrays.');
+        throw 'Animation sequence must be passed in as an array of Animation object arrays!';
+    }
+    if (animations.length && animations[0].length && Array.isArray(animations[0][0])) {
+        console.log('%cINVALID ANIMATION SEQUENCE:', 'color:red', animations);
+        console.log('Got triple-nested animations array instead of double-nested.');
+        throw 'Animation sequence must be passed in as an array of Animation object arrays!';
+    }
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = (0, _getIterator3.default)(animations), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var animation = _step.value;
+
+            checkIsValidAnimation(animation);
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
+    return true;
+};
 
 var EasingFunctions = exports.EasingFunctions = {
     // no easing, no acceleration
@@ -45110,27 +45249,27 @@ function select(obj, selector) {
     // ({a: {b: 2}}, '/a/b') => 2                   Get obj at specified addr (works with array indicies)
     if (selector === '/') return obj;
     if (selector[0] !== '/') throw 'Invalid selector! ' + selector;
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
 
     try {
-        for (var _iterator = (0, _getIterator3.default)(selector.split('/').slice(1)), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var key = _step.value;
+        for (var _iterator2 = (0, _getIterator3.default)(selector.split('/').slice(1)), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var key = _step2.value;
 
             obj = obj[key];
         }
     } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
     } finally {
         try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
             }
         } finally {
-            if (_didIteratorError) {
-                throw _iteratorError;
+            if (_didIteratorError2) {
+                throw _iteratorError2;
             }
         }
     }
@@ -45153,13 +45292,13 @@ function patch(obj, selector, new_val) {
         throw 'Patch paths must not have trailing slashes!';
     }
     var parent = obj;
-    var _iteratorNormalCompletion2 = true;
-    var _didIteratorError2 = false;
-    var _iteratorError2 = undefined;
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
 
     try {
-        for (var _iterator2 = (0, _getIterator3.default)(keys), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-            var key = _step2.value;
+        for (var _iterator3 = (0, _getIterator3.default)(keys), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var key = _step3.value;
 
             // create path if any point is missing
             if (mkpath && (parent[key] === undefined || parent[key] === null) || isBaseType(parent[key], false)) {
@@ -45168,16 +45307,16 @@ function patch(obj, selector, new_val) {
             parent = parent[key];
         }
     } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
     } finally {
         try {
-            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                _iterator2.return();
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                _iterator3.return();
             }
         } finally {
-            if (_didIteratorError2) {
-                throw _iteratorError2;
+            if (_didIteratorError3) {
+                throw _iteratorError3;
             }
         }
     }
@@ -45193,13 +45332,13 @@ function patch(obj, selector, new_val) {
 function applyPatches(obj, patches) {
     var output = {};
     // debugger
-    var _iteratorNormalCompletion3 = true;
-    var _didIteratorError3 = false;
-    var _iteratorError3 = undefined;
+    var _iteratorNormalCompletion4 = true;
+    var _didIteratorError4 = false;
+    var _iteratorError4 = undefined;
 
     try {
-        for (var _iterator3 = (0, _getIterator3.default)(patches), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-            var _patch = _step3.value;
+        for (var _iterator4 = (0, _getIterator3.default)(patches), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var _patch = _step4.value;
 
             if (_patch.path[0] !== '/') throw 'Invalid path found! ' + _patch.path;
 
@@ -45213,13 +45352,13 @@ function applyPatches(obj, patches) {
             var final_key = keys.pop();
             // get to the end of the list of paths
             var parent = output;
-            var _iteratorNormalCompletion4 = true;
-            var _didIteratorError4 = false;
-            var _iteratorError4 = undefined;
+            var _iteratorNormalCompletion5 = true;
+            var _didIteratorError5 = false;
+            var _iteratorError5 = undefined;
 
             try {
-                for (var _iterator4 = (0, _getIterator3.default)(keys), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-                    var key = _step4.value;
+                for (var _iterator5 = (0, _getIterator3.default)(keys), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                    var key = _step5.value;
 
                     if (parent[key] === undefined || parent[key] === null || isBaseType(parent[key], false)) {
                         parent[key] = {};
@@ -45227,16 +45366,16 @@ function applyPatches(obj, patches) {
                     parent = parent[key];
                 }
             } catch (err) {
-                _didIteratorError4 = true;
-                _iteratorError4 = err;
+                _didIteratorError5 = true;
+                _iteratorError5 = err;
             } finally {
                 try {
-                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
-                        _iterator4.return();
+                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                        _iterator5.return();
                     }
                 } finally {
-                    if (_didIteratorError4) {
-                        throw _iteratorError4;
+                    if (_didIteratorError5) {
+                        throw _iteratorError5;
                     }
                 }
             }
@@ -45244,16 +45383,16 @@ function applyPatches(obj, patches) {
             parent[final_key] = patch_val;
         }
     } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
     } finally {
         try {
-            if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                _iterator3.return();
+            if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                _iterator4.return();
             }
         } finally {
-            if (_didIteratorError3) {
-                throw _iteratorError3;
+            if (_didIteratorError4) {
+                throw _iteratorError4;
             }
         }
     }
