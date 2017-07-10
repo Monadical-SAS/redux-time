@@ -144,9 +144,17 @@ export function deepMerge(obj1, obj2, merge_vals=true) {
 
 export function select(obj, selector) {
     // ({a: {b: 2}}, '/a/b') => 2                   Get obj at specified addr (works with array indicies)
-    if (selector === '/') return obj
-    if (selector[0] !== '/') throw `Invalid selector! ${selector}`
-    for (let key of selector.split('/').slice(1)) {
+    let keys
+    if (typeof(selector) === 'string') {
+        if (selector === '/') return obj
+        if (selector[0] !== '/') throw `Invalid selector! ${selector}`
+        keys = selector.split('/').slice(1)
+    } else if (Array.isArray(selector)) {
+        keys = selector
+    } else {
+        throw `Invalid selector type! ${selector}`
+    }
+    for (let key of keys) {
         obj = obj[key]
     }
     return obj
@@ -154,9 +162,16 @@ export function select(obj, selector) {
 
 export function patch(obj, selector, new_val, merge=false, mkpath=false, deepcopy=true) {
     // ({a: {b: 2}}, '/a/b', 4) => {a: {b: 4}}      Set obj at specified addr (works with array indicies)
-    if (selector === '/') return new_val
-    if (!selector || selector[0] !== '/') throw `Invalid selector! ${selector}`
-    const keys = selector.split('/').slice(1)
+    let keys
+    if (typeof(selector) === 'string') {
+        if (selector === '/') return new_val
+        if (!selector || selector[0] !== '/') throw `Invalid selector! ${selector}`
+        keys = selector.split('/').slice(1)
+    } else if (Array.isArray(selector)) {
+        keys = selector
+    } else {
+        throw `Invalid selector type! ${selector}`
+    }
     const last_key = keys.pop()
     if (last_key == '') {
         console.log({obj, selector, new_val, merge, mkpath})
@@ -179,19 +194,105 @@ export function patch(obj, selector, new_val, merge=false, mkpath=false, deepcop
 }
 
 
-export function applyPatches(obj, patches) {
-    let output = {}
-    // debugger
-    for (let patch of patches) {
-        if (patch.path[0] !== '/') throw `Invalid path found! ${patch.path}`
+const css_transform_str = {
+    scale:          (scale) =>                  `scale(${scale})`,
+    perspective:    (px) =>                     `perspective(${px})`,
+    translate:      ({left, top}) =>            `translate(${left}, ${top})`,
+    translate3d:    ({x, y, z}) =>              `translate3d(${x}, ${y}, ${z})`,
+    rotate:         (rotation) =>               `rotate(${rotation})`,
+    rotate3d:       ({x, y, z}) =>              `rotate3d(${x}, ${y}, ${z})`,
+    skew:           ({x, y}) =>                 `skew(${x}, ${y})`,
+    scale3d:        ({x, y, z}) =>              `scale3d(${x}, ${y}, ${z})`,
+    // TODO: add more css transform types?
+}
 
+const css_animation_str = ({name, duration, curve, delay, playState}) =>
+    `${name} ${duration}ms ${curve} -${delay}ms ${playState}`
+
+const flattenTransform = (transform) => {
+    // flatten transforms from a dict to a string
+    // converts {style: {transform: {translate: {left: '0px', top: '10px'}, rotate: '10deg'}}}
+    //      =>  {style: {transform: 'translate(0px, 10px) rotate(10deg)'}}
+    const css_transform_funcs = Object.keys(transform)
+        .filter(key => transform[key] !== null)
+        .sort((a, b) => transform[a].order - transform[b].order)  // deterministic ordering via order: key
+        .map(key =>
+            css_transform_str[key](transform[key]))
+
+    return css_transform_funcs.join(' ')
+}
+
+const flattenAnimation = (animation) => {
+    // flatten animations from a dict to a string
+    // converts {style: {animations: {blinker: {name: blinker, duration: 1000, curve: 'linear', delay: 767}, ...}}}
+    //      =>  {style: {animation: blinker 1000ms linear -767ms paused, ...}}
+    const css_animation_funcs = Object.keys(animation)
+        .filter(key => animation[key] !== null)
+        .sort((a, b) => animation[a].order - animation[b].order)  // deterministic ordering via order: key
+        .map(key =>
+            css_animation_str(animation[key]))
+
+    return css_animation_funcs.join(', ')
+}
+
+const flattenIfNotFlattened = (state, path, flatten_func) => {
+    const state_slice = select(state, path)
+    if (typeof(state_slice) !== 'string') {
+        patch(state, path, flatten_func(state_slice), false, false, false)
+    }
+}
+
+export const flattenStyles = (state, paths_to_flatten) => {
+    // WARNING: highly optimized code, profile before changing anything
+    // this converts the styles stored as dicts in the state tree, to the strings
+    // that react components expect as CSS style values
+    for (let path of paths_to_flatten) {
+        const transform_idx = path.lastIndexOf('transform')
+        if (transform_idx != -1) {
+            const path_to_transform = path.slice(0, transform_idx + 1)
+            flattenIfNotFlattened(state, path_to_transform, flattenTransform)
+            continue
+        }
+        const animation_idx = path.lastIndexOf('animation')
+        if (animation_idx != -1) {
+            const path_to_animation = path.slice(0, animation_idx + 1)
+            flattenIfNotFlattened(state, path_to_animation, flattenAnimation)
+            continue
+        }
+    }
+
+    return state
+}
+
+const shouldFlatten = (split_path) => {
+    // check to see if a given path introduces some CSS state that needs to be
+    // converted from an object to a css string, e.g. {style: transform: translate: {top: 0, left: 0}}
+    const style_key = split_path.lastIndexOf('style')
+    return (style_key != -1
+            && (split_path[style_key + 1] == 'transform'
+                || split_path[style_key + 1] == 'animation'))
+}
+
+export function applyPatches(obj, patches, flatten_styles=true) {
+    // WARNING: highly optimized code, profile before changing anything
+    let output = {}
+    const paths_to_flatten = []
+
+    // O(n) application of patches onto a single object
+    for (let patch of patches) {
         // deepcopy to prevent later patches from mutating previous object values
         let patch_val = patch.value
         if (patch_val !== null && typeof(patch_val) === 'object') {
+            // unfortunately this is not very optimizable since dont know
+            // the structure beforehand. Do not use JSON.stringify+parse because
+            // Date, function, and Infinity objects dont get safely converted.
+            // jQuery is significantly faster than lodash cloneDeep
             patch_val = $.extend(true, {}, patch_val)
         }
+        const keys = [...patch.split_path]
 
-        const keys = patch.path.split('/').slice(1)
+        if (flatten_styles && shouldFlatten(keys)) paths_to_flatten.push(keys)
+
         const final_key = keys.pop()
         // get to the end of the list of paths
         let parent = output
@@ -203,5 +304,7 @@ export function applyPatches(obj, patches) {
         }
         parent[final_key] = patch_val
     }
+    if (flatten_styles)
+        return flattenStyles(output, paths_to_flatten)
     return output
 }

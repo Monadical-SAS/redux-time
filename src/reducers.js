@@ -82,99 +82,45 @@ export const activeAnimations = (anim_queue, current_timestamp, last_timestamp, 
 // window.activeAnimations = activeAnimations
 
 
-const css_transform_str = {
-    scale:          (scale) =>                  `scale(${scale})`,
-    perspective:    (px) =>                     `perspective(${px})`,
-    translate:      ({left, top}) =>            `translate(${left}, ${top})`,
-    translate3d:    ({x, y, z}) =>              `translate3d(${x}, ${y}, ${z})`,
-    rotate:         (rotation) =>               `rotate(${rotation})`,
-    rotate3d:       ({x, y, z}) =>              `rotate3d(${x}, ${y}, ${z})`,
-    skew:           ({x, y}) =>                 `skew(${x}, ${y})`,
-    scale3d:        ({x, y, z}) =>              `scale3d(${x}, ${y}, ${z})`,
-    // TODO: add more css transform types?
-}
-
-const css_animation_str = ({name, duration, curve, delay, playState}) =>
-    `${name} ${duration}ms ${curve} -${delay}ms ${playState}`
-
-
-export const flattenStyles = (state) => {
-    // this converts the styles stored as dicts in the state tree, to the strings
-    // that react components expect as CSS style values
-
-    if (state === undefined || state === null || (Array.isArray(state) && !state.style)) {  // TODO: make this also recurse into arrays since vals may have .style
-        // don't mess with values that don't have a style key
-        return state
-    }
-    if (state && state.animation) {
-        // flatten animations from a dict to a string
-        // converts {style: {animations: {blinker: {name: blinker, duration: 1000, curve: 'linear', delay: 767}, ...}}}
-        //      =>  {style: {animation: blinker 1000ms linear -767ms paused, ...}}
-        const css_animation_funcs = Object.keys(state.animation)
-            .filter(key => state.animation[key])
-            .map(key =>
-                css_animation_str(state.animation[key]))
-
-        state = {
-            ...state,
-            animation: css_animation_funcs.join(', '),
-        }
-    }
-    if (state && state.transform) {
-        // flatten transforms from a dict to a string
-        // converts {style: {transform: {translate: {left: '0px', top: '10px'}, rotate: '10deg'}}}
-        //      =>  {style: {transform: 'translate(0px, 10px) rotate(10deg)'}}
-        const css_transform_funcs = Object.keys(state.transform)
-            .map(key =>
-                css_transform_str[key](state.transform[key]))
-
-        state = {
-            ...state,
-            transform: css_transform_funcs.join(' '),
-        }
-    }
-    if (typeof(state) === 'object' && !(state.animations || state.transform)) {
-        // recurse down if value is a dictionary
-        return Object.keys(state).reduce((acc, key) => {
-            acc[key] = flattenStyles(state[key])
-            return acc
-        }, {})
-    }
-    return state
-}
-
 export const computeAnimatedState = (anim_queue, current_timestamp, last_timestamp=null) => {
     last_timestamp = last_timestamp === null ? current_timestamp : last_timestamp
 
-    const active_animations = activeAnimations(anim_queue, current_timestamp, last_timestamp)
+    const active_animations = activeAnimations(anim_queue, current_timestamp, last_timestamp, false)
     let patches = []
 
     for (let animation of active_animations) {
         try {
             const delta = current_timestamp - animation.start_time
-            patches.push({'path': animation.path, 'value': animation.tick(delta)})
+            patches.push({'split_path': animation.split_path, 'value': animation.tick(delta)})
         } catch(e) {
             console.log(animation.type, 'Animation tick function threw an exception:', e.message, animation)
         }
     }
 
-    return flattenStyles(applyPatches({}, patches))
+    return applyPatches({}, patches)
 }
 
+// limit anim_queue to max_time_travel length
 const trimmedAnimationQueue = (anim_queue, max_time_travel) => {
-    const keep_from = anim_queue.length - max_time_travel
-    const keep_to = -1
+    if (anim_queue.length > max_time_travel) {
+        // console.log(
+        //     '%c[i] Trimmed old animations from animations.queue', 'color:orange',
+        //     `(queue was longer than ${max_time_travel} items)`
+        // )
+        const keep_from = anim_queue.length - max_time_travel
+        const keep_to = -1
 
-    let new_queue = anim_queue.slice(keep_from, keep_to)
+        let new_queue = anim_queue.slice(keep_from, keep_to)
 
-    // always keep first BECOME animation
-    if ((keep_from != 0 || new_queue.length == 0) && anim_queue.length) {
-        new_queue = [anim_queue[0], ...new_queue]
+        // always keep first BECOME animation
+        if ((keep_from != 0 || new_queue.length == 0) && anim_queue.length) {
+            new_queue = [anim_queue[0], ...new_queue]
+        }
+
+        return new_queue
     }
-
-    return new_queue
+    return anim_queue
 }
-
 
 export const initial_state = {
     speed: 1,
@@ -235,10 +181,17 @@ export const animations = (state=initial_state, action) => {
             }
 
         case 'SET_ANIMATION_SPEED':
-            return {...state, speed: action.speed, last_timestamp: state.current_timestamp}
+            return {
+                ...state,
+                speed: action.speed,
+                last_timestamp: state.current_timestamp,
+            }
 
         case 'TICK':
-            const anim_state = computeAnimatedState(
+            if (action.current_timestamp === undefined || action.last_timestamp === undefined) {
+                throw 'TICK action must have a current_timestamp and last_timestamp'
+            }
+            const animated_state = computeAnimatedState(
                 state.queue,
                 action.current_timestamp,
                 action.last_timestamp,
@@ -246,7 +199,7 @@ export const animations = (state=initial_state, action) => {
 
             return {
                 ...state,
-                state: anim_state,
+                state: animated_state,
                 speed: action.speed || state.speed,
                 current_timestamp: action.current_timestamp,
                 last_timestamp: action.last_timestamp,
