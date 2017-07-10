@@ -5,20 +5,28 @@ import {Button} from 'react-bootstrap'
 import {createStore, combineReducers} from 'redux'
 import {Provider, connect} from 'react-redux'
 
-import {animations, startAnimation} from '../reducers.js'
-import {Become, RepeatSequence, Translate} from '../animations.js'
-import {AnimationControls} from '../controls.js'
-import {AnimationStateVisualizer} from '../state-visualizer.js'
-import {range} from '../util.js'
+import {ExpandableSection} from 'monadical-react-components'
 
-import {ExpandableSection} from '../section.js'
+import {
+    animations,
+    startAnimation,
+    AnimationControls,
+    AnimationStateVisualizer
+} from '../src/main.js'
+
+import {Become, RepeatSequence, Translate} from '../src/animations.js'
+
+import {range} from '../src/util.js'
+
+
 
 const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/examples/stress-test.js"
 
 window.initial_state = {balls: {}}
 
 window.store = createStore(combineReducers({animations}))
-const getWarpedTime = startAnimation(window.store, window.initial_state)
+window.time = startAnimation(window.store, window.initial_state)
+
 
 const StessTesterComponent = ({balls, addBalls, fps, speed, getTime}) => {
     const keys = Object.keys(balls)
@@ -69,13 +77,13 @@ const ADD_BALLS_ANIMATION = (start_time, num) => {
                     left: Math.random() * width,
                 },
             }),
-            ...RepeatSequence([Translate({
+            Translate({
                 path: `/balls/${num_balls}`,
                 start_time,
                 start_state: {top: 0, left: 0},
                 end_state: {top: 0, left: Math.random() * width - width/2},
                 duration: 10000,
-            })], 6),
+            })
         ]
     })
     console.log(num_balls)
@@ -103,7 +111,7 @@ const StessTester = connect(mapStateToProps, mapDispatchToProps)(StessTesterComp
 ReactDOM.render(
     <Provider store={window.store}>
         <div>
-            <StessTester getTime={getWarpedTime}/>
+            <StessTester getTime={window.time.getWarpedTime.bind(window.time)}/>
             <AnimationControls debug expanded/>
             <AnimationStateVisualizer debug/>
         </div>

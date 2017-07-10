@@ -1,11 +1,11 @@
 import React from 'react'
 import {Button} from 'react-bootstrap'
-
 import {connect} from 'react-redux'
 
-import {Become, Repeat, Animate, Translate, AnimateCSS} from '../animations.js'
+import {ExpandableSection} from 'monadical-react-components'
 
-import {ExpandableSection} from '../section.js'
+import {Become, Repeat, Animate, Translate, AnimateCSS} from '../src/animations.js'
+
 
 const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/examples/test-component.js"
 

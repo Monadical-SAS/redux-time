@@ -277,7 +277,7 @@ export const Reverse = (animations) => {
         if (start_time === undefined) start_time = (new Date).getTime()
         return {
             ...anim,
-            start_time: end_time
+            start_time: end_time,
             end_time: start_time,
             tick: (delta) => tick(duration - delta),
         }

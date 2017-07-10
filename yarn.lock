@@ -2384,9 +2384,9 @@ module-deps@^4.0.8:
     through2 "^2.0.0"
     xtend "^4.0.0"
 
-monadical-react-components@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/monadical-react-components/-/monadical-react-components-0.0.4.tgz#520f2684f5e823e7e9e51b8105af8fdcb38c2320"
+monadical-react-components@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/monadical-react-components/-/monadical-react-components-0.0.5.tgz#60d7d94f895315f0b10c21fb7b27f510841c3a07"
   dependencies:
     react "^15.6.1"
 
@@ -3389,11 +3389,11 @@ warning@^3.0.0:
   dependencies:
     loose-envify "^1.0.0"
 
-warped-time@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/warped-time/-/warped-time-0.0.6.tgz#a420c1f464a73513a3df1420da20c7a6872c981e"
+warped-time@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/warped-time/-/warped-time-0.0.8.tgz#6cc7a9948dfd577d35e9b049064388574c716ad4"
   dependencies:
-    monadical-react-components "^0.0.4"
+    monadical-react-components "^0.0.5"
     react "15.6.1"
     react-bootstrap "^0.31.0"
 

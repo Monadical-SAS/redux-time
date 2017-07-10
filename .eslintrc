@@ -1,0 +1,9 @@
+{
+    "parser": "babel-eslint",
+    "globals": {
+        "window": true
+    },
+    "plugins": [
+        "babel"
+    ]
+}

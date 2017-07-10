@@ -10,7 +10,7 @@ import {
     activeAnimations,
 } from './reducers.js'
 
-import {ExpandableSection} from './section.js'
+import {ExpandableSection} from 'monadical-react-components'
 
 const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/state-visualizer.js"
 

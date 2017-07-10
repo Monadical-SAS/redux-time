@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-import {animations, startAnimations} from './reducers.js'
-
-
-export {animations, startAnimations}
-=======
 import {WarpedTime} from 'warped-time'
 
 import {animations} from './reducers.js'
@@ -79,16 +73,16 @@ class AnimationHandler {
             current_timestamp: new_timestamp,
             speed: this.time.speed,
         })
-        if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
-            if (window && window.requestAnimationFrame) {
+        // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
+            // if (window && window.requestAnimationFrame) {
                 window.requestAnimationFrame(::this.tick)
-            } else {
-                alert('This should never be reached in the browser.')
-                setTimeout(::this.tick, (Math.random() * 100) % 50)
-            }
-        } else {
-            this.animating = false
-        }
+            // } else {
+                // alert('This should never be reached in the browser.')
+                // setTimeout(::this.tick, (Math.random() * 100) % 50)
+            // }
+        // } else {
+            // this.animating = false
+        // }
     }
 }
 
@@ -100,4 +94,3 @@ const startAnimation = (store, initial_state) => {
 
 
 export {animations, startAnimation, AnimationHandler, AnimationControls, AnimationStateVisualizer, AnimationStateVisualizerComponent}
->>>>>>> master

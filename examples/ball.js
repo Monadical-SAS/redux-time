@@ -4,12 +4,17 @@ import ReactDOM from 'react-dom'
 import {createStore, combineReducers} from 'redux'
 import {Provider, connect} from 'react-redux'
 
-import {animations, startAnimation} from '../reducers.js'
-import {AnimationControls} from '../controls.js'
-import {Become, Animate, Translate, RepeatSequence} from '../animations.js'
-import {AnimationStateVisualizer} from '../state-visualizer.js'
+import {ExpandableSection} from 'monadical-react-components'
 
-import {ExpandableSection} from '../section.js'
+import {
+    animations,
+    startAnimation,
+    AnimationControls,
+    AnimationStateVisualizer
+} from '../src/main.js'
+
+import {Become, Animate, Translate, RepeatSequence} from '../src/animations.js'
+
 
 
 const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/examples/ball.js"
@@ -30,7 +35,7 @@ window.initial_state = {
     }
 }
 window.store = createStore(combineReducers({animations}))
-const getWarpedTime = startAnimation(window.store, window.initial_state)
+window.time = startAnimation(window.store, window.initial_state)
 
 const BOUNCE_ANIMATION = (start_time) =>
     RepeatSequence([
@@ -40,8 +45,8 @@ const BOUNCE_ANIMATION = (start_time) =>
             amt:  {top: -200, left: 0},
             duration: 500,
             curve: 'easeOutQuad',
-            // start_time: getWarpedTime(),         //  optional, defaults to now
-            // unit: 'px',                          //  optional, defaults to px
+            // start_time: window.time.getWarpedTime(),         //  optional, defaults to now
+            // unit: 'px',                                      //  optional, defaults to px
         }),
         Translate({
             path: '/ball',
@@ -129,7 +134,7 @@ const Ball = connect(mapStateToProps, mapDispatchToProps)(BallComponent)
 ReactDOM.render(
     <Provider store={window.store}>
         <div>
-            <Ball getTime={getWarpedTime} expanded/>
+            <Ball getTime={window.time.getWarpedTime.bind(window.time)} expanded/>
             <AnimationControls debug expanded/>
             <AnimationStateVisualizer debug/>
         </div>
