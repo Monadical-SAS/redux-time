@@ -167,35 +167,35 @@ window.onmousemove = function (e) {
 
 },{"../src/animations.js":520,"../src/main.js":522,"babel-runtime/helpers/jsx":21,"monadical-react-components":207,"react":500,"react-dom":314,"react-redux":469,"redux":506}],2:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/array/from"), __esModule: true };
-},{"core-js/library/fn/array/from":28}],3:[function(require,module,exports){
+},{"core-js/library/fn/array/from":26}],3:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/get-iterator"), __esModule: true };
-},{"core-js/library/fn/get-iterator":29}],4:[function(require,module,exports){
+},{"core-js/library/fn/get-iterator":27}],4:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/json/stringify"), __esModule: true };
-},{"core-js/library/fn/json/stringify":30}],5:[function(require,module,exports){
+},{"core-js/library/fn/json/stringify":28}],5:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/assign"), __esModule: true };
-},{"core-js/library/fn/object/assign":31}],6:[function(require,module,exports){
+},{"core-js/library/fn/object/assign":29}],6:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/create"), __esModule: true };
-},{"core-js/library/fn/object/create":32}],7:[function(require,module,exports){
+},{"core-js/library/fn/object/create":30}],7:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/define-property"), __esModule: true };
-},{"core-js/library/fn/object/define-property":33}],8:[function(require,module,exports){
+},{"core-js/library/fn/object/define-property":31}],8:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/entries"), __esModule: true };
-},{"core-js/library/fn/object/entries":34}],9:[function(require,module,exports){
+},{"core-js/library/fn/object/entries":32}],9:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/get-prototype-of"), __esModule: true };
-},{"core-js/library/fn/object/get-prototype-of":35}],10:[function(require,module,exports){
+},{"core-js/library/fn/object/get-prototype-of":33}],10:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/keys"), __esModule: true };
-},{"core-js/library/fn/object/keys":36}],11:[function(require,module,exports){
+},{"core-js/library/fn/object/keys":34}],11:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/set-prototype-of"), __esModule: true };
-},{"core-js/library/fn/object/set-prototype-of":37}],12:[function(require,module,exports){
+},{"core-js/library/fn/object/set-prototype-of":35}],12:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/values"), __esModule: true };
-},{"core-js/library/fn/object/values":38}],13:[function(require,module,exports){
+},{"core-js/library/fn/object/values":36}],13:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/set"), __esModule: true };
-},{"core-js/library/fn/set":39}],14:[function(require,module,exports){
+},{"core-js/library/fn/set":37}],14:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/symbol"), __esModule: true };
-},{"core-js/library/fn/symbol":41}],15:[function(require,module,exports){
+},{"core-js/library/fn/symbol":39}],15:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/symbol/for"), __esModule: true };
-},{"core-js/library/fn/symbol/for":40}],16:[function(require,module,exports){
+},{"core-js/library/fn/symbol/for":38}],16:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/symbol/iterator"), __esModule: true };
-},{"core-js/library/fn/symbol/iterator":42}],17:[function(require,module,exports){
+},{"core-js/library/fn/symbol/iterator":40}],17:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -427,142 +427,89 @@ exports.default = typeof _symbol2.default === "function" && _typeof(_iterator2.d
   return obj && typeof _symbol2.default === "function" && obj.constructor === _symbol2.default && obj !== _symbol2.default.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
 };
 },{"../core-js/symbol":14,"../core-js/symbol/iterator":16}],26:[function(require,module,exports){
-module.exports = require("regenerator-runtime");
-
-},{"regenerator-runtime":508}],27:[function(require,module,exports){
-/*!
-  Copyright (c) 2016 Jed Watson.
-  Licensed under the MIT License (MIT), see
-  http://jedwatson.github.io/classnames
-*/
-/* global define */
-
-(function () {
-	'use strict';
-
-	var hasOwn = {}.hasOwnProperty;
-
-	function classNames () {
-		var classes = [];
-
-		for (var i = 0; i < arguments.length; i++) {
-			var arg = arguments[i];
-			if (!arg) continue;
-
-			var argType = typeof arg;
-
-			if (argType === 'string' || argType === 'number') {
-				classes.push(arg);
-			} else if (Array.isArray(arg)) {
-				classes.push(classNames.apply(null, arg));
-			} else if (argType === 'object') {
-				for (var key in arg) {
-					if (hasOwn.call(arg, key) && arg[key]) {
-						classes.push(key);
-					}
-				}
-			}
-		}
-
-		return classes.join(' ');
-	}
-
-	if (typeof module !== 'undefined' && module.exports) {
-		module.exports = classNames;
-	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
-		// register as 'classnames', consistent with npm package name
-		define('classnames', [], function () {
-			return classNames;
-		});
-	} else {
-		window.classNames = classNames;
-	}
-}());
-
-},{}],28:[function(require,module,exports){
 require('../../modules/es6.string.iterator');
 require('../../modules/es6.array.from');
 module.exports = require('../../modules/_core').Array.from;
-},{"../../modules/_core":57,"../../modules/es6.array.from":121,"../../modules/es6.string.iterator":131}],29:[function(require,module,exports){
+},{"../../modules/_core":55,"../../modules/es6.array.from":119,"../../modules/es6.string.iterator":129}],27:[function(require,module,exports){
 require('../modules/web.dom.iterable');
 require('../modules/es6.string.iterator');
 module.exports = require('../modules/core.get-iterator');
-},{"../modules/core.get-iterator":120,"../modules/es6.string.iterator":131,"../modules/web.dom.iterable":138}],30:[function(require,module,exports){
+},{"../modules/core.get-iterator":118,"../modules/es6.string.iterator":129,"../modules/web.dom.iterable":136}],28:[function(require,module,exports){
 var core  = require('../../modules/_core')
   , $JSON = core.JSON || (core.JSON = {stringify: JSON.stringify});
 module.exports = function stringify(it){ // eslint-disable-line no-unused-vars
   return $JSON.stringify.apply($JSON, arguments);
 };
-},{"../../modules/_core":57}],31:[function(require,module,exports){
+},{"../../modules/_core":55}],29:[function(require,module,exports){
 require('../../modules/es6.object.assign');
 module.exports = require('../../modules/_core').Object.assign;
-},{"../../modules/_core":57,"../../modules/es6.object.assign":123}],32:[function(require,module,exports){
+},{"../../modules/_core":55,"../../modules/es6.object.assign":121}],30:[function(require,module,exports){
 require('../../modules/es6.object.create');
 var $Object = require('../../modules/_core').Object;
 module.exports = function create(P, D){
   return $Object.create(P, D);
 };
-},{"../../modules/_core":57,"../../modules/es6.object.create":124}],33:[function(require,module,exports){
+},{"../../modules/_core":55,"../../modules/es6.object.create":122}],31:[function(require,module,exports){
 require('../../modules/es6.object.define-property');
 var $Object = require('../../modules/_core').Object;
 module.exports = function defineProperty(it, key, desc){
   return $Object.defineProperty(it, key, desc);
 };
-},{"../../modules/_core":57,"../../modules/es6.object.define-property":125}],34:[function(require,module,exports){
+},{"../../modules/_core":55,"../../modules/es6.object.define-property":123}],32:[function(require,module,exports){
 require('../../modules/es7.object.entries');
 module.exports = require('../../modules/_core').Object.entries;
-},{"../../modules/_core":57,"../../modules/es7.object.entries":133}],35:[function(require,module,exports){
+},{"../../modules/_core":55,"../../modules/es7.object.entries":131}],33:[function(require,module,exports){
 require('../../modules/es6.object.get-prototype-of');
 module.exports = require('../../modules/_core').Object.getPrototypeOf;
-},{"../../modules/_core":57,"../../modules/es6.object.get-prototype-of":126}],36:[function(require,module,exports){
+},{"../../modules/_core":55,"../../modules/es6.object.get-prototype-of":124}],34:[function(require,module,exports){
 require('../../modules/es6.object.keys');
 module.exports = require('../../modules/_core').Object.keys;
-},{"../../modules/_core":57,"../../modules/es6.object.keys":127}],37:[function(require,module,exports){
+},{"../../modules/_core":55,"../../modules/es6.object.keys":125}],35:[function(require,module,exports){
 require('../../modules/es6.object.set-prototype-of');
 module.exports = require('../../modules/_core').Object.setPrototypeOf;
-},{"../../modules/_core":57,"../../modules/es6.object.set-prototype-of":128}],38:[function(require,module,exports){
+},{"../../modules/_core":55,"../../modules/es6.object.set-prototype-of":126}],36:[function(require,module,exports){
 require('../../modules/es7.object.values');
 module.exports = require('../../modules/_core').Object.values;
-},{"../../modules/_core":57,"../../modules/es7.object.values":134}],39:[function(require,module,exports){
+},{"../../modules/_core":55,"../../modules/es7.object.values":132}],37:[function(require,module,exports){
 require('../modules/es6.object.to-string');
 require('../modules/es6.string.iterator');
 require('../modules/web.dom.iterable');
 require('../modules/es6.set');
 require('../modules/es7.set.to-json');
 module.exports = require('../modules/_core').Set;
-},{"../modules/_core":57,"../modules/es6.object.to-string":129,"../modules/es6.set":130,"../modules/es6.string.iterator":131,"../modules/es7.set.to-json":135,"../modules/web.dom.iterable":138}],40:[function(require,module,exports){
+},{"../modules/_core":55,"../modules/es6.object.to-string":127,"../modules/es6.set":128,"../modules/es6.string.iterator":129,"../modules/es7.set.to-json":133,"../modules/web.dom.iterable":136}],38:[function(require,module,exports){
 require('../../modules/es6.symbol');
 module.exports = require('../../modules/_core').Symbol['for'];
-},{"../../modules/_core":57,"../../modules/es6.symbol":132}],41:[function(require,module,exports){
+},{"../../modules/_core":55,"../../modules/es6.symbol":130}],39:[function(require,module,exports){
 require('../../modules/es6.symbol');
 require('../../modules/es6.object.to-string');
 require('../../modules/es7.symbol.async-iterator');
 require('../../modules/es7.symbol.observable');
 module.exports = require('../../modules/_core').Symbol;
-},{"../../modules/_core":57,"../../modules/es6.object.to-string":129,"../../modules/es6.symbol":132,"../../modules/es7.symbol.async-iterator":136,"../../modules/es7.symbol.observable":137}],42:[function(require,module,exports){
+},{"../../modules/_core":55,"../../modules/es6.object.to-string":127,"../../modules/es6.symbol":130,"../../modules/es7.symbol.async-iterator":134,"../../modules/es7.symbol.observable":135}],40:[function(require,module,exports){
 require('../../modules/es6.string.iterator');
 require('../../modules/web.dom.iterable');
 module.exports = require('../../modules/_wks-ext').f('iterator');
-},{"../../modules/_wks-ext":117,"../../modules/es6.string.iterator":131,"../../modules/web.dom.iterable":138}],43:[function(require,module,exports){
+},{"../../modules/_wks-ext":115,"../../modules/es6.string.iterator":129,"../../modules/web.dom.iterable":136}],41:[function(require,module,exports){
 module.exports = function(it){
   if(typeof it != 'function')throw TypeError(it + ' is not a function!');
   return it;
 };
-},{}],44:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 module.exports = function(){ /* empty */ };
-},{}],45:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 module.exports = function(it, Constructor, name, forbiddenField){
   if(!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)){
     throw TypeError(name + ': incorrect invocation!');
   } return it;
 };
-},{}],46:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 var isObject = require('./_is-object');
 module.exports = function(it){
   if(!isObject(it))throw TypeError(it + ' is not an object!');
   return it;
 };
-},{"./_is-object":76}],47:[function(require,module,exports){
+},{"./_is-object":74}],45:[function(require,module,exports){
 var forOf = require('./_for-of');
 
 module.exports = function(iter, ITERATOR){
@@ -571,7 +518,7 @@ module.exports = function(iter, ITERATOR){
   return result;
 };
 
-},{"./_for-of":67}],48:[function(require,module,exports){
+},{"./_for-of":65}],46:[function(require,module,exports){
 // false -> Array#indexOf
 // true  -> Array#includes
 var toIObject = require('./_to-iobject')
@@ -593,7 +540,7 @@ module.exports = function(IS_INCLUDES){
     } return !IS_INCLUDES && -1;
   };
 };
-},{"./_to-index":109,"./_to-iobject":111,"./_to-length":112}],49:[function(require,module,exports){
+},{"./_to-index":107,"./_to-iobject":109,"./_to-length":110}],47:[function(require,module,exports){
 // 0 -> Array#forEach
 // 1 -> Array#map
 // 2 -> Array#filter
@@ -638,7 +585,7 @@ module.exports = function(TYPE, $create){
     return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
   };
 };
-},{"./_array-species-create":51,"./_ctx":59,"./_iobject":73,"./_to-length":112,"./_to-object":113}],50:[function(require,module,exports){
+},{"./_array-species-create":49,"./_ctx":57,"./_iobject":71,"./_to-length":110,"./_to-object":111}],48:[function(require,module,exports){
 var isObject = require('./_is-object')
   , isArray  = require('./_is-array')
   , SPECIES  = require('./_wks')('species');
@@ -655,14 +602,14 @@ module.exports = function(original){
     }
   } return C === undefined ? Array : C;
 };
-},{"./_is-array":75,"./_is-object":76,"./_wks":118}],51:[function(require,module,exports){
+},{"./_is-array":73,"./_is-object":74,"./_wks":116}],49:[function(require,module,exports){
 // 9.4.2.3 ArraySpeciesCreate(originalArray, length)
 var speciesConstructor = require('./_array-species-constructor');
 
 module.exports = function(original, length){
   return new (speciesConstructor(original))(length);
 };
-},{"./_array-species-constructor":50}],52:[function(require,module,exports){
+},{"./_array-species-constructor":48}],50:[function(require,module,exports){
 // getting tag from 19.1.3.6 Object.prototype.toString()
 var cof = require('./_cof')
   , TAG = require('./_wks')('toStringTag')
@@ -686,13 +633,13 @@ module.exports = function(it){
     // ES3 arguments fallback
     : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
 };
-},{"./_cof":53,"./_wks":118}],53:[function(require,module,exports){
+},{"./_cof":51,"./_wks":116}],51:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = function(it){
   return toString.call(it).slice(8, -1);
 };
-},{}],54:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 'use strict';
 var dP          = require('./_object-dp').f
   , create      = require('./_object-create')
@@ -835,7 +782,7 @@ module.exports = {
     setSpecies(NAME);
   }
 };
-},{"./_an-instance":45,"./_ctx":59,"./_defined":60,"./_descriptors":61,"./_for-of":67,"./_iter-define":79,"./_iter-step":81,"./_meta":85,"./_object-create":87,"./_object-dp":88,"./_redefine-all":101,"./_set-species":104}],55:[function(require,module,exports){
+},{"./_an-instance":43,"./_ctx":57,"./_defined":58,"./_descriptors":59,"./_for-of":65,"./_iter-define":77,"./_iter-step":79,"./_meta":83,"./_object-create":85,"./_object-dp":86,"./_redefine-all":99,"./_set-species":102}],53:[function(require,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var classof = require('./_classof')
   , from    = require('./_array-from-iterable');
@@ -845,7 +792,7 @@ module.exports = function(NAME){
     return from(this);
   };
 };
-},{"./_array-from-iterable":47,"./_classof":52}],56:[function(require,module,exports){
+},{"./_array-from-iterable":45,"./_classof":50}],54:[function(require,module,exports){
 'use strict';
 var global         = require('./_global')
   , $export        = require('./_export')
@@ -905,10 +852,10 @@ module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
 
   return C;
 };
-},{"./_an-instance":45,"./_array-methods":49,"./_descriptors":61,"./_export":65,"./_fails":66,"./_for-of":67,"./_global":68,"./_hide":70,"./_is-object":76,"./_meta":85,"./_object-dp":88,"./_redefine-all":101,"./_set-to-string-tag":105}],57:[function(require,module,exports){
+},{"./_an-instance":43,"./_array-methods":47,"./_descriptors":59,"./_export":63,"./_fails":64,"./_for-of":65,"./_global":66,"./_hide":68,"./_is-object":74,"./_meta":83,"./_object-dp":86,"./_redefine-all":99,"./_set-to-string-tag":103}],55:[function(require,module,exports){
 var core = module.exports = {version: '2.4.0'};
 if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
-},{}],58:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 'use strict';
 var $defineProperty = require('./_object-dp')
   , createDesc      = require('./_property-desc');
@@ -917,7 +864,7 @@ module.exports = function(object, index, value){
   if(index in object)$defineProperty.f(object, index, createDesc(0, value));
   else object[index] = value;
 };
-},{"./_object-dp":88,"./_property-desc":100}],59:[function(require,module,exports){
+},{"./_object-dp":86,"./_property-desc":98}],57:[function(require,module,exports){
 // optional / simple context binding
 var aFunction = require('./_a-function');
 module.exports = function(fn, that, length){
@@ -938,18 +885,18 @@ module.exports = function(fn, that, length){
     return fn.apply(that, arguments);
   };
 };
-},{"./_a-function":43}],60:[function(require,module,exports){
+},{"./_a-function":41}],58:[function(require,module,exports){
 // 7.2.1 RequireObjectCoercible(argument)
 module.exports = function(it){
   if(it == undefined)throw TypeError("Can't call method on  " + it);
   return it;
 };
-},{}],61:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 // Thank's IE8 for his funny defineProperty
 module.exports = !require('./_fails')(function(){
   return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
 });
-},{"./_fails":66}],62:[function(require,module,exports){
+},{"./_fails":64}],60:[function(require,module,exports){
 var isObject = require('./_is-object')
   , document = require('./_global').document
   // in old IE typeof document.createElement is 'object'
@@ -957,12 +904,12 @@ var isObject = require('./_is-object')
 module.exports = function(it){
   return is ? document.createElement(it) : {};
 };
-},{"./_global":68,"./_is-object":76}],63:[function(require,module,exports){
+},{"./_global":66,"./_is-object":74}],61:[function(require,module,exports){
 // IE 8- don't enum bug keys
 module.exports = (
   'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
 ).split(',');
-},{}],64:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 // all enumerable object keys, includes symbols
 var getKeys = require('./_object-keys')
   , gOPS    = require('./_object-gops')
@@ -978,7 +925,7 @@ module.exports = function(it){
     while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))result.push(key);
   } return result;
 };
-},{"./_object-gops":93,"./_object-keys":96,"./_object-pie":97}],65:[function(require,module,exports){
+},{"./_object-gops":91,"./_object-keys":94,"./_object-pie":95}],63:[function(require,module,exports){
 var global    = require('./_global')
   , core      = require('./_core')
   , ctx       = require('./_ctx')
@@ -1040,7 +987,7 @@ $export.W = 32;  // wrap
 $export.U = 64;  // safe
 $export.R = 128; // real proto method for `library` 
 module.exports = $export;
-},{"./_core":57,"./_ctx":59,"./_global":68,"./_hide":70}],66:[function(require,module,exports){
+},{"./_core":55,"./_ctx":57,"./_global":66,"./_hide":68}],64:[function(require,module,exports){
 module.exports = function(exec){
   try {
     return !!exec();
@@ -1048,7 +995,7 @@ module.exports = function(exec){
     return true;
   }
 };
-},{}],67:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 var ctx         = require('./_ctx')
   , call        = require('./_iter-call')
   , isArrayIter = require('./_is-array-iter')
@@ -1074,17 +1021,17 @@ var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
 };
 exports.BREAK  = BREAK;
 exports.RETURN = RETURN;
-},{"./_an-object":46,"./_ctx":59,"./_is-array-iter":74,"./_iter-call":77,"./_to-length":112,"./core.get-iterator-method":119}],68:[function(require,module,exports){
+},{"./_an-object":44,"./_ctx":57,"./_is-array-iter":72,"./_iter-call":75,"./_to-length":110,"./core.get-iterator-method":117}],66:[function(require,module,exports){
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 var global = module.exports = typeof window != 'undefined' && window.Math == Math
   ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
 if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-},{}],69:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 var hasOwnProperty = {}.hasOwnProperty;
 module.exports = function(it, key){
   return hasOwnProperty.call(it, key);
 };
-},{}],70:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 var dP         = require('./_object-dp')
   , createDesc = require('./_property-desc');
 module.exports = require('./_descriptors') ? function(object, key, value){
@@ -1093,19 +1040,19 @@ module.exports = require('./_descriptors') ? function(object, key, value){
   object[key] = value;
   return object;
 };
-},{"./_descriptors":61,"./_object-dp":88,"./_property-desc":100}],71:[function(require,module,exports){
+},{"./_descriptors":59,"./_object-dp":86,"./_property-desc":98}],69:[function(require,module,exports){
 module.exports = require('./_global').document && document.documentElement;
-},{"./_global":68}],72:[function(require,module,exports){
+},{"./_global":66}],70:[function(require,module,exports){
 module.exports = !require('./_descriptors') && !require('./_fails')(function(){
   return Object.defineProperty(require('./_dom-create')('div'), 'a', {get: function(){ return 7; }}).a != 7;
 });
-},{"./_descriptors":61,"./_dom-create":62,"./_fails":66}],73:[function(require,module,exports){
+},{"./_descriptors":59,"./_dom-create":60,"./_fails":64}],71:[function(require,module,exports){
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 var cof = require('./_cof');
 module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
-},{"./_cof":53}],74:[function(require,module,exports){
+},{"./_cof":51}],72:[function(require,module,exports){
 // check on default Array iterator
 var Iterators  = require('./_iterators')
   , ITERATOR   = require('./_wks')('iterator')
@@ -1114,17 +1061,17 @@ var Iterators  = require('./_iterators')
 module.exports = function(it){
   return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
 };
-},{"./_iterators":82,"./_wks":118}],75:[function(require,module,exports){
+},{"./_iterators":80,"./_wks":116}],73:[function(require,module,exports){
 // 7.2.2 IsArray(argument)
 var cof = require('./_cof');
 module.exports = Array.isArray || function isArray(arg){
   return cof(arg) == 'Array';
 };
-},{"./_cof":53}],76:[function(require,module,exports){
+},{"./_cof":51}],74:[function(require,module,exports){
 module.exports = function(it){
   return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
-},{}],77:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 // call something on iterator step with safe closing on error
 var anObject = require('./_an-object');
 module.exports = function(iterator, fn, value, entries){
@@ -1137,7 +1084,7 @@ module.exports = function(iterator, fn, value, entries){
     throw e;
   }
 };
-},{"./_an-object":46}],78:[function(require,module,exports){
+},{"./_an-object":44}],76:[function(require,module,exports){
 'use strict';
 var create         = require('./_object-create')
   , descriptor     = require('./_property-desc')
@@ -1151,7 +1098,7 @@ module.exports = function(Constructor, NAME, next){
   Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
   setToStringTag(Constructor, NAME + ' Iterator');
 };
-},{"./_hide":70,"./_object-create":87,"./_property-desc":100,"./_set-to-string-tag":105,"./_wks":118}],79:[function(require,module,exports){
+},{"./_hide":68,"./_object-create":85,"./_property-desc":98,"./_set-to-string-tag":103,"./_wks":116}],77:[function(require,module,exports){
 'use strict';
 var LIBRARY        = require('./_library')
   , $export        = require('./_export')
@@ -1222,7 +1169,7 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
   }
   return methods;
 };
-},{"./_export":65,"./_has":69,"./_hide":70,"./_iter-create":78,"./_iterators":82,"./_library":84,"./_object-gpo":94,"./_redefine":102,"./_set-to-string-tag":105,"./_wks":118}],80:[function(require,module,exports){
+},{"./_export":63,"./_has":67,"./_hide":68,"./_iter-create":76,"./_iterators":80,"./_library":82,"./_object-gpo":92,"./_redefine":100,"./_set-to-string-tag":103,"./_wks":116}],78:[function(require,module,exports){
 var ITERATOR     = require('./_wks')('iterator')
   , SAFE_CLOSING = false;
 
@@ -1244,13 +1191,13 @@ module.exports = function(exec, skipClosing){
   } catch(e){ /* empty */ }
   return safe;
 };
-},{"./_wks":118}],81:[function(require,module,exports){
+},{"./_wks":116}],79:[function(require,module,exports){
 module.exports = function(done, value){
   return {value: value, done: !!done};
 };
-},{}],82:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 module.exports = {};
-},{}],83:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 var getKeys   = require('./_object-keys')
   , toIObject = require('./_to-iobject');
 module.exports = function(object, el){
@@ -1261,9 +1208,9 @@ module.exports = function(object, el){
     , key;
   while(length > index)if(O[key = keys[index++]] === el)return key;
 };
-},{"./_object-keys":96,"./_to-iobject":111}],84:[function(require,module,exports){
+},{"./_object-keys":94,"./_to-iobject":109}],82:[function(require,module,exports){
 module.exports = true;
-},{}],85:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 var META     = require('./_uid')('meta')
   , isObject = require('./_is-object')
   , has      = require('./_has')
@@ -1317,7 +1264,7 @@ var meta = module.exports = {
   getWeak:  getWeak,
   onFreeze: onFreeze
 };
-},{"./_fails":66,"./_has":69,"./_is-object":76,"./_object-dp":88,"./_uid":115}],86:[function(require,module,exports){
+},{"./_fails":64,"./_has":67,"./_is-object":74,"./_object-dp":86,"./_uid":113}],84:[function(require,module,exports){
 'use strict';
 // 19.1.2.1 Object.assign(target, source, ...)
 var getKeys  = require('./_object-keys')
@@ -1351,7 +1298,7 @@ module.exports = !$assign || require('./_fails')(function(){
     while(length > j)if(isEnum.call(S, key = keys[j++]))T[key] = S[key];
   } return T;
 } : $assign;
-},{"./_fails":66,"./_iobject":73,"./_object-gops":93,"./_object-keys":96,"./_object-pie":97,"./_to-object":113}],87:[function(require,module,exports){
+},{"./_fails":64,"./_iobject":71,"./_object-gops":91,"./_object-keys":94,"./_object-pie":95,"./_to-object":111}],85:[function(require,module,exports){
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject    = require('./_an-object')
   , dPs         = require('./_object-dps')
@@ -1394,7 +1341,7 @@ module.exports = Object.create || function create(O, Properties){
   return Properties === undefined ? result : dPs(result, Properties);
 };
 
-},{"./_an-object":46,"./_dom-create":62,"./_enum-bug-keys":63,"./_html":71,"./_object-dps":89,"./_shared-key":106}],88:[function(require,module,exports){
+},{"./_an-object":44,"./_dom-create":60,"./_enum-bug-keys":61,"./_html":69,"./_object-dps":87,"./_shared-key":104}],86:[function(require,module,exports){
 var anObject       = require('./_an-object')
   , IE8_DOM_DEFINE = require('./_ie8-dom-define')
   , toPrimitive    = require('./_to-primitive')
@@ -1411,7 +1358,7 @@ exports.f = require('./_descriptors') ? Object.defineProperty : function defineP
   if('value' in Attributes)O[P] = Attributes.value;
   return O;
 };
-},{"./_an-object":46,"./_descriptors":61,"./_ie8-dom-define":72,"./_to-primitive":114}],89:[function(require,module,exports){
+},{"./_an-object":44,"./_descriptors":59,"./_ie8-dom-define":70,"./_to-primitive":112}],87:[function(require,module,exports){
 var dP       = require('./_object-dp')
   , anObject = require('./_an-object')
   , getKeys  = require('./_object-keys');
@@ -1425,7 +1372,7 @@ module.exports = require('./_descriptors') ? Object.defineProperties : function 
   while(length > i)dP.f(O, P = keys[i++], Properties[P]);
   return O;
 };
-},{"./_an-object":46,"./_descriptors":61,"./_object-dp":88,"./_object-keys":96}],90:[function(require,module,exports){
+},{"./_an-object":44,"./_descriptors":59,"./_object-dp":86,"./_object-keys":94}],88:[function(require,module,exports){
 var pIE            = require('./_object-pie')
   , createDesc     = require('./_property-desc')
   , toIObject      = require('./_to-iobject')
@@ -1442,7 +1389,7 @@ exports.f = require('./_descriptors') ? gOPD : function getOwnPropertyDescriptor
   } catch(e){ /* empty */ }
   if(has(O, P))return createDesc(!pIE.f.call(O, P), O[P]);
 };
-},{"./_descriptors":61,"./_has":69,"./_ie8-dom-define":72,"./_object-pie":97,"./_property-desc":100,"./_to-iobject":111,"./_to-primitive":114}],91:[function(require,module,exports){
+},{"./_descriptors":59,"./_has":67,"./_ie8-dom-define":70,"./_object-pie":95,"./_property-desc":98,"./_to-iobject":109,"./_to-primitive":112}],89:[function(require,module,exports){
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 var toIObject = require('./_to-iobject')
   , gOPN      = require('./_object-gopn').f
@@ -1463,7 +1410,7 @@ module.exports.f = function getOwnPropertyNames(it){
   return windowNames && toString.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(toIObject(it));
 };
 
-},{"./_object-gopn":92,"./_to-iobject":111}],92:[function(require,module,exports){
+},{"./_object-gopn":90,"./_to-iobject":109}],90:[function(require,module,exports){
 // 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
 var $keys      = require('./_object-keys-internal')
   , hiddenKeys = require('./_enum-bug-keys').concat('length', 'prototype');
@@ -1471,9 +1418,9 @@ var $keys      = require('./_object-keys-internal')
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
   return $keys(O, hiddenKeys);
 };
-},{"./_enum-bug-keys":63,"./_object-keys-internal":95}],93:[function(require,module,exports){
+},{"./_enum-bug-keys":61,"./_object-keys-internal":93}],91:[function(require,module,exports){
 exports.f = Object.getOwnPropertySymbols;
-},{}],94:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has         = require('./_has')
   , toObject    = require('./_to-object')
@@ -1487,7 +1434,7 @@ module.exports = Object.getPrototypeOf || function(O){
     return O.constructor.prototype;
   } return O instanceof Object ? ObjectProto : null;
 };
-},{"./_has":69,"./_shared-key":106,"./_to-object":113}],95:[function(require,module,exports){
+},{"./_has":67,"./_shared-key":104,"./_to-object":111}],93:[function(require,module,exports){
 var has          = require('./_has')
   , toIObject    = require('./_to-iobject')
   , arrayIndexOf = require('./_array-includes')(false)
@@ -1505,7 +1452,7 @@ module.exports = function(object, names){
   }
   return result;
 };
-},{"./_array-includes":48,"./_has":69,"./_shared-key":106,"./_to-iobject":111}],96:[function(require,module,exports){
+},{"./_array-includes":46,"./_has":67,"./_shared-key":104,"./_to-iobject":109}],94:[function(require,module,exports){
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
 var $keys       = require('./_object-keys-internal')
   , enumBugKeys = require('./_enum-bug-keys');
@@ -1513,9 +1460,9 @@ var $keys       = require('./_object-keys-internal')
 module.exports = Object.keys || function keys(O){
   return $keys(O, enumBugKeys);
 };
-},{"./_enum-bug-keys":63,"./_object-keys-internal":95}],97:[function(require,module,exports){
+},{"./_enum-bug-keys":61,"./_object-keys-internal":93}],95:[function(require,module,exports){
 exports.f = {}.propertyIsEnumerable;
-},{}],98:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 // most Object methods by ES6 should accept primitives
 var $export = require('./_export')
   , core    = require('./_core')
@@ -1526,7 +1473,7 @@ module.exports = function(KEY, exec){
   exp[KEY] = exec(fn);
   $export($export.S + $export.F * fails(function(){ fn(1); }), 'Object', exp);
 };
-},{"./_core":57,"./_export":65,"./_fails":66}],99:[function(require,module,exports){
+},{"./_core":55,"./_export":63,"./_fails":64}],97:[function(require,module,exports){
 var getKeys   = require('./_object-keys')
   , toIObject = require('./_to-iobject')
   , isEnum    = require('./_object-pie').f;
@@ -1543,7 +1490,7 @@ module.exports = function(isEntries){
     } return result;
   };
 };
-},{"./_object-keys":96,"./_object-pie":97,"./_to-iobject":111}],100:[function(require,module,exports){
+},{"./_object-keys":94,"./_object-pie":95,"./_to-iobject":109}],98:[function(require,module,exports){
 module.exports = function(bitmap, value){
   return {
     enumerable  : !(bitmap & 1),
@@ -1552,7 +1499,7 @@ module.exports = function(bitmap, value){
     value       : value
   };
 };
-},{}],101:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 var hide = require('./_hide');
 module.exports = function(target, src, safe){
   for(var key in src){
@@ -1560,9 +1507,9 @@ module.exports = function(target, src, safe){
     else hide(target, key, src[key]);
   } return target;
 };
-},{"./_hide":70}],102:[function(require,module,exports){
+},{"./_hide":68}],100:[function(require,module,exports){
 module.exports = require('./_hide');
-},{"./_hide":70}],103:[function(require,module,exports){
+},{"./_hide":68}],101:[function(require,module,exports){
 // Works with __proto__ only. Old v8 can't work with null proto objects.
 /* eslint-disable no-proto */
 var isObject = require('./_is-object')
@@ -1588,7 +1535,7 @@ module.exports = {
     }({}, false) : undefined),
   check: check
 };
-},{"./_an-object":46,"./_ctx":59,"./_is-object":76,"./_object-gopd":90}],104:[function(require,module,exports){
+},{"./_an-object":44,"./_ctx":57,"./_is-object":74,"./_object-gopd":88}],102:[function(require,module,exports){
 'use strict';
 var global      = require('./_global')
   , core        = require('./_core')
@@ -1603,7 +1550,7 @@ module.exports = function(KEY){
     get: function(){ return this; }
   });
 };
-},{"./_core":57,"./_descriptors":61,"./_global":68,"./_object-dp":88,"./_wks":118}],105:[function(require,module,exports){
+},{"./_core":55,"./_descriptors":59,"./_global":66,"./_object-dp":86,"./_wks":116}],103:[function(require,module,exports){
 var def = require('./_object-dp').f
   , has = require('./_has')
   , TAG = require('./_wks')('toStringTag');
@@ -1611,20 +1558,20 @@ var def = require('./_object-dp').f
 module.exports = function(it, tag, stat){
   if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
 };
-},{"./_has":69,"./_object-dp":88,"./_wks":118}],106:[function(require,module,exports){
+},{"./_has":67,"./_object-dp":86,"./_wks":116}],104:[function(require,module,exports){
 var shared = require('./_shared')('keys')
   , uid    = require('./_uid');
 module.exports = function(key){
   return shared[key] || (shared[key] = uid(key));
 };
-},{"./_shared":107,"./_uid":115}],107:[function(require,module,exports){
+},{"./_shared":105,"./_uid":113}],105:[function(require,module,exports){
 var global = require('./_global')
   , SHARED = '__core-js_shared__'
   , store  = global[SHARED] || (global[SHARED] = {});
 module.exports = function(key){
   return store[key] || (store[key] = {});
 };
-},{"./_global":68}],108:[function(require,module,exports){
+},{"./_global":66}],106:[function(require,module,exports){
 var toInteger = require('./_to-integer')
   , defined   = require('./_defined');
 // true  -> String#at
@@ -1642,7 +1589,7 @@ module.exports = function(TO_STRING){
       : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
   };
 };
-},{"./_defined":60,"./_to-integer":110}],109:[function(require,module,exports){
+},{"./_defined":58,"./_to-integer":108}],107:[function(require,module,exports){
 var toInteger = require('./_to-integer')
   , max       = Math.max
   , min       = Math.min;
@@ -1650,34 +1597,34 @@ module.exports = function(index, length){
   index = toInteger(index);
   return index < 0 ? max(index + length, 0) : min(index, length);
 };
-},{"./_to-integer":110}],110:[function(require,module,exports){
+},{"./_to-integer":108}],108:[function(require,module,exports){
 // 7.1.4 ToInteger
 var ceil  = Math.ceil
   , floor = Math.floor;
 module.exports = function(it){
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
-},{}],111:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = require('./_iobject')
   , defined = require('./_defined');
 module.exports = function(it){
   return IObject(defined(it));
 };
-},{"./_defined":60,"./_iobject":73}],112:[function(require,module,exports){
+},{"./_defined":58,"./_iobject":71}],110:[function(require,module,exports){
 // 7.1.15 ToLength
 var toInteger = require('./_to-integer')
   , min       = Math.min;
 module.exports = function(it){
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
-},{"./_to-integer":110}],113:[function(require,module,exports){
+},{"./_to-integer":108}],111:[function(require,module,exports){
 // 7.1.13 ToObject(argument)
 var defined = require('./_defined');
 module.exports = function(it){
   return Object(defined(it));
 };
-},{"./_defined":60}],114:[function(require,module,exports){
+},{"./_defined":58}],112:[function(require,module,exports){
 // 7.1.1 ToPrimitive(input [, PreferredType])
 var isObject = require('./_is-object');
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
@@ -1690,13 +1637,13 @@ module.exports = function(it, S){
   if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
   throw TypeError("Can't convert object to primitive value");
 };
-},{"./_is-object":76}],115:[function(require,module,exports){
+},{"./_is-object":74}],113:[function(require,module,exports){
 var id = 0
   , px = Math.random();
 module.exports = function(key){
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
-},{}],116:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 var global         = require('./_global')
   , core           = require('./_core')
   , LIBRARY        = require('./_library')
@@ -1706,9 +1653,9 @@ module.exports = function(name){
   var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
   if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
 };
-},{"./_core":57,"./_global":68,"./_library":84,"./_object-dp":88,"./_wks-ext":117}],117:[function(require,module,exports){
+},{"./_core":55,"./_global":66,"./_library":82,"./_object-dp":86,"./_wks-ext":115}],115:[function(require,module,exports){
 exports.f = require('./_wks');
-},{"./_wks":118}],118:[function(require,module,exports){
+},{"./_wks":116}],116:[function(require,module,exports){
 var store      = require('./_shared')('wks')
   , uid        = require('./_uid')
   , Symbol     = require('./_global').Symbol
@@ -1720,7 +1667,7 @@ var $exports = module.exports = function(name){
 };
 
 $exports.store = store;
-},{"./_global":68,"./_shared":107,"./_uid":115}],119:[function(require,module,exports){
+},{"./_global":66,"./_shared":105,"./_uid":113}],117:[function(require,module,exports){
 var classof   = require('./_classof')
   , ITERATOR  = require('./_wks')('iterator')
   , Iterators = require('./_iterators');
@@ -1729,7 +1676,7 @@ module.exports = require('./_core').getIteratorMethod = function(it){
     || it['@@iterator']
     || Iterators[classof(it)];
 };
-},{"./_classof":52,"./_core":57,"./_iterators":82,"./_wks":118}],120:[function(require,module,exports){
+},{"./_classof":50,"./_core":55,"./_iterators":80,"./_wks":116}],118:[function(require,module,exports){
 var anObject = require('./_an-object')
   , get      = require('./core.get-iterator-method');
 module.exports = require('./_core').getIterator = function(it){
@@ -1737,7 +1684,7 @@ module.exports = require('./_core').getIterator = function(it){
   if(typeof iterFn != 'function')throw TypeError(it + ' is not iterable!');
   return anObject(iterFn.call(it));
 };
-},{"./_an-object":46,"./_core":57,"./core.get-iterator-method":119}],121:[function(require,module,exports){
+},{"./_an-object":44,"./_core":55,"./core.get-iterator-method":117}],119:[function(require,module,exports){
 'use strict';
 var ctx            = require('./_ctx')
   , $export        = require('./_export')
@@ -1776,7 +1723,7 @@ $export($export.S + $export.F * !require('./_iter-detect')(function(iter){ Array
   }
 });
 
-},{"./_create-property":58,"./_ctx":59,"./_export":65,"./_is-array-iter":74,"./_iter-call":77,"./_iter-detect":80,"./_to-length":112,"./_to-object":113,"./core.get-iterator-method":119}],122:[function(require,module,exports){
+},{"./_create-property":56,"./_ctx":57,"./_export":63,"./_is-array-iter":72,"./_iter-call":75,"./_iter-detect":78,"./_to-length":110,"./_to-object":111,"./core.get-iterator-method":117}],120:[function(require,module,exports){
 'use strict';
 var addToUnscopables = require('./_add-to-unscopables')
   , step             = require('./_iter-step')
@@ -1811,20 +1758,20 @@ Iterators.Arguments = Iterators.Array;
 addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
-},{"./_add-to-unscopables":44,"./_iter-define":79,"./_iter-step":81,"./_iterators":82,"./_to-iobject":111}],123:[function(require,module,exports){
+},{"./_add-to-unscopables":42,"./_iter-define":77,"./_iter-step":79,"./_iterators":80,"./_to-iobject":109}],121:[function(require,module,exports){
 // 19.1.3.1 Object.assign(target, source)
 var $export = require('./_export');
 
 $export($export.S + $export.F, 'Object', {assign: require('./_object-assign')});
-},{"./_export":65,"./_object-assign":86}],124:[function(require,module,exports){
+},{"./_export":63,"./_object-assign":84}],122:[function(require,module,exports){
 var $export = require('./_export')
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 $export($export.S, 'Object', {create: require('./_object-create')});
-},{"./_export":65,"./_object-create":87}],125:[function(require,module,exports){
+},{"./_export":63,"./_object-create":85}],123:[function(require,module,exports){
 var $export = require('./_export');
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
 $export($export.S + $export.F * !require('./_descriptors'), 'Object', {defineProperty: require('./_object-dp').f});
-},{"./_descriptors":61,"./_export":65,"./_object-dp":88}],126:[function(require,module,exports){
+},{"./_descriptors":59,"./_export":63,"./_object-dp":86}],124:[function(require,module,exports){
 // 19.1.2.9 Object.getPrototypeOf(O)
 var toObject        = require('./_to-object')
   , $getPrototypeOf = require('./_object-gpo');
@@ -1834,7 +1781,7 @@ require('./_object-sap')('getPrototypeOf', function(){
     return $getPrototypeOf(toObject(it));
   };
 });
-},{"./_object-gpo":94,"./_object-sap":98,"./_to-object":113}],127:[function(require,module,exports){
+},{"./_object-gpo":92,"./_object-sap":96,"./_to-object":111}],125:[function(require,module,exports){
 // 19.1.2.14 Object.keys(O)
 var toObject = require('./_to-object')
   , $keys    = require('./_object-keys');
@@ -1844,13 +1791,13 @@ require('./_object-sap')('keys', function(){
     return $keys(toObject(it));
   };
 });
-},{"./_object-keys":96,"./_object-sap":98,"./_to-object":113}],128:[function(require,module,exports){
+},{"./_object-keys":94,"./_object-sap":96,"./_to-object":111}],126:[function(require,module,exports){
 // 19.1.3.19 Object.setPrototypeOf(O, proto)
 var $export = require('./_export');
 $export($export.S, 'Object', {setPrototypeOf: require('./_set-proto').set});
-},{"./_export":65,"./_set-proto":103}],129:[function(require,module,exports){
+},{"./_export":63,"./_set-proto":101}],127:[function(require,module,exports){
 
-},{}],130:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 'use strict';
 var strong = require('./_collection-strong');
 
@@ -1863,7 +1810,7 @@ module.exports = require('./_collection')('Set', function(get){
     return strong.def(this, value = value === 0 ? 0 : value, value);
   }
 }, strong);
-},{"./_collection":56,"./_collection-strong":54}],131:[function(require,module,exports){
+},{"./_collection":54,"./_collection-strong":52}],129:[function(require,module,exports){
 'use strict';
 var $at  = require('./_string-at')(true);
 
@@ -1881,7 +1828,7 @@ require('./_iter-define')(String, 'String', function(iterated){
   this._i += point.length;
   return {value: point, done: false};
 });
-},{"./_iter-define":79,"./_string-at":108}],132:[function(require,module,exports){
+},{"./_iter-define":77,"./_string-at":106}],130:[function(require,module,exports){
 'use strict';
 // ECMAScript 6 symbols shim
 var global         = require('./_global')
@@ -2117,7 +2064,7 @@ setToStringTag($Symbol, 'Symbol');
 setToStringTag(Math, 'Math', true);
 // 24.3.3 JSON[@@toStringTag]
 setToStringTag(global.JSON, 'JSON', true);
-},{"./_an-object":46,"./_descriptors":61,"./_enum-keys":64,"./_export":65,"./_fails":66,"./_global":68,"./_has":69,"./_hide":70,"./_is-array":75,"./_keyof":83,"./_library":84,"./_meta":85,"./_object-create":87,"./_object-dp":88,"./_object-gopd":90,"./_object-gopn":92,"./_object-gopn-ext":91,"./_object-gops":93,"./_object-keys":96,"./_object-pie":97,"./_property-desc":100,"./_redefine":102,"./_set-to-string-tag":105,"./_shared":107,"./_to-iobject":111,"./_to-primitive":114,"./_uid":115,"./_wks":118,"./_wks-define":116,"./_wks-ext":117}],133:[function(require,module,exports){
+},{"./_an-object":44,"./_descriptors":59,"./_enum-keys":62,"./_export":63,"./_fails":64,"./_global":66,"./_has":67,"./_hide":68,"./_is-array":73,"./_keyof":81,"./_library":82,"./_meta":83,"./_object-create":85,"./_object-dp":86,"./_object-gopd":88,"./_object-gopn":90,"./_object-gopn-ext":89,"./_object-gops":91,"./_object-keys":94,"./_object-pie":95,"./_property-desc":98,"./_redefine":100,"./_set-to-string-tag":103,"./_shared":105,"./_to-iobject":109,"./_to-primitive":112,"./_uid":113,"./_wks":116,"./_wks-define":114,"./_wks-ext":115}],131:[function(require,module,exports){
 // https://github.com/tc39/proposal-object-values-entries
 var $export  = require('./_export')
   , $entries = require('./_object-to-array')(true);
@@ -2127,7 +2074,7 @@ $export($export.S, 'Object', {
     return $entries(it);
   }
 });
-},{"./_export":65,"./_object-to-array":99}],134:[function(require,module,exports){
+},{"./_export":63,"./_object-to-array":97}],132:[function(require,module,exports){
 // https://github.com/tc39/proposal-object-values-entries
 var $export = require('./_export')
   , $values = require('./_object-to-array')(false);
@@ -2137,16 +2084,16 @@ $export($export.S, 'Object', {
     return $values(it);
   }
 });
-},{"./_export":65,"./_object-to-array":99}],135:[function(require,module,exports){
+},{"./_export":63,"./_object-to-array":97}],133:[function(require,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var $export  = require('./_export');
 
 $export($export.P + $export.R, 'Set', {toJSON: require('./_collection-to-json')('Set')});
-},{"./_collection-to-json":55,"./_export":65}],136:[function(require,module,exports){
+},{"./_collection-to-json":53,"./_export":63}],134:[function(require,module,exports){
 require('./_wks-define')('asyncIterator');
-},{"./_wks-define":116}],137:[function(require,module,exports){
+},{"./_wks-define":114}],135:[function(require,module,exports){
 require('./_wks-define')('observable');
-},{"./_wks-define":116}],138:[function(require,module,exports){
+},{"./_wks-define":114}],136:[function(require,module,exports){
 require('./es6.array.iterator');
 var global        = require('./_global')
   , hide          = require('./_hide')
@@ -2160,7 +2107,60 @@ for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList'
   if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
   Iterators[NAME] = Iterators.Array;
 }
-},{"./_global":68,"./_hide":70,"./_iterators":82,"./_wks":118,"./es6.array.iterator":122}],139:[function(require,module,exports){
+},{"./_global":66,"./_hide":68,"./_iterators":80,"./_wks":116,"./es6.array.iterator":120}],137:[function(require,module,exports){
+module.exports = require("regenerator-runtime");
+
+},{"regenerator-runtime":508}],138:[function(require,module,exports){
+/*!
+  Copyright (c) 2016 Jed Watson.
+  Licensed under the MIT License (MIT), see
+  http://jedwatson.github.io/classnames
+*/
+/* global define */
+
+(function () {
+	'use strict';
+
+	var hasOwn = {}.hasOwnProperty;
+
+	function classNames () {
+		var classes = [];
+
+		for (var i = 0; i < arguments.length; i++) {
+			var arg = arguments[i];
+			if (!arg) continue;
+
+			var argType = typeof arg;
+
+			if (argType === 'string' || argType === 'number') {
+				classes.push(arg);
+			} else if (Array.isArray(arg)) {
+				classes.push(classNames.apply(null, arg));
+			} else if (argType === 'object') {
+				for (var key in arg) {
+					if (hasOwn.call(arg, key) && arg[key]) {
+						classes.push(key);
+					}
+				}
+			}
+		}
+
+		return classes.join(' ');
+	}
+
+	if (typeof module !== 'undefined' && module.exports) {
+		module.exports = classNames;
+	} else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+		// register as 'classnames', consistent with npm package name
+		define('classnames', [], function () {
+			return classNames;
+		});
+	} else {
+		window.classNames = classNames;
+	}
+}());
+
+},{}],139:[function(require,module,exports){
 /**
  * Copyright 2013-present, Facebook, Inc.
  * All rights reserved.
@@ -6767,7 +6767,7 @@ Alert.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsStyles)((0, _values2['default'])(_StyleConfig.State), _StyleConfig.State.INFO, (0, _bootstrapUtils.bsClass)('alert', Alert));
 module.exports = exports['default'];
-},{"./CloseButton":229,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/core-js/object/values":12,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],218:[function(require,module,exports){
+},{"./CloseButton":229,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/core-js/object/values":12,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],218:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6877,7 +6877,7 @@ Badge.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('badge', Badge);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],219:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],219:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -6951,7 +6951,7 @@ Breadcrumb.Item = _BreadcrumbItem2['default'];
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('breadcrumb', Breadcrumb);
 module.exports = exports['default'];
-},{"./BreadcrumbItem":220,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500}],220:[function(require,module,exports){
+},{"./BreadcrumbItem":220,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500}],220:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -7053,7 +7053,7 @@ BreadcrumbItem.defaultProps = defaultProps;
 
 exports['default'] = BreadcrumbItem;
 module.exports = exports['default'];
-},{"./SafeAnchor":291,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],221:[function(require,module,exports){
+},{"./SafeAnchor":291,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],221:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -7187,7 +7187,7 @@ Button.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('btn', (0, _bootstrapUtils.bsSizes)([_StyleConfig.Size.LARGE, _StyleConfig.Size.SMALL, _StyleConfig.Size.XSMALL], (0, _bootstrapUtils.bsStyles)([].concat((0, _values2['default'])(_StyleConfig.State), [_StyleConfig.Style.DEFAULT, _StyleConfig.Style.PRIMARY, _StyleConfig.Style.LINK]), _StyleConfig.Style.DEFAULT, Button)));
 module.exports = exports['default'];
-},{"./SafeAnchor":291,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/core-js/object/values":12,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],222:[function(require,module,exports){
+},{"./SafeAnchor":291,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/core-js/object/values":12,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],222:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -7294,7 +7294,7 @@ ButtonGroup.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('btn-group', ButtonGroup);
 module.exports = exports['default'];
-},{"./Button":221,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/all":455}],223:[function(require,module,exports){
+},{"./Button":221,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/all":455}],223:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -7365,7 +7365,7 @@ var ButtonToolbar = function (_React$Component) {
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('btn-toolbar', (0, _bootstrapUtils.bsSizes)(_Button2['default'].SIZES, ButtonToolbar));
 module.exports = exports['default'];
-},{"./Button":221,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500}],224:[function(require,module,exports){
+},{"./Button":221,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500}],224:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -7823,7 +7823,7 @@ Carousel.Item = _CarouselItem2['default'];
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('carousel', Carousel);
 module.exports = exports['default'];
-},{"./CarouselCaption":225,"./CarouselItem":226,"./Glyphicon":243,"./SafeAnchor":291,"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],225:[function(require,module,exports){
+},{"./CarouselCaption":225,"./CarouselItem":226,"./Glyphicon":243,"./SafeAnchor":291,"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],225:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -7905,7 +7905,7 @@ CarouselCaption.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('carousel-caption', CarouselCaption);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500,"react-prop-types/lib/elementType":457}],226:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500,"react-prop-types/lib/elementType":457}],226:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -8073,7 +8073,7 @@ CarouselItem.defaultProps = defaultProps;
 
 exports['default'] = CarouselItem;
 module.exports = exports['default'];
-},{"./utils/TransitionEvents":306,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-dom":314}],227:[function(require,module,exports){
+},{"./utils/TransitionEvents":306,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-dom":314}],227:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -8215,7 +8215,7 @@ Checkbox.defaultProps = defaultProps;
 exports['default'] = (0, _bootstrapUtils.bsClass)('checkbox', Checkbox);
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./utils/bootstrapUtils":308,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"warning":516}],228:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"warning":516}],228:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -8349,7 +8349,7 @@ Clearfix.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('clearfix', Clearfix);
 module.exports = exports['default'];
-},{"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"./utils/capitalize":309,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],229:[function(require,module,exports){
+},{"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"./utils/capitalize":309,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],229:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -8696,7 +8696,7 @@ Col.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('col', Col);
 module.exports = exports['default'];
-},{"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],231:[function(require,module,exports){
+},{"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],231:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -8964,7 +8964,7 @@ Collapse.defaultProps = defaultProps;
 
 exports['default'] = Collapse;
 module.exports = exports['default'];
-},{"./utils/capitalize":309,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"dom-helpers/style":160,"prop-types":214,"react":500,"react-overlays/lib/Transition":447}],232:[function(require,module,exports){
+},{"./utils/capitalize":309,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"dom-helpers/style":160,"prop-types":214,"react":500,"react-overlays/lib/Transition":447}],232:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -9071,7 +9071,7 @@ ControlLabel.contextTypes = contextTypes;
 exports['default'] = (0, _bootstrapUtils.bsClass)('control-label', ControlLabel);
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./utils/bootstrapUtils":308,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"warning":516}],233:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"warning":516}],233:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -9494,7 +9494,7 @@ UncontrolledDropdown.Menu = _DropdownMenu2['default'];
 exports['default'] = UncontrolledDropdown;
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./ButtonGroup":222,"./DropdownMenu":235,"./DropdownToggle":236,"./utils/PropTypes":304,"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"dom-helpers/activeElement":140,"dom-helpers/query/contains":151,"keycode":195,"prop-types":214,"react":500,"react-dom":314,"react-prop-types/lib/all":455,"react-prop-types/lib/elementType":457,"react-prop-types/lib/isRequiredForA11y":458,"uncontrollable":514,"warning":516}],234:[function(require,module,exports){
+},{"./ButtonGroup":222,"./DropdownMenu":235,"./DropdownToggle":236,"./utils/PropTypes":304,"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"dom-helpers/activeElement":140,"dom-helpers/query/contains":151,"keycode":195,"prop-types":214,"react":500,"react-dom":314,"react-prop-types/lib/all":455,"react-prop-types/lib/elementType":457,"react-prop-types/lib/isRequiredForA11y":458,"uncontrollable":514,"warning":516}],234:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -9809,7 +9809,7 @@ DropdownMenu.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('dropdown-menu', DropdownMenu);
 module.exports = exports['default'];
-},{"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/core-js/array/from":2,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"keycode":195,"prop-types":214,"react":500,"react-dom":314,"react-overlays/lib/RootCloseWrapper":446}],236:[function(require,module,exports){
+},{"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/core-js/array/from":2,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"keycode":195,"prop-types":214,"react":500,"react-dom":314,"react-overlays/lib/RootCloseWrapper":446}],236:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -9922,7 +9922,7 @@ DropdownToggle.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('dropdown-toggle', DropdownToggle);
 module.exports = exports['default'];
-},{"./Button":221,"./SafeAnchor":291,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],237:[function(require,module,exports){
+},{"./Button":221,"./SafeAnchor":291,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],237:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10048,7 +10048,7 @@ Fade.defaultProps = defaultProps;
 
 exports['default'] = Fade;
 module.exports = exports['default'];
-},{"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-overlays/lib/Transition":447}],238:[function(require,module,exports){
+},{"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-overlays/lib/Transition":447}],238:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10146,7 +10146,7 @@ Form.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('form', Form);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],239:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],239:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -10296,7 +10296,7 @@ FormControl.Static = _FormControlStatic2['default'];
 exports['default'] = (0, _bootstrapUtils.bsClass)('form-control', (0, _bootstrapUtils.bsSizes)([_StyleConfig.Size.SMALL, _StyleConfig.Size.LARGE], FormControl));
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./FormControlFeedback":240,"./FormControlStatic":241,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457,"warning":516}],240:[function(require,module,exports){
+},{"./FormControlFeedback":240,"./FormControlStatic":241,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457,"warning":516}],240:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10412,7 +10412,7 @@ FormControlFeedback.contextTypes = contextTypes;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('form-control-feedback', FormControlFeedback);
 module.exports = exports['default'];
-},{"./Glyphicon":243,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],241:[function(require,module,exports){
+},{"./Glyphicon":243,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],241:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10494,7 +10494,7 @@ FormControlStatic.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('form-control-static', FormControlStatic);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500,"react-prop-types/lib/elementType":457}],242:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500,"react-prop-types/lib/elementType":457}],242:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10618,7 +10618,7 @@ FormGroup.childContextTypes = childContextTypes;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('form-group', (0, _bootstrapUtils.bsSizes)([_StyleConfig.Size.LARGE, _StyleConfig.Size.SMALL], FormGroup));
 module.exports = exports['default'];
-},{"./utils/StyleConfig":305,"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],243:[function(require,module,exports){
+},{"./utils/StyleConfig":305,"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],243:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10700,7 +10700,7 @@ Glyphicon.propTypes = propTypes;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('glyphicon', Glyphicon);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],244:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],244:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10797,7 +10797,7 @@ Grid.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('container', Grid);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],245:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],245:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10863,7 +10863,7 @@ var HelpBlock = function (_React$Component) {
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('help-block', HelpBlock);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500}],246:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500}],246:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -10971,7 +10971,7 @@ Image.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('img', Image);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],247:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],247:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11050,7 +11050,7 @@ InputGroup.Button = _InputGroupButton2['default'];
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('input-group', (0, _bootstrapUtils.bsSizes)([_StyleConfig.Size.LARGE, _StyleConfig.Size.SMALL], InputGroup));
 module.exports = exports['default'];
-},{"./InputGroupAddon":248,"./InputGroupButton":249,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500}],248:[function(require,module,exports){
+},{"./InputGroupAddon":248,"./InputGroupButton":249,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500}],248:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11116,7 +11116,7 @@ var InputGroupAddon = function (_React$Component) {
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('input-group-addon', InputGroupAddon);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500}],249:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500}],249:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11182,7 +11182,7 @@ var InputGroupButton = function (_React$Component) {
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('input-group-btn', InputGroupButton);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500}],250:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500}],250:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11264,7 +11264,7 @@ Jumbotron.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('jumbotron', Jumbotron);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500,"react-prop-types/lib/elementType":457}],251:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500,"react-prop-types/lib/elementType":457}],251:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11361,7 +11361,7 @@ var Label = function (_React$Component) {
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('label', (0, _bootstrapUtils.bsStyles)([].concat((0, _values2['default'])(_StyleConfig.State), [_StyleConfig.Style.DEFAULT, _StyleConfig.Style.PRIMARY]), _StyleConfig.Style.DEFAULT, Label));
 module.exports = exports['default'];
-},{"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/core-js/object/values":12,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500}],252:[function(require,module,exports){
+},{"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/core-js/object/values":12,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500}],252:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11479,7 +11479,7 @@ ListGroup.propTypes = propTypes;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('list-group', ListGroup);
 module.exports = exports['default'];
-},{"./ListGroupItem":253,"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500,"react-prop-types/lib/elementType":457}],253:[function(require,module,exports){
+},{"./ListGroupItem":253,"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500,"react-prop-types/lib/elementType":457}],253:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11625,7 +11625,7 @@ ListGroupItem.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('list-group-item', (0, _bootstrapUtils.bsStyles)((0, _values2['default'])(_StyleConfig.State), ListGroupItem));
 module.exports = exports['default'];
-},{"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/core-js/object/values":12,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],254:[function(require,module,exports){
+},{"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/core-js/object/values":12,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],254:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11738,7 +11738,7 @@ Media.ListItem = _MediaListItem2['default'];
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('media', Media);
 module.exports = exports['default'];
-},{"./MediaBody":255,"./MediaHeading":256,"./MediaLeft":257,"./MediaList":258,"./MediaListItem":259,"./MediaRight":260,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500,"react-prop-types/lib/elementType":457}],255:[function(require,module,exports){
+},{"./MediaBody":255,"./MediaHeading":256,"./MediaLeft":257,"./MediaList":258,"./MediaListItem":259,"./MediaRight":260,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500,"react-prop-types/lib/elementType":457}],255:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11820,7 +11820,7 @@ MediaBody.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('media-body', MediaBody);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500,"react-prop-types/lib/elementType":457}],256:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500,"react-prop-types/lib/elementType":457}],256:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11902,7 +11902,7 @@ MediaHeading.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('media-heading', MediaHeading);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500,"react-prop-types/lib/elementType":457}],257:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500,"react-prop-types/lib/elementType":457}],257:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -11991,7 +11991,7 @@ MediaLeft.propTypes = propTypes;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('media-left', MediaLeft);
 module.exports = exports['default'];
-},{"./Media":254,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],258:[function(require,module,exports){
+},{"./Media":254,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],258:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12057,7 +12057,7 @@ var MediaList = function (_React$Component) {
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('media-list', MediaList);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500}],259:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500}],259:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12123,7 +12123,7 @@ var MediaListItem = function (_React$Component) {
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('media', MediaListItem);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500}],260:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500}],260:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12212,7 +12212,7 @@ MediaRight.propTypes = propTypes;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('media-right', MediaRight);
 module.exports = exports['default'];
-},{"./Media":254,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],261:[function(require,module,exports){
+},{"./Media":254,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],261:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12412,7 +12412,7 @@ MenuItem.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('dropdown', MenuItem);
 module.exports = exports['default'];
-},{"./SafeAnchor":291,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/all":455}],262:[function(require,module,exports){
+},{"./SafeAnchor":291,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/all":455}],262:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12766,7 +12766,7 @@ Modal.BACKDROP_TRANSITION_DURATION = 150;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('modal', (0, _bootstrapUtils.bsSizes)([_StyleConfig.Size.LARGE, _StyleConfig.Size.SMALL], Modal));
 module.exports = exports['default'];
-},{"./Fade":237,"./ModalBody":263,"./ModalDialog":264,"./ModalFooter":265,"./ModalHeader":266,"./ModalTitle":267,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"./utils/splitComponentProps":313,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"dom-helpers/events":146,"dom-helpers/ownerDocument":150,"dom-helpers/util/inDOM":168,"dom-helpers/util/scrollbarSize":169,"prop-types":214,"react":500,"react-dom":314,"react-overlays/lib/Modal":441,"react-overlays/lib/utils/isOverflowing":452,"react-prop-types/lib/elementType":457}],263:[function(require,module,exports){
+},{"./Fade":237,"./ModalBody":263,"./ModalDialog":264,"./ModalFooter":265,"./ModalHeader":266,"./ModalTitle":267,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"./utils/splitComponentProps":313,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"dom-helpers/events":146,"dom-helpers/ownerDocument":150,"dom-helpers/util/inDOM":168,"dom-helpers/util/scrollbarSize":169,"prop-types":214,"react":500,"react-dom":314,"react-overlays/lib/Modal":441,"react-overlays/lib/utils/isOverflowing":452,"react-prop-types/lib/elementType":457}],263:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12848,7 +12848,7 @@ ModalBody.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('modal-body', ModalBody);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500,"react-prop-types/lib/elementType":457}],264:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500,"react-prop-types/lib/elementType":457}],264:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -12953,7 +12953,7 @@ ModalDialog.propTypes = propTypes;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('modal', (0, _bootstrapUtils.bsSizes)([_StyleConfig.Size.LARGE, _StyleConfig.Size.SMALL], ModalDialog));
 module.exports = exports['default'];
-},{"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],265:[function(require,module,exports){
+},{"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],265:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -13035,7 +13035,7 @@ ModalFooter.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('modal-footer', ModalFooter);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500,"react-prop-types/lib/elementType":457}],266:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500,"react-prop-types/lib/elementType":457}],266:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -13166,7 +13166,7 @@ ModalHeader.contextTypes = contextTypes;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('modal-header', ModalHeader);
 module.exports = exports['default'];
-},{"./CloseButton":229,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],267:[function(require,module,exports){
+},{"./CloseButton":229,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],267:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -13248,7 +13248,7 @@ ModalTitle.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('modal-title', ModalTitle);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500,"react-prop-types/lib/elementType":457}],268:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500,"react-prop-types/lib/elementType":457}],268:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -13653,7 +13653,7 @@ Nav.contextTypes = contextTypes;
 exports['default'] = (0, _bootstrapUtils.bsClass)('nav', (0, _bootstrapUtils.bsStyles)(['tabs', 'pills'], Nav));
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"keycode":195,"prop-types":214,"react":500,"react-dom":314,"react-prop-types/lib/all":455,"warning":516}],269:[function(require,module,exports){
+},{"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"keycode":195,"prop-types":214,"react":500,"react-dom":314,"react-prop-types/lib/all":455,"warning":516}],269:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -13799,7 +13799,7 @@ NavDropdown.propTypes = propTypes;
 
 exports['default'] = NavDropdown;
 module.exports = exports['default'];
-},{"./Dropdown":233,"./utils/ValidComponentChildren":307,"./utils/splitComponentProps":313,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],270:[function(require,module,exports){
+},{"./Dropdown":233,"./utils/ValidComponentChildren":307,"./utils/splitComponentProps":313,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],270:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -13930,7 +13930,7 @@ NavItem.defaultProps = defaultProps;
 
 exports['default'] = NavItem;
 module.exports = exports['default'];
-},{"./SafeAnchor":291,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],271:[function(require,module,exports){
+},{"./SafeAnchor":291,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],271:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -14259,7 +14259,7 @@ UncontrollableNavbar.Link = createSimpleWrapper('a', 'link', 'NavbarLink');
 // Set bsStyles here so they can be overridden.
 exports['default'] = (0, _bootstrapUtils.bsStyles)([_StyleConfig.Style.DEFAULT, _StyleConfig.Style.INVERSE], _StyleConfig.Style.DEFAULT, UncontrollableNavbar);
 module.exports = exports['default'];
-},{"./Grid":244,"./NavbarBrand":272,"./NavbarCollapse":273,"./NavbarHeader":274,"./NavbarToggle":275,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457,"uncontrollable":514}],272:[function(require,module,exports){
+},{"./Grid":244,"./NavbarBrand":272,"./NavbarCollapse":273,"./NavbarHeader":274,"./NavbarToggle":275,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457,"uncontrollable":514}],272:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -14344,7 +14344,7 @@ NavbarBrand.contextTypes = contextTypes;
 
 exports['default'] = NavbarBrand;
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],273:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],273:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -14501,7 +14501,7 @@ NavbarHeader.contextTypes = contextTypes;
 
 exports['default'] = NavbarHeader;
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],275:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],275:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -14616,7 +14616,7 @@ NavbarToggle.contextTypes = contextTypes;
 
 exports['default'] = NavbarToggle;
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],276:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],276:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -14775,7 +14775,7 @@ Overlay.defaultProps = defaultProps;
 
 exports['default'] = Overlay;
 module.exports = exports['default'];
-},{"./Fade":237,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-overlays/lib/Overlay":443,"react-prop-types/lib/elementType":457}],277:[function(require,module,exports){
+},{"./Fade":237,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-overlays/lib/Overlay":443,"react-prop-types/lib/elementType":457}],277:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -15204,7 +15204,7 @@ var PageHeader = function (_React$Component) {
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('page-header', PageHeader);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500}],279:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500}],279:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -15321,7 +15321,7 @@ Pager.Item = _PagerItem2['default'];
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('pager', Pager);
 module.exports = exports['default'];
-},{"./PagerItem":281,"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],281:[function(require,module,exports){
+},{"./PagerItem":281,"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],281:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -15450,7 +15450,7 @@ PagerItem.defaultProps = defaultProps;
 
 exports['default'] = PagerItem;
 module.exports = exports['default'];
-},{"./SafeAnchor":291,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],282:[function(require,module,exports){
+},{"./SafeAnchor":291,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],282:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -15747,7 +15747,7 @@ Pagination.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('pagination', Pagination);
 module.exports = exports['default'];
-},{"./PaginationButton":283,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],283:[function(require,module,exports){
+},{"./PaginationButton":283,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],283:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -15885,7 +15885,7 @@ PaginationButton.defaultProps = defaultProps;
 
 exports['default'] = PaginationButton;
 module.exports = exports['default'];
-},{"./SafeAnchor":291,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],284:[function(require,module,exports){
+},{"./SafeAnchor":291,"./utils/createChainedFunction":310,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],284:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -16150,7 +16150,7 @@ Panel.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('panel', (0, _bootstrapUtils.bsStyles)([].concat((0, _values2['default'])(_StyleConfig.State), [_StyleConfig.Style.DEFAULT, _StyleConfig.Style.PRIMARY]), _StyleConfig.Style.DEFAULT, Panel));
 module.exports = exports['default'];
-},{"./Collapse":231,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/core-js/object/values":12,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],285:[function(require,module,exports){
+},{"./Collapse":231,"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/core-js/object/values":12,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],285:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -16302,7 +16302,7 @@ PanelGroup.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('panel-group', PanelGroup);
 module.exports = exports['default'];
-},{"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/core-js/object/assign":5,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],286:[function(require,module,exports){
+},{"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"babel-runtime/core-js/object/assign":5,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],286:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -16457,7 +16457,7 @@ Popover.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('popover', Popover);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/isRequiredForA11y":458}],287:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/isRequiredForA11y":458}],287:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -16661,7 +16661,7 @@ ProgressBar.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('progress-bar', (0, _bootstrapUtils.bsStyles)((0, _values2['default'])(_StyleConfig.State), ProgressBar));
 module.exports = exports['default'];
-},{"./utils/StyleConfig":305,"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"babel-runtime/core-js/object/values":12,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],288:[function(require,module,exports){
+},{"./utils/StyleConfig":305,"./utils/ValidComponentChildren":307,"./utils/bootstrapUtils":308,"babel-runtime/core-js/object/values":12,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],288:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -16803,7 +16803,7 @@ Radio.defaultProps = defaultProps;
 exports['default'] = (0, _bootstrapUtils.bsClass)('radio', Radio);
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./utils/bootstrapUtils":308,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"warning":516}],289:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"warning":516}],289:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -16916,7 +16916,7 @@ ResponsiveEmbed.defaultProps = defaultProps;
 exports['default'] = (0, _bootstrapUtils.bsClass)('embed-responsive', ResponsiveEmbed);
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./utils/bootstrapUtils":308,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"warning":516}],290:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"warning":516}],290:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -16998,7 +16998,7 @@ Row.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('row', Row);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500,"react-prop-types/lib/elementType":457}],291:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500,"react-prop-types/lib/elementType":457}],291:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -17775,7 +17775,7 @@ TabContent.childContextTypes = childContextTypes;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('tab', TabContent);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],297:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457}],297:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -18098,7 +18098,7 @@ TabPane.childContextTypes = childContextTypes;
 exports['default'] = (0, _bootstrapUtils.bsClass)('tab-pane', TabPane);
 module.exports = exports['default'];
 }).call(this,require('_process'))
-},{"./Fade":237,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457,"warning":516}],298:[function(require,module,exports){
+},{"./Fade":237,"./utils/bootstrapUtils":308,"./utils/createChainedFunction":310,"_process":209,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/elementType":457,"warning":516}],298:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -18204,7 +18204,7 @@ Table.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('table', Table);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],299:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],299:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -18515,7 +18515,7 @@ Thumbnail.propTypes = propTypes;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('thumbnail', Thumbnail);
 module.exports = exports['default'];
-},{"./SafeAnchor":291,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500}],301:[function(require,module,exports){
+},{"./SafeAnchor":291,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500}],301:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -18658,7 +18658,7 @@ Tooltip.defaultProps = defaultProps;
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('tooltip', Tooltip);
 module.exports = exports['default'];
-},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"prop-types":214,"react":500,"react-prop-types/lib/isRequiredForA11y":458}],302:[function(require,module,exports){
+},{"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"prop-types":214,"react":500,"react-prop-types/lib/isRequiredForA11y":458}],302:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -18726,7 +18726,7 @@ var Well = function (_React$Component) {
 
 exports['default'] = (0, _bootstrapUtils.bsClass)('well', (0, _bootstrapUtils.bsSizes)([_StyleConfig.Size.LARGE, _StyleConfig.Size.SMALL], Well));
 module.exports = exports['default'];
-},{"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":27,"react":500}],303:[function(require,module,exports){
+},{"./utils/StyleConfig":305,"./utils/bootstrapUtils":308,"babel-runtime/helpers/classCallCheck":17,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/inherits":20,"babel-runtime/helpers/objectWithoutProperties":22,"babel-runtime/helpers/possibleConstructorReturn":23,"classnames":138,"react":500}],303:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -37230,7 +37230,7 @@ Position.defaultProps = {
 
 exports.default = Position;
 module.exports = exports['default'];
-},{"./utils/calculatePosition":450,"./utils/getContainer":451,"./utils/ownerDocument":454,"classnames":27,"prop-types":214,"react":500,"react-dom":314,"react-prop-types/lib/componentOrElement":456}],446:[function(require,module,exports){
+},{"./utils/calculatePosition":450,"./utils/getContainer":451,"./utils/ownerDocument":454,"classnames":138,"prop-types":214,"react":500,"react-dom":314,"react-prop-types/lib/componentOrElement":456}],446:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -37755,7 +37755,7 @@ Transition.defaultProps = {
 };
 
 exports.default = Transition;
-},{"classnames":27,"dom-helpers/events/on":149,"dom-helpers/transition/properties":163,"prop-types":214,"react":500,"react-dom":314}],448:[function(require,module,exports){
+},{"classnames":138,"dom-helpers/events/on":149,"dom-helpers/transition/properties":163,"prop-types":214,"react":500,"react-dom":314}],448:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -44223,8 +44223,6 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _reactBootstrap = require('react-bootstrap');
-
 var _reactRedux = require('react-redux');
 
 var _warpedTime = require('warped-time');
@@ -44250,7 +44248,7 @@ var mapDispatchToProps = function mapDispatchToProps(dispatch) {
 
 var AnimationControls = exports.AnimationControls = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_warpedTime.TimeControlsComponent);
 
-},{"react":500,"react-bootstrap":303,"react-redux":469,"warped-time":518}],522:[function(require,module,exports){
+},{"react":500,"react-redux":469,"warped-time":518}],522:[function(require,module,exports){
 (function (global){
 'use strict';
 
@@ -44397,19 +44395,11 @@ exports.AnimationStateVisualizerComponent = _stateVisualizer.AnimationStateVisua
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.animations = exports.initial_state = exports.computeAnimatedState = exports.flattenStyles = exports.activeAnimations = exports.uniqueAnimations = exports.sortedAnimations = exports.futureAnimations = exports.currentAnimations = exports.pastAnimations = undefined;
-
-var _typeof2 = require('babel-runtime/helpers/typeof');
-
-var _typeof3 = _interopRequireDefault(_typeof2);
+exports.animations = exports.initial_state = exports.computeAnimatedState = exports.activeAnimations = exports.uniqueAnimations = exports.sortedAnimations = exports.futureAnimations = exports.currentAnimations = exports.pastAnimations = undefined;
 
 var _extends2 = require('babel-runtime/helpers/extends');
 
 var _extends3 = _interopRequireDefault(_extends2);
-
-var _keys = require('babel-runtime/core-js/object/keys');
-
-var _keys2 = _interopRequireDefault(_keys);
 
 var _set = require('babel-runtime/core-js/set');
 
@@ -44541,7 +44531,11 @@ var uniqueAnimations = exports.uniqueAnimations = function uniqueAnimations(anim
 };
 
 var activeAnimations = exports.activeAnimations = function activeAnimations(anim_queue, current_timestamp, last_timestamp) {
-    return uniqueAnimations(sortedAnimations(currentAnimations(anim_queue, current_timestamp, last_timestamp)));
+    var uniqueify = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
+
+    var anims = sortedAnimations(currentAnimations(anim_queue, current_timestamp, last_timestamp));
+    if (uniqueify) return uniqueAnimations(anims);
+    return anims;
 };
 
 // window.parentExists = parentExists
@@ -44551,115 +44545,12 @@ var activeAnimations = exports.activeAnimations = function activeAnimations(anim
 // window.activeAnimations = activeAnimations
 
 
-var css_transform_str = {
-    scale: function scale(_scale) {
-        return 'scale(' + _scale + ')';
-    },
-    perspective: function perspective(px) {
-        return 'perspective(' + px + ')';
-    },
-    translate: function translate(_ref4) {
-        var left = _ref4.left,
-            top = _ref4.top;
-        return 'translate(' + left + ', ' + top + ')';
-    },
-    translate3d: function translate3d(_ref5) {
-        var x = _ref5.x,
-            y = _ref5.y,
-            z = _ref5.z;
-        return 'translate3d(' + x + ', ' + y + ', ' + z + ')';
-    },
-    rotate: function rotate(rotation) {
-        return 'rotate(' + rotation + ')';
-    },
-    rotate3d: function rotate3d(_ref6) {
-        var x = _ref6.x,
-            y = _ref6.y,
-            z = _ref6.z;
-        return 'rotate3d(' + x + ', ' + y + ', ' + z + ')';
-    },
-    skew: function skew(_ref7) {
-        var x = _ref7.x,
-            y = _ref7.y;
-        return 'skew(' + x + ', ' + y + ')';
-    },
-    scale3d: function scale3d(_ref8) {
-        var x = _ref8.x,
-            y = _ref8.y,
-            z = _ref8.z;
-        return 'scale3d(' + x + ', ' + y + ', ' + z + ')';
-    }
-    // TODO: add more css transform types?
-};
-
-var css_animation_str = function css_animation_str(_ref9) {
-    var name = _ref9.name,
-        duration = _ref9.duration,
-        curve = _ref9.curve,
-        delay = _ref9.delay,
-        playState = _ref9.playState;
-    return name + ' ' + duration + 'ms ' + curve + ' -' + delay + 'ms ' + playState;
-};
-
-var flattenStyles = exports.flattenStyles = function flattenStyles(state) {
-    // this converts the styles stored as dicts in the state tree, to the strings
-    // that react components expect as CSS style values
-
-    if (state === undefined || state === null || Array.isArray(state) && !state.style) {
-        // TODO: make this also recurse into arrays since vals may have .style
-        // don't mess with values that don't have a style key
-        return state;
-    }
-    if (state && state.animation) {
-        // flatten animations from a dict to a string
-        // converts {style: {animations: {blinker: {name: blinker, duration: 1000, curve: 'linear', delay: 767}, ...}}}
-        //      =>  {style: {animation: blinker 1000ms linear -767ms paused, ...}}
-        var css_animation_funcs = (0, _keys2.default)(state.animation).filter(function (key) {
-            return state.animation[key] !== null;
-        }).sort(function (a, b) {
-            return state.animation[a].order - state.animation[b].order;
-        }) // deterministic ordering
-        .map(function (key) {
-            return css_animation_str(state.animation[key]);
-        });
-
-        state = (0, _extends3.default)({}, state, {
-            animation: css_animation_funcs.join(', ')
-        });
-    }
-    if (state && state.transform) {
-        // flatten transforms from a dict to a string
-        // converts {style: {transform: {translate: {left: '0px', top: '10px'}, rotate: '10deg'}}}
-        //      =>  {style: {transform: 'translate(0px, 10px) rotate(10deg)'}}
-        var css_transform_funcs = (0, _keys2.default)(state.transform).filter(function (key) {
-            return state.transform[key] !== null;
-        }).sort(function (a, b) {
-            return state.transform[a].order - state.transform[b].order;
-        }) // deterministic ordering
-        .map(function (key) {
-            return css_transform_str[key](state.transform[key]);
-        });
-
-        state = (0, _extends3.default)({}, state, {
-            transform: css_transform_funcs.join(' ')
-        });
-    }
-    if ((typeof state === 'undefined' ? 'undefined' : (0, _typeof3.default)(state)) === 'object' && !(state.animations || state.transform)) {
-        // recurse down if value is a dictionary
-        return (0, _keys2.default)(state).reduce(function (acc, key) {
-            acc[key] = flattenStyles(state[key]);
-            return acc;
-        }, {});
-    }
-    return state;
-};
-
 var computeAnimatedState = exports.computeAnimatedState = function computeAnimatedState(anim_queue, current_timestamp) {
     var last_timestamp = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
     last_timestamp = last_timestamp === null ? current_timestamp : last_timestamp;
 
-    var active_animations = activeAnimations(anim_queue, current_timestamp, last_timestamp);
+    var active_animations = activeAnimations(anim_queue, current_timestamp, last_timestamp, false);
     var patches = [];
 
     var _iteratorNormalCompletion3 = true;
@@ -44672,7 +44563,7 @@ var computeAnimatedState = exports.computeAnimatedState = function computeAnimat
 
             try {
                 var delta = current_timestamp - animation.start_time;
-                patches.push({ 'path': animation.path, 'value': animation.tick(delta) });
+                patches.push({ 'split_path': animation.split_path, 'value': animation.tick(delta) });
             } catch (e) {
                 console.log(animation.type, 'Animation tick function threw an exception:', e.message, animation);
             }
@@ -44692,7 +44583,7 @@ var computeAnimatedState = exports.computeAnimatedState = function computeAnimat
         }
     }
 
-    return flattenStyles((0, _util.applyPatches)({}, patches));
+    return (0, _util.applyPatches)({}, patches);
 };
 
 // limit anim_queue to max_time_travel length
@@ -44715,15 +44606,6 @@ var trimmedAnimationQueue = function trimmedAnimationQueue(anim_queue, max_time_
         return new_queue;
     }
     return anim_queue;
-};
-
-// Set start_time to now if it's undefined
-var startTimeOrNow = function startTimeOrNow(anim_queue) {
-    return anim_queue.map(function (anim) {
-        return (0, _extends3.default)({}, anim, {
-            start_time: anim.start_time === undefined ? new Date().getTime() : anim.start_time
-        });
-    });
 };
 
 var initial_state = exports.initial_state = {
@@ -44753,18 +44635,29 @@ var animations = exports.animations = function animations() {
 
         case 'ANIMATE':
             var anim_objs = void 0;
+            // validate new animations are correctly typed
             if (action.animation && !action.animations) {
+                // if single animation
                 (0, _util.checkIsValidAnimation)(action.animation);
                 anim_objs = action.animation;
             } else if (action.animations && !action.animation) {
+                // if animation sequence
                 (0, _util.checkIsValidSequence)(action.animations);
                 anim_objs = (0, _util.flattened)(action.animations);
             } else {
                 console.log('%cINVALID ANIMATE ACTION:', action);
-                throw 'ANIMATE action must be passed either animations: [[], [], ...] or animation: [{}, {}, ...]';
+                throw 'ANIMATE action must be passed either animations: [[{}, {}, ...], [...], ...] or animation: [{}, {}, ...]';
             }
+            // trim queue to max_time_travel length
             var trimmed_queue = trimmedAnimationQueue(state.queue, state.max_time_travel);
-            var new_animation_objs = startTimeOrNow(anim_objs);
+            // add any missing fields
+            var new_animation_objs = anim_objs.map(function (anim) {
+                return (0, _extends3.default)({}, anim, {
+                    split_path: anim.path.split('/').slice(1), // .split is expensive to do later, saves CPU on each TICK
+                    start_time: anim.start_time === undefined ? // set to now if start_time is not provided
+                    new Date().getTime() : anim.start_time
+                });
+            });
             return (0, _extends3.default)({}, state, {
                 queue: [].concat((0, _toConsumableArray3.default)(trimmed_queue), (0, _toConsumableArray3.default)(new_animation_objs))
             });
@@ -44793,7 +44686,7 @@ var animations = exports.animations = function animations() {
     }
 };
 
-},{"./util.js":525,"babel-runtime/core-js/get-iterator":3,"babel-runtime/core-js/object/keys":10,"babel-runtime/core-js/set":13,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/toConsumableArray":24,"babel-runtime/helpers/typeof":25}],524:[function(require,module,exports){
+},{"./util.js":525,"babel-runtime/core-js/get-iterator":3,"babel-runtime/core-js/set":13,"babel-runtime/helpers/extends":19,"babel-runtime/helpers/toConsumableArray":24}],524:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -44908,7 +44801,7 @@ var AnimationStateVisualizer = exports.AnimationStateVisualizer = (0, _reactRedu
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.setDifference = exports.setIntersection = exports.flattened = exports.flipObj = exports.deepCopy = exports.range = exports.mod = exports.EasingFunctions = exports.checkIsValidSequence = exports.checkIsValidAnimation = undefined;
+exports.flattenStyles = exports.setDifference = exports.setIntersection = exports.flattened = exports.flipObj = exports.deepCopy = exports.range = exports.mod = exports.EasingFunctions = exports.checkIsValidSequence = exports.checkIsValidAnimation = undefined;
 
 var _set = require('babel-runtime/core-js/set');
 
@@ -45129,14 +45022,14 @@ var setDifference = exports.setDifference = function setDifference(set1, set2) {
 
 var base_types = ['string', 'number', 'boolean', 'symbol', 'function'];
 function isBaseType(item) {
-    var arrays = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+    var array_is_basetype = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
     // false if item is a dict, true for everything else
     if (item === null || item === undefined) {
         return true;
     } else if (base_types.indexOf(typeof item === 'undefined' ? 'undefined' : (0, _typeof3.default)(item)) != -1) {
         return true;
-    } else if (arrays && Array.isArray(item)) {
+    } else if (array_is_basetype && Array.isArray(item)) {
         return true;
     }
     return false;
@@ -45182,14 +45075,22 @@ function deepMerge(obj1, obj2) {
 
 function select(obj, selector) {
     // ({a: {b: 2}}, '/a/b') => 2                   Get obj at specified addr (works with array indicies)
-    if (selector === '/') return obj;
-    if (selector[0] !== '/') throw 'Invalid selector! ' + selector;
+    var keys = void 0;
+    if (typeof selector === 'string') {
+        if (selector === '/') return obj;
+        if (selector[0] !== '/') throw 'Invalid selector! ' + selector;
+        keys = selector.split('/').slice(1);
+    } else if (Array.isArray(selector)) {
+        keys = selector;
+    } else {
+        throw 'Invalid selector, must be string /path or array of keys! ' + selector;
+    }
     var _iteratorNormalCompletion2 = true;
     var _didIteratorError2 = false;
     var _iteratorError2 = undefined;
 
     try {
-        for (var _iterator2 = (0, _getIterator3.default)(selector.split('/').slice(1)), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+        for (var _iterator2 = (0, _getIterator3.default)(keys), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
             var key = _step2.value;
 
             obj = obj[key];
@@ -45218,13 +45119,20 @@ function patch(obj, selector, new_val) {
     var deepcopy = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : true;
 
     // ({a: {b: 2}}, '/a/b', 4) => {a: {b: 4}}      Set obj at specified addr (works with array indicies)
-    if (selector === '/') return new_val;
-    if (!selector || selector[0] !== '/') throw 'Invalid selector! ' + selector;
-    var keys = selector.split('/').slice(1);
+    var keys = void 0;
+    if (typeof selector === 'string') {
+        if (selector === '/') return new_val;
+        if (!selector || selector[0] !== '/') throw 'Invalid selector! ' + selector;
+        keys = selector.split('/').slice(1);
+    } else if (Array.isArray(selector)) {
+        keys = [].concat((0, _toConsumableArray3.default)(selector));
+    } else {
+        throw 'Invalid selector, must be string /path or array of keys! ' + selector;
+    }
     var last_key = keys.pop();
     if (last_key == '') {
         console.log({ obj: obj, selector: selector, new_val: new_val, merge: merge, mkpath: mkpath });
-        throw 'Patch paths must not have trailing slashes!';
+        throw 'Patch paths must not have trailing slashes or empty keys!';
     }
     var parent = obj;
     var _iteratorNormalCompletion3 = true;
@@ -45264,58 +45172,76 @@ function patch(obj, selector, new_val) {
     return deepcopy ? $.extend(true, {}, obj) : obj;
 }
 
-function applyPatches(obj, patches) {
-    var output = {};
-    // debugger
+var css_transform_str = {
+    scale: function scale(_scale) {
+        return 'scale(' + _scale + ')';
+    },
+    perspective: function perspective(px) {
+        return 'perspective(' + px + ')';
+    },
+    translate: function translate(_ref) {
+        var left = _ref.left,
+            top = _ref.top;
+        return 'translate(' + left + ', ' + top + ')';
+    },
+    translate3d: function translate3d(_ref2) {
+        var x = _ref2.x,
+            y = _ref2.y,
+            z = _ref2.z;
+        return 'translate3d(' + x + ', ' + y + ', ' + z + ')';
+    },
+    rotate: function rotate(rotation) {
+        return 'rotate(' + rotation + ')';
+    },
+    rotate3d: function rotate3d(_ref3) {
+        var x = _ref3.x,
+            y = _ref3.y,
+            z = _ref3.z;
+        return 'rotate3d(' + x + ', ' + y + ', ' + z + ')';
+    },
+    skew: function skew(_ref4) {
+        var x = _ref4.x,
+            y = _ref4.y;
+        return 'skew(' + x + ', ' + y + ')';
+    },
+    scale3d: function scale3d(_ref5) {
+        var x = _ref5.x,
+            y = _ref5.y,
+            z = _ref5.z;
+        return 'scale3d(' + x + ', ' + y + ', ' + z + ')';
+    }
+    // TODO: add more css transform types?
+};
+
+var css_animation_str = function css_animation_str(_ref6) {
+    var name = _ref6.name,
+        duration = _ref6.duration,
+        curve = _ref6.curve,
+        delay = _ref6.delay,
+        playState = _ref6.playState;
+    return name + ' ' + duration + 'ms ' + curve + ' -' + delay + 'ms ' + playState;
+};
+
+var flattenTransform = function flattenTransform(transform) {
+    // WARNING: optimized code, do not convert to map() without profiling
+    // flatten transforms from a dict to a string
+    // converts {style: {transform: {translate: {left: '0px', top: '10px'}, rotate: '10deg'}}}
+    //      =>  {style: {transform: 'translate(0px, 10px) rotate(10deg)'}}
+    var transform_funcs = (0, _keys2.default)(transform).sort(function (a, b) {
+        return transform[a].order - transform[b].order;
+    }); // deterministic ordering via order: key
+
+    var css_transform_funcs = [];
     var _iteratorNormalCompletion4 = true;
     var _didIteratorError4 = false;
     var _iteratorError4 = undefined;
 
     try {
-        for (var _iterator4 = (0, _getIterator3.default)(patches), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-            var _patch = _step4.value;
+        for (var _iterator4 = (0, _getIterator3.default)(transform_funcs), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var key = _step4.value;
 
-            if (_patch.path[0] !== '/') throw 'Invalid path found! ' + _patch.path;
-
-            // deepcopy to prevent later patches from mutating previous object values
-            var patch_val = _patch.value;
-            if (patch_val !== null && (typeof patch_val === 'undefined' ? 'undefined' : (0, _typeof3.default)(patch_val)) === 'object') {
-                patch_val = $.extend(true, {}, patch_val);
-            }
-
-            var keys = _patch.path.split('/').slice(1);
-            var final_key = keys.pop();
-            // get to the end of the list of paths
-            var parent = output;
-            var _iteratorNormalCompletion5 = true;
-            var _didIteratorError5 = false;
-            var _iteratorError5 = undefined;
-
-            try {
-                for (var _iterator5 = (0, _getIterator3.default)(keys), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                    var key = _step5.value;
-
-                    if (parent[key] === undefined || parent[key] === null || isBaseType(parent[key], false)) {
-                        parent[key] = {};
-                    }
-                    parent = parent[key];
-                }
-            } catch (err) {
-                _didIteratorError5 = true;
-                _iteratorError5 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                        _iterator5.return();
-                    }
-                } finally {
-                    if (_didIteratorError5) {
-                        throw _iteratorError5;
-                    }
-                }
-            }
-
-            parent[final_key] = patch_val;
+            if (transform[key] === null) continue;
+            css_transform_funcs.push(css_transform_str[key](transform[key]));
         }
     } catch (err) {
         _didIteratorError4 = true;
@@ -45332,7 +45258,185 @@ function applyPatches(obj, patches) {
         }
     }
 
+    return css_transform_funcs.join(' ');
+};
+
+var flattenAnimation = function flattenAnimation(animation) {
+    // WARNING: optimized code, do not convert to map() without profiling
+    // flatten animations from a dict to a string
+    // converts {style: {animations: {blinker: {name: blinker, duration: 1000, curve: 'linear', delay: 767}, ...}}}
+    //      =>  {style: {animation: blinker 1000ms linear -767ms paused, ...}}
+    var animation_funcs = (0, _keys2.default)(animation).sort(function (a, b) {
+        return animation[a].order - animation[b].order;
+    }); // deterministic ordering via order: key
+
+    var css_animation_funcs = [];
+    var _iteratorNormalCompletion5 = true;
+    var _didIteratorError5 = false;
+    var _iteratorError5 = undefined;
+
+    try {
+        for (var _iterator5 = (0, _getIterator3.default)(animation_funcs), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var key = _step5.value;
+
+            if (transform[key] === null) continue;
+            css_animation_funcs.push(css_animation_str(animation[key]));
+        }
+    } catch (err) {
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                _iterator5.return();
+            }
+        } finally {
+            if (_didIteratorError5) {
+                throw _iteratorError5;
+            }
+        }
+    }
+
+    return css_animation_funcs.join(', ');
+};
+
+var flattenIfNotFlattened = function flattenIfNotFlattened(state, path, flatten_func) {
+    var state_slice = select(state, path);
+    if (typeof state_slice !== 'string') {
+        patch(state, path, flatten_func(state_slice), false, false, false);
+    }
+};
+
+var flattenStyles = exports.flattenStyles = function flattenStyles(state, paths_to_flatten) {
+    // WARNING: highly optimized code, profile before changing anything
+    // this converts the styles stored as dicts in the state tree, to the strings
+    // that react components expect as CSS style values
+    var _iteratorNormalCompletion6 = true;
+    var _didIteratorError6 = false;
+    var _iteratorError6 = undefined;
+
+    try {
+        for (var _iterator6 = (0, _getIterator3.default)(paths_to_flatten), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+            var path = _step6.value;
+
+            var transform_idx = path.lastIndexOf('transform');
+            if (transform_idx != -1) {
+                var path_to_transform = path.slice(0, transform_idx + 1);
+                flattenIfNotFlattened(state, path_to_transform, flattenTransform);
+                continue;
+            }
+            var animation_idx = path.lastIndexOf('animation');
+            if (animation_idx != -1) {
+                var path_to_animation = path.slice(0, animation_idx + 1);
+                flattenIfNotFlattened(state, path_to_animation, flattenAnimation);
+                continue;
+            }
+        }
+    } catch (err) {
+        _didIteratorError6 = true;
+        _iteratorError6 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                _iterator6.return();
+            }
+        } finally {
+            if (_didIteratorError6) {
+                throw _iteratorError6;
+            }
+        }
+    }
+
+    return state;
+};
+
+var shouldFlatten = function shouldFlatten(split_path) {
+    // WARNING: highly optimized code, profile before changing anything
+    // check to see if a given path introduces some CSS state that needs to be
+    // converted from an object to a css string, e.g. {style: transform: translate: {top: 0, left: 0}}
+    var style_key = split_path.lastIndexOf('style');
+    return style_key != -1 && (split_path[style_key + 1] == 'transform' || split_path[style_key + 1] == 'animation');
+};
+
+function applyPatches(obj, patches) {
+    var flatten_styles = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+    // WARNING: highly optimized code, profile before changing anything
+    var output = {};
+    var paths_to_flatten = [];
+
+    // O(n) application of patches onto a single object
+    var _iteratorNormalCompletion7 = true;
+    var _didIteratorError7 = false;
+    var _iteratorError7 = undefined;
+
+    try {
+        for (var _iterator7 = (0, _getIterator3.default)(patches), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+            var _patch = _step7.value;
+
+            // deepcopy to prevent later patches from mutating previous object values
+            var patch_val = _patch.value;
+            if (patch_val !== null && (typeof patch_val === 'undefined' ? 'undefined' : (0, _typeof3.default)(patch_val)) === 'object') {
+                // unfortunately this is not very optimizable since dont know
+                // the structure beforehand. Do not use JSON.stringify+parse because
+                // Date, function, and Infinity objects dont get safely converted.
+                // jQuery is significantly faster than lodash cloneDeep
+                patch_val = $.extend(true, {}, patch_val);
+            }
+            var keys = [].concat((0, _toConsumableArray3.default)(_patch.split_path));
+
+            if (flatten_styles && shouldFlatten(keys)) paths_to_flatten.push(keys);
+
+            var final_key = keys.pop();
+            // get to the end of the list of paths
+            var parent = output;
+            var _iteratorNormalCompletion8 = true;
+            var _didIteratorError8 = false;
+            var _iteratorError8 = undefined;
+
+            try {
+                for (var _iterator8 = (0, _getIterator3.default)(keys), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+                    var key = _step8.value;
+
+                    if (parent[key] === undefined || parent[key] === null || isBaseType(parent[key], false)) {
+                        parent[key] = {};
+                    }
+                    parent = parent[key];
+                }
+            } catch (err) {
+                _didIteratorError8 = true;
+                _iteratorError8 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion8 && _iterator8.return) {
+                        _iterator8.return();
+                    }
+                } finally {
+                    if (_didIteratorError8) {
+                        throw _iteratorError8;
+                    }
+                }
+            }
+
+            parent[final_key] = patch_val;
+        }
+    } catch (err) {
+        _didIteratorError7 = true;
+        _iteratorError7 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                _iterator7.return();
+            }
+        } finally {
+            if (_didIteratorError7) {
+                throw _iteratorError7;
+            }
+        }
+    }
+
+    if (flatten_styles) return flattenStyles(output, paths_to_flatten);
     return output;
 }
 
-},{"babel-runtime/core-js/get-iterator":3,"babel-runtime/core-js/object/keys":10,"babel-runtime/core-js/set":13,"babel-runtime/helpers/toConsumableArray":24,"babel-runtime/helpers/typeof":25,"babel-runtime/regenerator":26}]},{},[1]);
+},{"babel-runtime/core-js/get-iterator":3,"babel-runtime/core-js/object/keys":10,"babel-runtime/core-js/set":13,"babel-runtime/helpers/toConsumableArray":24,"babel-runtime/helpers/typeof":25,"babel-runtime/regenerator":137}]},{},[1]);

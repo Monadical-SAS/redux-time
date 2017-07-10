@@ -152,7 +152,7 @@ export function select(obj, selector) {
     } else if (Array.isArray(selector)) {
         keys = selector
     } else {
-        throw `Invalid selector type! ${selector}`
+        throw `Invalid selector, must be string /path or array of keys! ${selector}`
     }
     for (let key of keys) {
         obj = obj[key]
@@ -168,14 +168,14 @@ export function patch(obj, selector, new_val, merge=false, mkpath=false, deepcop
         if (!selector || selector[0] !== '/') throw `Invalid selector! ${selector}`
         keys = selector.split('/').slice(1)
     } else if (Array.isArray(selector)) {
-        keys = selector
+        keys = [...selector]
     } else {
-        throw `Invalid selector type! ${selector}`
+        throw `Invalid selector, must be string /path or array of keys! ${selector}`
     }
     const last_key = keys.pop()
     if (last_key == '') {
         console.log({obj, selector, new_val, merge, mkpath})
-        throw 'Patch paths must not have trailing slashes!'
+        throw 'Patch paths must not have trailing slashes or empty keys!'
     }
     let parent = obj
     for (let key of keys) {
@@ -210,27 +210,35 @@ const css_animation_str = ({name, duration, curve, delay, playState}) =>
     `${name} ${duration}ms ${curve} -${delay}ms ${playState}`
 
 const flattenTransform = (transform) => {
+    // WARNING: optimized code, do not convert to map() without profiling
     // flatten transforms from a dict to a string
     // converts {style: {transform: {translate: {left: '0px', top: '10px'}, rotate: '10deg'}}}
     //      =>  {style: {transform: 'translate(0px, 10px) rotate(10deg)'}}
-    const css_transform_funcs = Object.keys(transform)
-        .filter(key => transform[key] !== null)
-        .sort((a, b) => transform[a].order - transform[b].order)  // deterministic ordering via order: key
-        .map(key =>
-            css_transform_str[key](transform[key]))
+    const transform_funcs = Object.keys(transform).sort((a, b) =>
+        transform[a].order - transform[b].order)  // deterministic ordering via order: key
+
+    let css_transform_funcs = []
+    for (let key of transform_funcs) {
+        if (transform[key] === null) continue
+        css_transform_funcs.push(css_transform_str[key](transform[key]))
+    }
 
     return css_transform_funcs.join(' ')
 }
 
 const flattenAnimation = (animation) => {
+    // WARNING: optimized code, do not convert to map() without profiling
     // flatten animations from a dict to a string
     // converts {style: {animations: {blinker: {name: blinker, duration: 1000, curve: 'linear', delay: 767}, ...}}}
     //      =>  {style: {animation: blinker 1000ms linear -767ms paused, ...}}
-    const css_animation_funcs = Object.keys(animation)
-        .filter(key => animation[key] !== null)
-        .sort((a, b) => animation[a].order - animation[b].order)  // deterministic ordering via order: key
-        .map(key =>
-            css_animation_str(animation[key]))
+    const animation_funcs = Object.keys(animation).sort((a, b) =>
+        animation[a].order - animation[b].order)  // deterministic ordering via order: key
+
+    let css_animation_funcs = []
+    for (let key of animation_funcs) {
+        if (transform[key] === null) continue
+        css_animation_funcs.push(css_animation_str(animation[key]))
+    }
 
     return css_animation_funcs.join(', ')
 }
@@ -265,6 +273,7 @@ export const flattenStyles = (state, paths_to_flatten) => {
 }
 
 const shouldFlatten = (split_path) => {
+    // WARNING: highly optimized code, profile before changing anything
     // check to see if a given path introduces some CSS state that needs to be
     // converted from an object to a css string, e.g. {style: transform: translate: {top: 0, left: 0}}
     const style_key = split_path.lastIndexOf('style')
