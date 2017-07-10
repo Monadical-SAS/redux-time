@@ -1,4 +1,11 @@
-import {applyPatches, reversed} from './util.js'
+import {
+    applyPatches,
+    flattenStyles,
+    reversed,
+    flattened,
+    checkIsValidAnimation,
+    checkIsValidSequence,
+} from './util.js'
 
 
 export const pastAnimations = (anim_queue, timestamp) =>
@@ -60,8 +67,12 @@ export const uniqueAnimations = (anim_queue) => {
     return uniq_anims.reverse()
 }
 
-export const activeAnimations = (anim_queue, current_timestamp, last_timestamp) =>
-    uniqueAnimations(sortedAnimations(currentAnimations(anim_queue, current_timestamp, last_timestamp)))
+export const activeAnimations = (anim_queue, current_timestamp, last_timestamp, uniqueify=true) => {
+    const anims = sortedAnimations(currentAnimations(anim_queue, current_timestamp, last_timestamp))
+    if (uniqueify)
+        return uniqueAnimations(anims)
+    return anims
+}
 
 
 // window.parentExists = parentExists
@@ -189,34 +200,39 @@ export const animations = (state=initial_state, action) => {
                     state.last_timestamp,
                 )
             }
-        case 'ADD_ANIMATION':
-            let queue = state.queue
-            if (queue.length > state.max_time_travel) {
-                // console.log(
-                //     '%c[i] Trimmed old animations from animations.queue', 'color:orange',
-                //     `(queue was longer than ${state.max_time_travel} items)`
-                // )
-                queue = trimmedAnimationQueue(queue, state.max_time_travel)
-            }
-            let new_animations
-            if (Array.isArray(action.animations))
-                new_animations = action.animations
-            else if (Array.isArray(action.animation))
-                new_animations = action.animation
-            else if (action.animation)
-                new_animations = [action.animation]
-            else
-                throw 'action.animation is missing!'
 
-            // Set start_time to now if it's undefined
-            new_animations = new_animations.map(anim => ({
+        case 'ANIMATE':
+            let anim_objs
+            // validate new animations are correctly typed
+            if (action.animation && !action.animations) {
+                // if single animation
+                checkIsValidAnimation(action.animation)
+                anim_objs = action.animation
+            } else if (action.animations && !action.animation) {
+                // if animation sequence
+                checkIsValidSequence(action.animations)
+                anim_objs = flattened(action.animations)
+            } else {
+                console.log('%cINVALID ANIMATE ACTION:', action)
+                throw 'ANIMATE action must be passed either animations: [[{}, {}, ...], [...], ...] or animation: [{}, {}, ...]'
+            }
+            // trim queue to max_time_travel length
+            const trimmed_queue = trimmedAnimationQueue(
+                state.queue,
+                state.max_time_travel,
+            )
+            // add any missing fields
+            const new_animation_objs = anim_objs.map(anim => ({
                 ...anim,
-                start_time: anim.start_time === undefined ?
+                split_path: anim.path.split('/').slice(1),   // .split is expensive to do later, saves CPU on each TICK
+                start_time: anim.start_time === undefined ?  // set to now if start_time is not provided
                     (new Date).getTime()
                   : anim.start_time
             }))
-
-            return {...state, queue: [...queue, ...new_animations]}
+            return {
+                ...state,
+                queue: [...trimmed_queue, ...new_animation_objs],
+            }
 
         case 'SET_ANIMATION_SPEED':
             return {...state, speed: action.speed, last_timestamp: state.current_timestamp}

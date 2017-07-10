@@ -120,11 +120,11 @@ const BallComponent = ({ball, queue, animateBallBounce, animateBallFollow, getTi
 const mapStateToProps = ({animations}) => ({ball: animations.state.ball})
 const mapDispatchToProps = (dispatch) => ({
     animateBallBounce: (start_time) => {
-        dispatch({type: 'ADD_ANIMATION', animation: BOUNCE_ANIMATION(start_time)})
+        dispatch({type: 'ANIMATE', animations: BOUNCE_ANIMATIONS(start_time)})
     },
     animateBallFollow: (e) => {
         e.preventDefault()
-        dispatch({type: 'ADD_ANIMATION', animation: FOLLOW_ANIMATION()})
+        dispatch({type: 'ANIMATE', animations: FOLLOW_ANIMATIONS()})
     },
 })
 

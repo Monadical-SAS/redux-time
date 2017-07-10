@@ -1,4 +1,12 @@
-import {EasingFunctions, mod, range} from './util.js'
+import {
+    mod,
+    range,
+    flattened,
+    checkIsValidAnimation,
+    checkIsValidSequence,
+    EasingFunctions,
+} from './util.js'
+
 
 const unit_tick = ({start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null}, key) => {
     var {start_state, amt, end_state} = checked_animation_amt({start_state, end_state, amt, key})
@@ -90,17 +98,19 @@ const checked_animation_amt = ({key, start_state, end_state, amt}) => {
     }
 }
 
-const KeyedAnimation = ({type, path, key, start_time, end_time, duration, start_state, end_state, amt, curve, unit}) => {
-    path = `${path}/${key}`
-    return Animate({
-        type, path, key,
-        start_time, end_time, duration,
+const KeyedAnimation = ({type, path, key, start_time, end_time, duration, start_state, end_state, amt, curve, unit}) =>
+    Animate({
+        type,
+        path: `${path}/${key}`,
+        key,
+        start_time,
+        end_time,
+        duration,
         start_state: start_state && start_state[key],
         end_state: end_state && end_state[key],
         amt: amt && amt[key],
         curve, unit,
     })
-}
 
 
 export const Become = ({path, state, start_time, end_time=Infinity, duration=Infinity}) => {
@@ -111,20 +121,22 @@ export const Become = ({path, state, start_time, end_time=Infinity, duration=Inf
         console.log({path, state, start_time, end_time, duration})
         throw 'Become animation must have a start_time and path defined.'
     }
-    return {
-        type: 'BECOME',
-        path,
-        state,
-        start_time,
-        end_time,
-        duration,
-        tick: (delta) => {
-            if ((start_time + delta) >= start_time && delta < duration)
-                return state
-            else
-                return undefined
+    return [
+        {
+            type: 'BECOME',
+            path,
+            state,
+            start_time,
+            end_time,
+            duration,
+            tick: (delta) => {
+                if ((start_time + delta) >= start_time && delta < duration)
+                    return state
+                else
+                    return undefined
+            },
         },
-    }
+    ]
 }
 
 export const Animate = ({type, path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null, tick=null}) => {
@@ -161,7 +173,7 @@ export const Animate = ({type, path, start_time, end_time, duration, start_state
     }
 
     // console.log(animation.type, animation)
-    return animation
+    return [animation]
 }
 
 export const AnimateCSS = ({name, path, start_time, end_time, duration=1000, curve='linear'}) => {
@@ -215,47 +227,67 @@ export const Translate = ({path, start_time, end_time, duration=1000, start_stat
 }
 
 export const TranslateTo = ({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'}) => {
-    path = `${path}/style`
-    const anims = []
+    let anims = []
     if (start_state.left || end_state.left || amt.left) {
-        anims.push(KeyedAnimation({
-            type: 'TRANSLATE_TO_LEFT',
-            path,
-            key: 'left',
-            start_time, end_time, duration,
-            start_state, end_state, amt,
-            curve, unit,
-        }))
+        anims = [
+            ...KeyedAnimation({
+                type: 'TRANSLATE_TO_LEFT',
+                path: `${path}/style`,
+                key: 'left',
+                start_time, end_time, duration,
+                start_state, end_state, amt,
+                curve, unit,
+            })
+        ]
     }
     if (start_state.top || end_state.top || amt.top) {
-        anims.push(KeyedAnimation({
-            type: 'TRANSLATE_TO_TOP',
-            path,
-            key: 'top',
-            start_time, end_time, duration,
-            start_state, end_state, amt,
-            curve, unit,
-        }))
+        anims = [
+            ...anims,
+            ...KeyedAnimation({
+                type: 'TRANSLATE_TO_TOP',
+                path: `${path}/style`,
+                key: 'top',
+                start_time, end_time, duration,
+                start_state, end_state, amt,
+                curve, unit,
+            })
+        ]
     }
     return anims
 }
 
-export const Opacity = ({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null}) => {
-    path = `${path}/style/opacity`
-    const type = 'OPACITY'
-    return Animate({type, path, start_time, end_time, duration, start_state, end_state, amt, curve, unit})
-}
+export const Opacity = ({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null}) =>
+    Animate({
+        type: 'OPACITY',
+        path: `${path}/style/opacity`,
+        start_time,
+        end_time,
+        duration,
+        start_state,
+        end_state,
+        amt,
+        curve,
+        unit,
+    })
 
-export const Rotate = ({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit='deg'}) => {
-    path = `${path}/style/transform/rotate`
-    const type = 'ROTATE'
-    return Animate({type, path, start_time, end_time, duration, start_state, end_state, amt, curve, unit})
-}
+export const Rotate = ({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit='deg'}) =>
+    Animate({
+        type: 'ROTATE',
+        path: `${path}/style/transform/rotate`,
+        start_time,
+        end_time,
+        duration,
+        start_state,
+        end_state,
+        amt,
+        curve,
+        unit,
+    })
 
 // repeat a single animation (which may be composed of several objects)
-export const Repeat = (animations, repeat=Infinity) => {
-    if (!Array.isArray(animations)) animations = [animations]
-    return animations.map(anim => {
+export const Repeat = (animation, repeat=Infinity) => {
+    checkIsValidAnimation(animation)
+    return flattened(animation).map(anim => {
         let {tick, start_time, duration} = anim
         if (start_time === undefined) start_time = (new Date).getTime()
         const repeated_tick = (delta) => tick(mod(delta, duration))
@@ -270,9 +302,9 @@ export const Repeat = (animations, repeat=Infinity) => {
 }
 
 // reverse a single animation (which may be composed of several objects)
-export const Reverse = (animations) => {
-    if (!Array.isArray(animations)) animations = [animations]
-    return animations.map(anim => {
+export const Reverse = (animation) => {
+    checkIsValidAnimation(animation)
+    return flattened(animation).map(anim => {
         let {tick, start_time, duration} = anim
         if (start_time === undefined) start_time = (new Date).getTime()
         return {
@@ -291,25 +323,32 @@ export const Reverse = (animations) => {
 
 // make each animation in a sequence start after the last one ends
 export const Sequential = (animations, start_time) => {
+    checkIsValidSequence(animations)
     if (start_time === undefined) start_time = (new Date).getTime()
     const seq = []
     let last_end = start_time
-    for (let animation of animations) {
-        seq.push({
-            ...animation,
-            start_time: last_end,
-            end_time: last_end + animation.duration,
-        })
-        last_end = animation.duration == Infinity ?
-            last_end + 1
-          : last_end + animation.duration
+    for (let animation_set of animations) {
+        const single_anim = []
+        for (let animation of animation_set) {
+            single_anim.push({
+                ...animation,
+                start_time: last_end,
+                end_time: last_end + animation.duration,
+            })
+            last_end = animation.duration == Infinity ?
+                last_end + 1
+              : last_end + animation.duration
+        }
+        seq.push(single_anim)
     }
+    checkIsValidSequence(seq)
     return seq
 }
 
 // repeat a sequential list of animations
 export const RepeatSequence = (animations, repeat, start_time) => {
-    if (!Array.isArray(animations)) animations = [animations]
+    checkIsValidSequence(animations)
+
     const repeated = range(repeat).reduce((acc, val) => {
         return acc = [...acc, ...animations]
     }, [])

@@ -47,35 +47,35 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch({type: 'CLEAR_ANIMATIONS'})
     },
     animateFirstState: (start_time) => {
-        dispatch({type: 'ADD_ANIMATION', animation: Become({
+        dispatch({type: 'ANIMATE', animation: Become({
             path: '/test_state/text',
             state: '1st state',
             start_time,
         })})
     },
     animateSecondState: (start_time) => {
-        dispatch({type: 'ADD_ANIMATION', animation: Become({
+        dispatch({type: 'ANIMATE', animation: Become({
             path: '/test_state/text',
             state: '2nd state',
             start_time,
         })})
     },
     animateGreen: (start_time) => {
-        dispatch({type: 'ADD_ANIMATION', animation: Become({
+        dispatch({type: 'ANIMATE', animation: Become({
             path: '/test_state/style/color',
             state: 'green',
             start_time,
         })})
     },
     animateRed: (start_time) => {
-        dispatch({type: 'ADD_ANIMATION', animation: Become({
+        dispatch({type: 'ANIMATE', animation: Become({
             path: '/test_state/style/color',
             state: 'red',
             start_time,
         })})
     },
     animateMove: (start_time) => {
-        dispatch({type: 'ADD_ANIMATION', animation: Translate({
+        dispatch({type: 'ANIMATE', animation: Translate({
             path: '/test_state',
             start_state: {top: 0, left: 0},
             end_state: {top: 100, left: 100},
@@ -85,7 +85,7 @@ const mapDispatchToProps = (dispatch) => ({
         })})
     },
     animateRotate: (start_time) => {
-        dispatch({type: 'ADD_ANIMATION', animation: Repeat(Animate({
+        const Spin = Animate({
             path: '/test_state/style/transform/rotate',
             start_state: 0,
             end_state: 360,
@@ -93,10 +93,11 @@ const mapDispatchToProps = (dispatch) => ({
             curve: 'linear',
             unit: 'deg',
             start_time,
-        }), 3)})
+        })
+        dispatch({type: 'ANIMATE', animation: Repeat(Spin, 3)})
     },
     animatePulse: (start_time) => {
-        dispatch({type: 'ADD_ANIMATION', animation: AnimateCSS({
+        dispatch({type: 'ANIMATE', animation: AnimateCSS({
             path: '/test_state',
             name: 'pulse',
             duration: 2000,
@@ -104,15 +105,16 @@ const mapDispatchToProps = (dispatch) => ({
         })})
     },
     animateBlink: (start_time) => {
-        dispatch({type: 'ADD_ANIMATION', animation: Repeat(AnimateCSS({
+        const Blink = AnimateCSS({
             path: '/test_state',
             name: 'blinker',
             duration: 1000,
             start_time,
-        }), Infinity)})
+        })
+        dispatch({type: 'ANIMATE', animation: Repeat(Blink, Infinity)})
     },
     animateBlinkStop: (start_time) => {
-        dispatch({type: 'ADD_ANIMATION', animation: Become({
+        dispatch({type: 'ANIMATE', animation: Become({
             path: '/test_state/style/animation/blinker',
             state: null,
             start_time,

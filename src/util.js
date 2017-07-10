@@ -1,3 +1,43 @@
+export const checkIsValidAnimation = (animation) => {
+    if (!Array.isArray(animation)) {
+        console.log('%cINVALID ANIMATION:', 'color:red', animation)
+        console.log('Got something other than an array.')
+        throw 'Animation must be passed in as an array of Animation objects!'
+    }
+    if (animation.length && Array.isArray(animation[0])) {
+        console.log('%cINVALID ANIMATION:', 'color:red', animation)
+        console.log('Got double-nested animation array instead of just an array of objects.')
+        throw 'Animation must be passed in as an array of Animation objects!'
+    }
+    if (animation.length && !animation[0].path) {
+        console.log('%cINVALID ANIMATION :', 'color:red', animation)
+        console.log('Animations object is missing a path, is it a real animation?')
+        throw 'Animation must be passed in as an array of Animation objects!'
+    }
+}
+
+export const checkIsValidSequence = (animations) => {
+    if (!Array.isArray(animations)) {
+        console.log('%cINVALID ANIMATION SEQUENCE:', 'color:red', animations)
+        console.log('Got something other than an array.')
+        throw 'Animation sequence must be passed in as an array of Animation object arrays!'
+    }
+    if (animations.length && !Array.isArray(animations[0])) {
+        console.log('%cINVALID ANIMATION SEQUENCE:', 'color:red', animations)
+        console.log('Got an array of objects instead of an array of arrays.')
+        throw 'Animation sequence must be passed in as an array of Animation object arrays!'
+    }
+    if (animations.length && animations[0].length && Array.isArray(animations[0][0])) {
+        console.log('%cINVALID ANIMATION SEQUENCE:', 'color:red', animations)
+        console.log('Got triple-nested animations array instead of double-nested.')
+        throw 'Animation sequence must be passed in as an array of Animation object arrays!'
+    }
+    for (let animation of animations) {
+        checkIsValidAnimation(animation)
+    }
+    return true
+}
+
 export const EasingFunctions = {
     // no easing, no acceleration
     linear: (t) => (t),
@@ -54,13 +94,13 @@ export const setIntersection = (set1, set2) => [...set1].filter(x => set2.has(x)
 export const setDifference = (set1, set2) => [...set1].filter(x => !set2.has(x))
 
 const base_types = ['string', 'number', 'boolean', 'symbol', 'function']
-export function isBaseType(item, arrays=true) {
+export function isBaseType(item, array_is_basetype=true) {
     // false if item is a dict, true for everything else
     if (item === null || item === undefined) {
         return true
-    } else if (base_types.indexOf(typeof item) != -1) {
+    } else if (base_types.indexOf(typeof(item)) != -1) {
         return true
-    } else if (arrays && Array.isArray(item)) {
+    } else if (array_is_basetype && Array.isArray(item)) {
         return true
     }
     return false

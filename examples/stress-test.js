@@ -56,12 +56,11 @@ const ball_style = {
     width: 20,
     height: 20,
     borderRadius: 10,
-    zIndex: 10,
 }
 
 let num_balls = 0
 
-const ADD_BALLS_ANIMATION = (start_time, num) => {
+const ADD_BALLS_ANIMATIONS = (start_time, num) => {
     const width = window.innerWidth
     let new_anims = []
     range(num).map(idx => {
@@ -101,7 +100,7 @@ const mapStateToProps = ({animations}) => ({
 })
 const mapDispatchToProps = (dispatch) => ({
     addBalls: (start_time) => {
-        dispatch({type: 'ADD_ANIMATION', animation: ADD_BALLS_ANIMATION(start_time, 100)})
+        dispatch({type: 'ANIMATE', animations: ADD_BALLS_ANIMATIONS(start_time, 100)})
     },
 })
 

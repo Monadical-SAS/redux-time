@@ -65,7 +65,7 @@ const assert = (val, error_msg) => {
 
 
 // // ADDING STATE CHANGES
-// store.dispatch({type: 'ADD_ANIMATION', animation: Become({path: '/test/text', state: '2nd state', start_time})})
+// store.dispatch({type: 'ANIMATE', animation: Become({path: '/test/text', state: '2nd state', start_time})})
 // assert(store.getState().animations.queue.length == 1,                       'Animation was not added to queue.')
 
 
@@ -77,7 +77,7 @@ const assert = (val, error_msg) => {
 
 
 // // OVERLAPPING STATE CHANGES
-// store.dispatch({type: 'ADD_ANIMATION', animation: Become({path: '/test/text', state: '3rd state', start_time: start_time + 3})})
+// store.dispatch({type: 'ANIMATE', animation: Become({path: '/test/text', state: '3rd state', start_time: start_time + 3})})
 // assert(store.getState().animations.queue.length == 2,                       'Animation was not added to queue.')
 
 // store.dispatch({type: 'TICK', timestamp: start_time + 4})
@@ -87,7 +87,7 @@ const assert = (val, error_msg) => {
 
 
 // // ANIMATED STATE CHANGES
-// store.dispatch({type: 'ADD_ANIMATION', animation: Animate({path: '/test/text', start_state: 0, end_state: 100, start_time: start_time + 6, duration: 1000})})
+// store.dispatch({type: 'ANIMATE', animation: Animate({path: '/test/text', start_state: 0, end_state: 100, start_time: start_time + 6, duration: 1000})})
 // assert(store.getState().animations.queue.length == 3,                       'Animation was not added to queue.')
 // store.dispatch({type: 'TICK', timestamp: start_time + 7})
 // assert(animatedStore.getState().test.text > 0,                              '3rd State was not reset after Become.')
@@ -98,10 +98,10 @@ const assert = (val, error_msg) => {
 
 
 // // OVERLAPPING ANIMATED STATE CHANGES
-// store.dispatch({type: 'ADD_ANIMATION', animation: Become({path: '/test/text', state: 0, start_time: start_time + 2000})})
-// store.dispatch({type: 'ADD_ANIMATION', animation: Animate({path: '/test/text', start_state: 0, amt: 100, start_time: start_time + 2100, duration: 1000})})
-// store.dispatch({type: 'ADD_ANIMATION', animation: Animate({path: '/test/text', start_state: 200, amt: 100, start_time: start_time + 2200, duration: 2000})})
-// store.dispatch({type: 'ADD_ANIMATION', animation: Animate({path: '/test/text', start_state: 400, amt: 100, start_time: start_time + 2300, duration: 1000})})
+// store.dispatch({type: 'ANIMATE', animation: Become({path: '/test/text', state: 0, start_time: start_time + 2000})})
+// store.dispatch({type: 'ANIMATE', animation: Animate({path: '/test/text', start_state: 0, amt: 100, start_time: start_time + 2100, duration: 1000})})
+// store.dispatch({type: 'ANIMATE', animation: Animate({path: '/test/text', start_state: 200, amt: 100, start_time: start_time + 2200, duration: 2000})})
+// store.dispatch({type: 'ANIMATE', animation: Animate({path: '/test/text', start_state: 400, amt: 100, start_time: start_time + 2300, duration: 1000})})
 // store.dispatch({type: 'TICK', timestamp: start_time + 2050})
 // assert(animatedStore.getState().test.text == 0,                             'State 0 was not applied after Become.')
 // store.dispatch({type: 'TICK', timestamp: start_time + 2150})
@@ -117,7 +117,7 @@ const assert = (val, error_msg) => {
 
 
 // // REPEATED ANIMATIONS
-// store.dispatch({type: 'ADD_ANIMATION', animation: Repeat(Animate({path: '/test/text', start_state: 600, amt: 100, start_time: start_time + 5000, duration: 200}), 5)})
+// store.dispatch({type: 'ANIMATE', animation: Repeat(Animate({path: '/test/text', start_state: 600, amt: 100, start_time: start_time + 5000, duration: 200}), 5)})
 // store.dispatch({type: 'TICK', timestamp: start_time + 5050})
 // assert(animatedStore.getState().test.text > 600,                             'State 600-700 was not animated.')
 // store.dispatch({type: 'TICK', timestamp: start_time + 5500})
@@ -127,7 +127,7 @@ const assert = (val, error_msg) => {
 
 
 // // RUNLOOP MECHANICS
-// store.dispatch({type: 'ADD_ANIMATION', animation: Animate({path: '/test/text', start_state: 600, amt: 100, start_time: start_time + 8000, duration: 200})})
+// store.dispatch({type: 'ANIMATE', animation: Animate({path: '/test/text', start_state: 600, amt: 100, start_time: start_time + 8000, duration: 200})})
 // let queue = store.getState().animations.queue
 
 // assert(currentAnimations(queue, start_time + 7000).length > 0,               'currentAnimations was empty despite queued infinite animations.')
@@ -151,7 +151,7 @@ const assert = (val, error_msg) => {
 //     Rotate({path: '/test', start_time: start_time + 9000, duration: 1000, start_state: 0, end_state: 360}),
 //     Become({path: '/test/text', start_time: start_time + 10000, state: null}),
 // ]
-// seq.map((animation => store.dispatch({type: 'ADD_ANIMATION', animation})))
+// seq.map((animation => store.dispatch({type: 'ANIMATE', animation})))
 // queue = store.getState().animations.queue
 
 // assert(currentAnimations(queue, start_time + 9001).length == seq.length - 1,        'Queue was not the right length after adding several animations.')

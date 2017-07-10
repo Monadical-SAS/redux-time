@@ -99,7 +99,7 @@ const move_ball = [
     })
 ]
 
-window.store.dispatch({type: 'ADD_ANIMATION', animation: move_ball})
+window.store.dispatch({type: 'ANIMATE', animations: move_ball})
 ```
 
 **You're done!** The proper intermediate state is calculated from the animation and rendered on every tick, and the ball moves on the screen!

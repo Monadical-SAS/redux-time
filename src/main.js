@@ -39,7 +39,7 @@ class AnimationHandler {
     }
     initState(initial_state) {
         Object.keys(initial_state).map(key => {
-            this.store.dispatch({type: 'ADD_ANIMATION', animation: Become({
+            this.store.dispatch({type: 'ANIMATE', animation: Become({
                 path: `/${key}`,
                 state: initial_state[key],
                 start_time: 0,
