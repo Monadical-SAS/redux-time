@@ -37,7 +37,7 @@ window.initial_state = {
 window.store = createStore(combineReducers({animations}))
 window.time = startAnimation(window.store, window.initial_state)
 
-const BOUNCE_ANIMATION = (start_time) =>
+const BOUNCE_ANIMATIONS = (start_time) =>
     RepeatSequence([
         // high bounce
         Translate({
@@ -87,7 +87,7 @@ const BOUNCE_ANIMATION = (start_time) =>
         }),
     ], 3, start_time)
 
-const FOLLOW_ANIMATION = () => {
+const FOLLOW_ANIMATIONS = () => {
     return [
         Become({
             path: '/ball/style/position',
