@@ -185,8 +185,9 @@ We encourage you to follow along with the demos in `examples/` to see how the li
         * Custom tick functions
         * Interactive animations
     + [Writing CSS Animations](#writing-css-animations)
-        * CSS `transform` (very advanced)
-        * CSS `animate` (very advanced)
+        * Using CSS `@keyframes` animations
+        * Manual CSS `transform` (very advanced)
+        * Manual CSS `animate` (very advanced)
 - [Optimization](#optimization)
 - [Troubleshooting](#troubleshooting)
 
