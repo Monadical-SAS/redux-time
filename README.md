@@ -165,12 +165,13 @@ Documentation is a work-in-progress, for now refer to the `examples/` to see how
 
 ### Rendering Animated State
 
+
 ### Animations
 
-Animations are defined in `redux-time` as normal JS objects with the following keys:
+An "animation" in `redux-time` is defined as an Array of normal JS objects with the following keys:
 
 ```javascript
-{
+[{
     type,        // human readable description, e.g. TRANSLATE or OPACITY
     path,        // an RFC-6902 style javascript patch path, e.g. /ball/style/top or /path/to/array/0
     start_time,  // ddetermines when animation is active, defaults to immediately (new Date).getTime()
@@ -186,13 +187,36 @@ Animations are defined in `redux-time` as normal JS objects with the following k
                  //      const progress = start_state + curve_func(delta/duration)*amt        
                  //      return `${progress}${unit}`
                  //  }      
-}
+}]
 ```
 
 On each frame, `computeAnimatedState` in `reducers.js` runs through all the animation `tick` functions,
 and applies the computed results as patches to the specified location `path` in the state tree.
 
-Typically, you wont create animaitons objects by hand, but rather use some of the provided animation functions.
+A single animation object can only change one value in the state tree, that's why we've defined a unit of animation
+as an array of multiple objects, so that several `tick` functions can be logically grouped together.  This is helpful
+for cases such as `TRANSLATE_TO`, which is animation comprised of two animation objects: `TRANSLATE_TO_LEFT` and `TRANSLATE_TO_TOP`.
+
+An "animation sequence" in `redux-time` is a list of several animations, defined as an Array of the Arrays above like so:
+```javascript
+[
+    [{type: ROTATE}], 
+    [{type: TRANSLATE_TO_LEFT}, {type: TRANSLATE_TO_TOP}]],
+]
+```
+
+When queueing up an animation, you can pass either a single "animation" (Array), or an "animation sequence" (double-nested Array):
+```javascript
+// a single animation
+store.dispatch({type: 'ANIMATE', animation: Become(...)})
+
+// an animation sequence
+store.dispatch({type: 'ANIMATE', animations: [Become(...), Translate(...), Rotate(...)]})
+```
+In practice, the double-nesting for sequences is seamless, because all functions which take and produce animations
+operate on only their expected types, and throw helpful errors if you pass the wrong type.
+
+Typically, you wont create animations objects by hand, but rather use some of the provided animation functions.
 
 ```javascript
 import {...} from 'redux-time/src/animations' 
@@ -234,7 +258,7 @@ import {...} from 'redux-time/src/animations'
     // repeat a single animation or set of animations simultaneously
     Repeat(animations, repeat=Infinity)
     
-    // repeat a sequential list of animations
+    // repeat a sequence of animations in order
     RepeatSequence(animations, repeat, start_time)
 
     // reverse a single animation or set of animations simultaneously
