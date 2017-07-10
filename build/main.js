@@ -45112,7 +45112,7 @@ var flattenAnimation = function flattenAnimation(animation) {
         for (var _iterator5 = (0, _getIterator3.default)(animation_funcs), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
             var key = _step5.value;
 
-            if (transform[key] === null) continue;
+            if (animation[key] === null) continue;
             css_animation_funcs.push(css_animation_str(animation[key]));
         }
     } catch (err) {
