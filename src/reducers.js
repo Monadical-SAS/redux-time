@@ -166,14 +166,14 @@ export const animations = (state=initial_state, action) => {
             if (action.animation && !action.animations) {
                 // if single animation
                 checkIsValidAnimation(action.animation)
-                anim_objs = action.animation
+                anim_objs = [action.animation]
             } else if (action.animations && !action.animation) {
                 // if animation sequence
                 checkIsValidSequence(action.animations)
-                anim_objs = flattened(action.animations)
+                anim_objs = action.animations
             } else {
                 console.log('%cINVALID ANIMATE ACTION:', action)
-                throw 'ANIMATE action must be passed either animations: [[{}, {}, ...], [...], ...] or animation: [{}, {}, ...]'
+                throw 'ANIMATE action must be passed either an animation sequence: [{}, {}, ...] or a single animation: {}'
             }
             // trim queue to max_time_travel length
             const trimmed_queue = trimmedAnimationQueue(

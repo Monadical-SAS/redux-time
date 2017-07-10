@@ -286,10 +286,10 @@ Most animations will add `/style` to the path you provide in order to animate an
 
 ### Animations
 
-An "animation" in `redux-time` is defined as an Array of normal JS objects with the following keys:
+An "animation" in `redux-time` is defined as a normal JS object with the following keys:
 
 ```javascript
-[{
+{
     type,        // human readable description, e.g. TRANSLATE or OPACITY
     path,        // an RFC-6902 style javascript patch path, e.g. /ball/style/top or /path/to/array/0
     start_time,  // ddetermines when animation is active, defaults to immediately (new Date).getTime()
@@ -305,26 +305,25 @@ An "animation" in `redux-time` is defined as an Array of normal JS objects with 
                  //      const progress = start_state + curve_func(delta/duration)*amt        
                  //      return `${progress}${unit}`
                  //  }      
-}]
+}
 ```
 
 On each frame, `computeAnimatedState` in `reducers.js` runs through all the animation `tick` functions,
 and applies the computed results as patches to the specified location `path` in the state tree.
 
-A single animation object can only change one value in the state tree, that's why we've defined a unit of animation
-as an array of multiple objects, so that several `tick` functions can be logically grouped together.  This is helpful
-for cases such as `TRANSLATE_TO`, which is animation comprised of two animation objects: `TRANSLATE_TO_LEFT` and `TRANSLATE_TO_TOP`.
+A single animation object can only change one value in the state tree, but you can create an "animation sequence" of multiple animations to change different values or animated some things sequentially.  This is helpful when dispatching several animations at once, or for cases such as `TRANSLATE_TO`, which is actually an animation sequence comprised of two animation objects: `TRANSLATE_TO_LEFT` and `TRANSLATE_TO_TOP`.
 
-An "animation sequence" in `redux-time` is a list of several animations, defined as an Array of the Arrays above like so:
+An "animation sequence" in `redux-time` is a list of several animations, defined as an Array of the javascript objects above, like so:
 ```javascript
 [
-    [{type: ROTATE, ...}], 
-    [{type: TRANSLATE_TO_LEFT, ...}, {type: TRANSLATE_TO_TOP, ...}]],
+    {type: ROTATE, ...}
+    {type: TRANSLATE_TO_LEFT, ...},
+    {type: TRANSLATE_TO_TOP, ...},
     ...,
 ]
 ```
 
-When queueing up an animation, you can pass either a single "animation" (Array), or an "animation sequence" (double-nested Array):
+When queueing up an animation, you can pass either a single "animation", or an "animation sequence" (Array of animations):
 ```javascript
 // a single animation
 store.dispatch({type: 'ANIMATE', animation: Become(...)})
@@ -332,8 +331,8 @@ store.dispatch({type: 'ANIMATE', animation: Become(...)})
 // an animation sequence
 store.dispatch({type: 'ANIMATE', animations: [Become(...), Translate(...), Rotate(...)]})
 ```
-In practice, the double-nesting for sequences is seamless, because all functions which take and produce animations
-operate on only their expected types, and throw helpful errors if you pass the wrong type.
+Functions which take and produce sequences
+operate on only their expected types, and throw helpful errors if you pass a single object instead of a sequence.
 
 Typically, you wont create animations objects by hand, but rather use some of the provided animation functions.
 
@@ -367,6 +366,7 @@ import {...} from 'redux-time/src/animations'
 
     // move an element's absolute or fixed position using {top, left}
     TranslateTo({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'})
+    // Must be used with ... because it's actually two animations!
 
     // aniamte an element changing opacity
     Opacity({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null})

@@ -121,22 +121,20 @@ export const Become = ({path, state, start_time, end_time=Infinity, duration=Inf
         console.log({path, state, start_time, end_time, duration})
         throw 'Become animation must have a start_time and path defined.'
     }
-    return [
-        {
-            type: 'BECOME',
-            path,
-            state,
-            start_time,
-            end_time,
-            duration,
-            tick: (delta) => {
-                if ((start_time + delta) >= start_time && delta < duration)
-                    return state
-                else
-                    return undefined
-            },
+    return {
+        type: 'BECOME',
+        path,
+        state,
+        start_time,
+        end_time,
+        duration,
+        tick: (delta) => {
+            if ((start_time + delta) >= start_time && delta < duration)
+                return state
+            else
+                return undefined
         },
-    ]
+    }
 }
 
 export const Animate = ({type, path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null, tick=null}) => {
@@ -173,7 +171,7 @@ export const Animate = ({type, path, start_time, end_time, duration, start_state
     }
 
     // console.log(animation.type, animation)
-    return [animation]
+    return animation
 }
 
 export const AnimateCSS = ({name, path, start_time, end_time, duration=1000, curve='linear'}) => {
@@ -287,33 +285,29 @@ export const Rotate = ({path, start_time, end_time, duration, start_state, end_s
 // repeat a single animation (which may be composed of several objects)
 export const Repeat = (animation, repeat=Infinity) => {
     checkIsValidAnimation(animation)
-    return flattened(animation).map(anim => {
-        let {tick, start_time, duration} = anim
-        if (start_time === undefined) start_time = (new Date).getTime()
-        const repeated_tick = (delta) => tick(mod(delta, duration))
-        return {
-            ...anim,
-            repeat,
-            duration: duration * repeat,
-            end_time: start_time + duration*repeat,
-            tick: repeated_tick,
-        }
-    })
+    let {tick, start_time, duration} = animation
+    if (start_time === undefined) start_time = (new Date).getTime()
+    const repeated_tick = (delta) => tick(mod(delta, duration))
+    return {
+        ...animation,
+        repeat,
+        duration: duration * repeat,
+        end_time: start_time + duration*repeat,
+        tick: repeated_tick,
+    }
 }
 
 // reverse a single animation (which may be composed of several objects)
 export const Reverse = (animation) => {
     checkIsValidAnimation(animation)
-    return flattened(animation).map(anim => {
-        let {tick, start_time, duration} = anim
-        if (start_time === undefined) start_time = (new Date).getTime()
-        return {
-            ...anim,
-            start_time: end_time,
-            end_time: start_time,
-            tick: (delta) => tick(duration - delta),
-        }
-    })
+    let {tick, start_time, duration} = animation
+    if (start_time === undefined) start_time = (new Date).getTime()
+    return {
+        ...animation,
+        start_time: end_time,
+        end_time: start_time,
+        tick: (delta) => tick(duration - delta),
+    }
 }
 
 // reverse a sequence of animations
@@ -327,19 +321,15 @@ export const Sequential = (animations, start_time) => {
     if (start_time === undefined) start_time = (new Date).getTime()
     const seq = []
     let last_end = start_time
-    for (let animation_set of animations) {
-        const single_anim = []
-        for (let animation of animation_set) {
-            single_anim.push({
-                ...animation,
-                start_time: last_end,
-                end_time: last_end + animation.duration,
-            })
-            last_end = animation.duration == Infinity ?
-                last_end + 1
-              : last_end + animation.duration
-        }
-        seq.push(single_anim)
+    for (let animation of animations) {
+        seq.push({
+            ...animation,
+            start_time: last_end,
+            end_time: last_end + animation.duration,
+        })
+        last_end = animation.duration == Infinity ?
+            last_end + 1
+          : last_end + animation.duration
     }
     checkIsValidSequence(seq)
     return seq

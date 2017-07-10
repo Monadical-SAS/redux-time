@@ -1,36 +1,26 @@
 export const checkIsValidAnimation = (animation) => {
-    if (!Array.isArray(animation)) {
+    if (Array.isArray(animation)) {
         console.log('%cINVALID ANIMATION:', 'color:red', animation)
-        console.log('Got something other than an array.')
-        throw 'Animation must be passed in as an array of Animation objects!'
+        console.log('Got an array instead of a single animation object, did you double-nest somthing by forgetting to use ...?')
+        throw 'Animation must be passed in as a single Animation object!'
     }
-    if (animation.length && Array.isArray(animation[0])) {
+    if (!(animation.type && animation.path)) {
         console.log('%cINVALID ANIMATION:', 'color:red', animation)
-        console.log('Got double-nested animation array instead of just an array of objects.')
-        throw 'Animation must be passed in as an array of Animation objects!'
-    }
-    if (animation.length && !animation[0].path) {
-        console.log('%cINVALID ANIMATION :', 'color:red', animation)
-        console.log('Animations object is missing a path, is it a real animation?')
-        throw 'Animation must be passed in as an array of Animation objects!'
+        console.log('Got unrecognized aniamtion object missing a type or path.')
+        throw 'Animation must be passed in as a single Animation object!'
     }
 }
 
 export const checkIsValidSequence = (animations) => {
     if (!Array.isArray(animations)) {
-        console.log('%cINVALID ANIMATION SEQUENCE:', 'color:red', animations)
+        console.log('%cINVALID ANIMATION:', 'color:red', animations)
         console.log('Got something other than an array.')
-        throw 'Animation sequence must be passed in as an array of Animation object arrays!'
+        throw 'Sequence must be passed in as an array of Animation objects!'
     }
-    if (animations.length && !Array.isArray(animations[0])) {
-        console.log('%cINVALID ANIMATION SEQUENCE:', 'color:red', animations)
-        console.log('Got an array of objects instead of an array of arrays.')
-        throw 'Animation sequence must be passed in as an array of Animation object arrays!'
-    }
-    if (animations.length && animations[0].length && Array.isArray(animations[0][0])) {
-        console.log('%cINVALID ANIMATION SEQUENCE:', 'color:red', animations)
-        console.log('Got triple-nested animations array instead of double-nested.')
-        throw 'Animation sequence must be passed in as an array of Animation object arrays!'
+    if (animations.length && Array.isArray(animations[0])) {
+        console.log('%cINVALID ANIMATION:', 'color:red', animations)
+        console.log('Got double-nested animation array instead of just an array of objects.')
+        throw 'Sequence must be passed in as an array of Animation objects!'
     }
     for (let animation of animations) {
         checkIsValidAnimation(animation)
@@ -214,16 +204,20 @@ const flattenTransform = (transform) => {
     // flatten transforms from a dict to a string
     // converts {style: {transform: {translate: {left: '0px', top: '10px'}, rotate: '10deg'}}}
     //      =>  {style: {transform: 'translate(0px, 10px) rotate(10deg)'}}
-    const transform_funcs = Object.keys(transform).sort((a, b) =>
-        transform[a].order - transform[b].order)  // deterministic ordering via order: key
 
     let css_transform_funcs = []
-    for (let key of transform_funcs) {
+    for (let key of Object.keys(transform)) {
         if (transform[key] === null) continue
-        css_transform_funcs.push(css_transform_str[key](transform[key]))
+        const order = transform[key].order
+        if (typeof(order) === 'number') {
+            // deterministic ordering via order: key
+            css_transform_funcs[order] = css_transform_str[key](transform[key])
+        } else {
+            css_transform_funcs.push(css_transform_str[key](transform[key]))
+        }
     }
 
-    return css_transform_funcs.join(' ')
+    return css_transform_funcs.filter(Boolean).join(' ')
 }
 
 const flattenAnimation = (animation) => {
@@ -231,16 +225,21 @@ const flattenAnimation = (animation) => {
     // flatten animations from a dict to a string
     // converts {style: {animations: {blinker: {name: blinker, duration: 1000, curve: 'linear', delay: 767}, ...}}}
     //      =>  {style: {animation: blinker 1000ms linear -767ms paused, ...}}
-    const animation_funcs = Object.keys(animation).sort((a, b) =>
-        animation[a].order - animation[b].order)  // deterministic ordering via order: key
 
     let css_animation_funcs = []
-    for (let key of animation_funcs) {
+    for (let key of Object.keys(animation)) {
         if (animation[key] === null) continue
-        css_animation_funcs.push(css_animation_str(animation[key]))
+        const order = animation[key].order
+        if (typeof(order) === 'number') {
+            // deterministic ordering via order: key
+            css_animation_funcs[order] = css_animation_str(animation[key])
+        } else {
+            css_animation_funcs.push(css_animation_str(animation[key]))
+        }
+
     }
 
-    return css_animation_funcs.join(', ')
+    return css_animation_funcs.filter(Boolean).join(', ')
 }
 
 const flattenIfNotFlattened = (state, path, flatten_func) => {
