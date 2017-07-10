@@ -620,7 +620,7 @@ The function which merges all the animation functions into a final string is cal
 
 ### Optimization
 
-In our [benchmarks](https://github.com/Monadical-SAS/redux-time/blob/master/warped-time/examples/stress-test.js) `redux-time` can compute state for 100 animations in about 0.5ms.  This means that the bottneck for computing animations is usually going to be in React and the DOM (recalculating styles, paint, etc), not `redux-time`.
+In our [benchmarks](https://monadical-sas.github.io/redux-time/examples/stress-test.html) `redux-time` takes about 0.5ms to compute the state for 100 animations.  This means that the bottneck for animation FPS is usually going to be in React & DOM (recalculating styles, paint, etc) rather than `redux-time`, until you hit about ~2000 active animations.
 
 These are some great articles on optimizing react/redux code in general:
 - https://marmelab.com/blog/2017/02/06/react-is-slow-react-is-fast.html
@@ -629,7 +629,8 @@ These are some great articles on optimizing react/redux code in general:
 
 **React Optimization**
 
-Step one is to make sure you've taken care of all the low-hanging-fruit react optimization in the articles above.
+Step one is to make sure you've taken care of all the low-hanging-fruit react optimization in the articles above.  
+Check out Inferno and Preact if you need a faster VirtualDOM engine than React.
 
 **Redux Optimization**
 
