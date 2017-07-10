@@ -382,14 +382,14 @@ import {...} from 'redux-time/src/animations'
     // make each animation in a sequence start after the last one ends
     Sequential(animations, start_time)
 
-    // repeat a single animation or set of animations simultaneously
-    Repeat(animations, repeat=Infinity)
+    // repeat a single animation
+    Repeat(animation, repeat=Infinity)
     
     // repeat a sequence of animations in order
     RepeatSequence(animations, repeat, start_time)
 
-    // reverse a single animation or set of animations simultaneously
-    Reverse(animations)
+    // reverse a single animation
+    Reverse(animation)
     
     // reverse a sequence of animations in order
     ReverseSequence(animations, start_time)
@@ -432,7 +432,7 @@ You can use `start_time` to build up a sequence of animations that overlap or ru
 We provide several `animations.js` functions that operate on "animation sequences", a.k.a lists of animations, but you can also write your own.
 
 - `Sequential`: play a list of animations one after another (so you dont have to do math on `start_time` manually)
-- `Repeat`: repeat an animation or list of animations
+- `Repeat`: repeat a single animation
 - `RepeatSequence`: repeat a list of animations in order
 - `Reverse`: reverse the direction of a single animation
 - `ReverseSequence`: reverse a list of animations in order
@@ -485,16 +485,20 @@ window.onmousemove = (e) => {
     window.mouseY = e.pageY
     window.mouseX = e.pageX
 }
+const getCursorPosition() => ({
+    top: window.mouseY,    // you could put more complex interactive logic here
+    left: window.mouseX,   //    e.g. window.innerWidth * getZoomLevel() - 100
+})
 store.dispatch({type: 'ANIMATE', animations: [
     Animate({
         path: '/ball/style/top',
         duration: Infinity,
-        tick: () => window.mouseY - 50
+        tick: () => getCursorPosition().top - 50
     }),
     Animate({
         path: '/ball/style/left',
         duration: Infinity,
-        tick: () => window.mouseX - 50
+        tick: () => getCursorPosition().left - 50
     }),
 ]})
 ```
