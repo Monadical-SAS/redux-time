@@ -41,6 +41,7 @@ At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum
 - works in all browsers with `requestAnimationFrame` and in node with `setTimemout`
 - it's fast! computing state takes about `0.5ms` per 100 active animations (the bottleneck is usually React & the DOM, check out [Inferno] + canvas if you really want speed!)
 - fully compatible with CSS animation libraries like [Animate.css](https://daneden.github.io/animate.css/), you already have access to 1000s of pre-written animations out there that plug right into `redux-time`!
+- WIP: animations are time-synchronizable with a server's time, so everyone's animations happen at the same time (within ~300ms of eachother hopefully)
 
 ## Intro
 
