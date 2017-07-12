@@ -129,10 +129,7 @@ export const Become = ({path, state, start_time, end_time=Infinity, duration=Inf
         end_time,
         duration,
         tick: (delta) => {
-            if ((start_time + delta) >= start_time && delta < duration)
-                return state
-            else
-                return undefined
+            return state
         },
     }
 }
