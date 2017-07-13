@@ -146,13 +146,48 @@ const new_state = {
 Redux re-renders components automatcially whenever the state they subscribe to with `mapStateToProps` changes.  New animated state is immediately rendered after the `animations` reducer returns, and the position of the ball updates on the screen!
 This process repeats on every animation frame, and the ball state changes on every `TICK` until the animtion finishes.
 
+## When would you use this?
+
+**A simple game, with animations dispatched from a backend via websocket.**
+```javascript
+window.initial_state = {
+    game: {table: {...}, players: {...}},
+}
+window.store = createStore(combineReducers({animations}))
+window.time = startAnimation(window.store, window.initial_state)
+window.socket = new WebSocket('/game_backend')
+
+// when the backend sends us a new gamestate
+window.socket.onmessage = (message) => {
+    const action = JSON.parse(message)
+    if (action.type == 'UPDATE_GAMESTATE') {
+        const new_state = action.gamestate
+        const {table, players} = new_state
+        const animations = Sequential([
+            // bounce the ball, rotate the arrow, flash the box red, etc...
+            ...get_game_animations(action.aniamtions),
+
+            // once the animations complete,
+            // set the whole ui gamestate to the server's state
+            Become({
+                path: '/game',
+                state: {table, players},
+                start_time: window.time.getActualTime(),
+            }),
+        ])
+    }
+    window.store.dispatch({type: 'ANIMATE', animations: animations})
+}
+```
+Note: we use `window.store`, `window.socket` to refer to the redux store, and a WebSocket connection to the backend respectively.  In practice you would architect with dependency injection, so `window.` is not needed, but we use it here and in the rest of the docs for simplicity.
+
 ## Contributing
 
 We'd love see PR's or issues opened if you have questions or suggestions!
 
 If possible, when submitting an issue report, try to copy one of the `examples/` files and modify it to illustrate your reproduceable error.
 
-## Further-Reading Links
+## Links
 
 - [React Docs on Animation](https://facebook.github.io/react/docs/animation.html)
 - [React-Transition-Group](https://github.com/reactjs/react-transition-group/tree/v1-stable) library to add component lifecycle CSS transitions
