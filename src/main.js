@@ -28,9 +28,8 @@ const shouldAnimate = (anim_queue, timestamp, speed) => {
 
 
 class AnimationHandler {
-    constructor(store, initial_state) {
-        this.time = new WarpedTime()
-        this.time.setSpeed(store.getState().animations.speed)
+    constructor(store, initial_state, initial_time) {
+        this.time = new WarpedTime(null, store.getState().animations.speed, initial_time)
         this.store = store
         this.animating = false
         this.start_time = 0
@@ -53,7 +52,7 @@ class AnimationHandler {
         const timestamp = this.time.getWarpedTime()
 
         if (!this.animating && shouldAnimate(animations.queue, timestamp, this.time.speed)) {
-            // console.log('Starting Animation.')
+            console.log('[i] Starting Animation. Current time:', timestamp, '  Active Animations:', animations)
             this.tick()
         }
     }
