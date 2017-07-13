@@ -190,6 +190,7 @@ If possible, when submitting an issue report, try to copy one of the `examples/`
 ## Links
 
 - [React Docs on Animation](https://facebook.github.io/react/docs/animation.html)
+- [React-f1]: stateful animations library
 - [React-Transition-Group](https://github.com/reactjs/react-transition-group/tree/v1-stable) library to add component lifecycle CSS transitions
 - React-Transition-Group walkthrough article:  [UI Animations with React — The Right Way](https://medium.com/@joethedave/achieving-ui-animations-with-react-the-right-way-562fa8a91935)
 - [GSAP](https://greensock.com/gsap): incredibly robust, stable, well-supported Javascript animations library
