@@ -13,7 +13,7 @@ Generally, there are two different categories of animations on websites:
  - content transitions (e.g. effects when adding/deleting a list item, hover effects, photo gallery transitions, etc)
  - **full-blown interactive dynamic animations** (like in games)
 
-`redux-time` is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) instead.
+`redux-time` is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) (basic) or [react-move](https://github.com/tannerlinsley/react-move) (advanced) instead.
 
 ```bash
 yarn add redux-time    # 🎂
