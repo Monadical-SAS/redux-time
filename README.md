@@ -153,9 +153,10 @@ We'd love see PR's or issues opened if you have questions or suggestions!
 
 If possible, when submitting an issue report, try to copy one of the `examples/` files and modify it to illustrate your reproduceable error.
 
-## Further-Reading Links
+## Links
 
 - [React Docs on Animation](https://facebook.github.io/react/docs/animation.html)
+- [React-Move](https://github.com/tannerlinsley/react-move) library for react HOC-based transitions
 - [React-Transition-Group](https://github.com/reactjs/react-transition-group/tree/v1-stable) library to add component lifecycle CSS transitions
 - React-Transition-Group walkthrough article:  [UI Animations with React — The Right Way](https://medium.com/@joethedave/achieving-ui-animations-with-react-the-right-way-562fa8a91935)
 - [GSAP](https://greensock.com/gsap): incredibly robust, stable, well-supported Javascript animations library
