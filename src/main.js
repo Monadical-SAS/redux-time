@@ -28,31 +28,32 @@ const shouldAnimate = (anim_queue, timestamp, speed) => {
 
 
 class AnimationHandler {
-    constructor(store, initial_state, initial_time) {
-        this.time = new WarpedTime(null, store.getState().animations.speed, initial_time)
-        this.store = store
+    constructor(store, initial_state) {
+        const speed = store.getState().animations.speed
         this.animating = false
-        this.start_time = 0
+        this.store = store
+        this.time = new WarpedTime(null, speed)
         store.subscribe(::this.handleStateChange)
-        this.initState(initial_state || {})
+        if (initial_state) {
+            this.initState(initial_state)
+        }
     }
     initState(initial_state) {
-        Object.keys(initial_state).map(key => {
-            this.store.dispatch({type: 'ANIMATE', animation: Become({
+        const animations = Object.keys(initial_state).map(key =>
+            Become({
                 path: `/${key}`,
                 state: initial_state[key],
                 start_time: 0,
-            })})
-        })
+            }))
+        this.store.dispatch({type: 'ANIMATE', animations})
     }
     handleStateChange() {
         // console.log('RUNNING ANIMATION DISPATCHER')
         const {animations} = this.store.getState()
         this.time.setSpeed(animations.speed)
         const timestamp = this.time.getWarpedTime()
-
         if (!this.animating && shouldAnimate(animations.queue, timestamp, this.time.speed)) {
-            console.log('[i] Starting Animation. Current time:', timestamp, '  Active Animations:', animations)
+            console.log('[i] Starting Animation. Current time:', timestamp, ' Active Animations:', animations)
             this.tick()
         }
     }
@@ -70,7 +71,7 @@ class AnimationHandler {
             type: 'TICK',
             last_timestamp: animations.current_timestamp || 0,
             current_timestamp: new_timestamp,
-            speed: this.time.speed,
+            speed: animations.speed,
         })
         // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
             // if (window && window.requestAnimationFrame) {

@@ -118,7 +118,15 @@ See the demo of this code in action here: [ball.html](https://monadical-sas.gith
 
 ## Info & Motivation
 
-After spending almost a year contemplating how to do declarative animations cleanly at [Monadical](https://monadical.com), we realized that all state can be represented as layered patches that are a function of time.
+There are lots of different approaches to animation out there right now:
+
+- start_state + css transition + callback when finished (see react-f1)
+- component-lifecycle hooks like onRemove + css transitions (see react-transition-group)
+- animation functions + a runloop + a timeline  controller (see GSAP)
+
+Redux-time shares some similarities to GSAP: for example, declarative animations are built using simple primitive functions, and they both have a time-controller to fast-forward and rewind time.  redux-time is built specifically for reactive virtual-dom rendering though, whereas GSAP animations are typically applied directly to the DOM.  We highly recommend reading [GSAP's docs](https://greensock.com/docs/TweenLite) if you want a more thorough explanation of tweens and this general style of approaching animations.
+
+After spending almost a year contemplating how to do declarative animations cleanly at [Monadical](https://monadical.com), we realized that all state can be represented as layered patches that are a function of time.  
 
 On the way we tried many other solutions from using jQuery animations, to `react-transition-group`, to janky manual approaches w/ `setTimout`.  Since all those are designed with content transitions in mind, nothing really "clicked" and felt like a clean way to do interactive game animations.
 
@@ -666,6 +674,7 @@ These are some great articles on optimizing react/redux code in general:
 - https://marmelab.com/blog/2017/02/06/react-is-slow-react-is-fast.html
 - https://reactrocket.com/post/react-redux-optimization/
 - http://redux.js.org/docs/recipes/ComputingDerivedData.html
+- https://medium.com/outsystems-experts/how-to-achieve-60-fps-animations-with-css3-db7b98610108
 
 **React Optimization**
 

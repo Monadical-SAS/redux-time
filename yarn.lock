@@ -3389,9 +3389,9 @@ warning@^3.0.0:
   dependencies:
     loose-envify "^1.0.0"
 
-warped-time@^0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/warped-time/-/warped-time-0.0.8.tgz#6cc7a9948dfd577d35e9b049064388574c716ad4"
+warped-time@^0.0.9:
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/warped-time/-/warped-time-0.0.9.tgz#72a13b693f463610214fbb4b12ffd5b84c99de50"
   dependencies:
     monadical-react-components "^0.0.5"
     react "15.6.1"
