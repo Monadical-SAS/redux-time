@@ -6,7 +6,7 @@
 
 ▶️ [Intro](#intro) | [Walkthrough](#walkthrough-example) | [Info & Motivation](#info--motivation) | [Links](#links) | [Documentation](#documentation) | [Examples](https://monadical-sas.github.io/redux-time/examples/) | [Source](https://github.com/Monadical-SaS/redux-time/)
 
-`redux-time` is a library that allows you to compute your state tree as a function of time.  It's primarily used for animations, but it can also be used for generically changing any redux state as time progresses.
+`redux-time` is a library that allows you to determistically compute your state tree as a function of time.  It's primarily used for animations, but it can also be used for generically changing any redux state as time progresses.
 
 Generally, there are two different categories of animations on websites:
 
