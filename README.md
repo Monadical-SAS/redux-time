@@ -13,7 +13,7 @@ Generally, there are two different categories of animations on websites:
  - content transitions (e.g. effects when adding/deleting a list item, hover effects, photo gallery transitions, etc)
  - **full-blown interactive dynamic animations** (like in games)
 
-`redux-time` is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) instead.
+`redux-time` is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) (basic) or [react-move](https://github.com/tannerlinsley/react-move) (advanced) instead.
 
 ```bash
 yarn add redux-time    # 🎂
@@ -198,7 +198,8 @@ If possible, when submitting an issue report, try to copy one of the `examples/`
 ## Links
 
 - [React Docs on Animation](https://facebook.github.io/react/docs/animation.html)
-- [React-f1]: stateful animations library
+- [react-move](https://github.com/tannerlinsley/react-move): react animations library
+- [React-f1](https://github.com/Jam3/react-f1): stateful animations library
 - [React-Transition-Group](https://github.com/reactjs/react-transition-group/tree/v1-stable) library to add component lifecycle CSS transitions
 - React-Transition-Group walkthrough article:  [UI Animations with React — The Right Way](https://medium.com/@joethedave/achieving-ui-animations-with-react-the-right-way-562fa8a91935)
 - [GSAP](https://greensock.com/gsap): incredibly robust, stable, well-supported Javascript animations library
