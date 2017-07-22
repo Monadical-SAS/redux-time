@@ -390,7 +390,7 @@ import {...} from 'redux-time/src/animations'
 
     // set some state without animating.  not everything is animates, some stuff you want to have 
     // snap into place instantly. Become is the most common "animation" of all.
-    Become({path, state, start_time, end_time=Infinity, duration=Infinity})
+    Become({path='/', state={}, start_time=now, end_time=Infinity, duration=Infinity})
 
     // the building block of all others, just interpolates a raw value or object
     // over some time, at the specified path, with the specified tick function
@@ -425,19 +425,19 @@ import {...} from 'redux-time/src/animations'
 // Composable Higher-Order Animations (aka functions)
 
     // make each animation in a sequence start after the last one ends
-    Sequential(animations, start_time)
+    Sequential([animation, ...], start_time=1500000000000)
 
     // repeat a single animation
     Repeat(animation, repeat=Infinity)
     
     // repeat a sequence of animations in order
-    RepeatSequence(animations, repeat, start_time)
+    RepeatSequence([animation, ...], repeat, start_time=1500000000000)
 
     // reverse a single animation
     Reverse(animation)
     
     // reverse a sequence of animations in order
-    ReverseSequence(animations, start_time)
+    ReverseSequence([animation, ...], start_time=1500000000000)
 ```
 
 #### Running & Queueing Animations
@@ -453,7 +453,7 @@ store.dispatch({type: 'ANIMATE', animations: [...]})
 
 **Delayed Animations**
 
-To queue an animation that you don't want to have start immediately, just set the `start_time` of your animation to something before you dispatch it:
+To queue an animation that you don't want to have start immediately, set the `start_time` of your animation to `window.time.getActualTime() + delay`:
 
 ```javascript
 const delayed_rotate = Rotate({
