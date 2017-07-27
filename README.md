@@ -704,3 +704,5 @@ WIP
 <img src="examples/static/jeremy.jpg" height="40px" style="float:right"/>
 
 MIT License | [Monadical](https://monadical.com) SAS 2017 ([we're hiring!](https://monadical.com/apply))
+
+[![Monadical Logo](https://nicksweeting.com/d/monadical-banner.png)](https://monadical.com)
