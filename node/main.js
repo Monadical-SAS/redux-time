@@ -29,8 +29,6 @@ var _stateVisualizer = require('./state-visualizer.js');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var window = window || global;
-
 var shouldAnimate = function shouldAnimate(anim_queue, timestamp, speed) {
     return anim_queue.length && speed;
 
@@ -60,6 +58,9 @@ var AnimationHandler = function () {
         if (initial_state) {
             this.initState(initial_state);
         }
+        this.rAF = global.requestAnimationFrame || function (func) {
+            return setTimeout(func, 20);
+        };
     }
 
     (0, _createClass3.default)(AnimationHandler, [{
@@ -110,7 +111,7 @@ var AnimationHandler = function () {
             });
             // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
             // if (window && window.requestAnimationFrame) {
-            window.requestAnimationFrame(this.tick.bind(this));
+            this.rAF(this.tick.bind(this));
             // } else {
             // alert('This should never be reached in the browser.')
             // setTimeout(::this.tick, (Math.random() * 100) % 50)

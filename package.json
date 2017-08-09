@@ -29,7 +29,7 @@
   ],
   "main": "node/main.js",
   "dependencies": {
-    "jquery": "^3.2.1",
+    "extend": "^3.0.1",
     "monadical-react-components": "^0.0.6",
     "react-redux": "^5.0.5",
     "redux": "^3.6.0",

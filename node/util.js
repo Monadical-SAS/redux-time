@@ -36,7 +36,9 @@ exports.select = select;
 exports.patch = patch;
 exports.applyPatches = applyPatches;
 
-var _jquery = require('jquery');
+var _extend = require('extend');
+
+var _extend2 = _interopRequireDefault(_extend);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -158,7 +160,7 @@ var range = exports.range = function range(num) {
 };
 
 var deepCopy = exports.deepCopy = function deepCopy(obj) {
-    return (0, _jquery.extend)(true, {}, obj);
+    return (0, _extend2.default)(true, {}, obj);
 }; // TODO: remove jquery
 
 var flipObj = exports.flipObj = function flipObj(obj) {
@@ -363,7 +365,7 @@ function patch(obj, selector, new_val) {
     } else {
         parent[last_key] = new_val;
     }
-    return deepcopy ? (0, _jquery.extend)(true, {}, obj) : obj;
+    return deepcopy ? (0, _extend2.default)(true, {}, obj) : obj;
 }
 
 var css_transform_str = {
@@ -581,7 +583,7 @@ function applyPatches(obj, patches) {
                 // the structure beforehand. Do not use JSON.stringify+parse because
                 // Date, function, and Infinity objects dont get safely converted.
                 // jQuery is significantly faster than lodash cloneDeep
-                patch_val = (0, _jquery.extend)(true, {}, patch_val);
+                patch_val = (0, _extend2.default)(true, {}, patch_val);
             }
             var keys = [].concat((0, _toConsumableArray3.default)(_patch.split_path));
 

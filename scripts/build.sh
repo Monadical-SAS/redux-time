@@ -1,4 +1,5 @@
 #!/bin/bash
+set -o pipefail
 
 SCRIPTS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CODE="$SCRIPTS_DIR/.."
@@ -20,24 +21,30 @@ function browserify() {
 }
 
 function build_file() {
-    echo "[1/3] Linting JS..."
-    [[ -e "es6/$1" ]] && eslint "es6/$1"
-    [[ -e "examples/$1" ]] && eslint "examples/$1"
+    if [[ -e "es6/$1" ]]; then
+        echo "[1/3] Linting JS..."
+        eslint "es6/$1" || exit 1
+        echo
+        echo "[2/3] Babelifying for Node..."
+        babel "es6/$1" "node/$1" || exit 1
+        echo
+        echo "[3/3] Browserifying for Browsers..."
+        browserify "es6/$1" "browser/$1"
+    fi
 
-    echo
-    echo "[2/3] Babelifying for Node..."
-    [[ -e "es6/$1" ]] && babel "es6/$1" "node/$1"
-
-    echo
-    echo "[3/3] Browserifying for Browsers..."
-    [[ -e "es6/$1" ]] && browserify "es6/$1" "browser/$1"
-    [[ -e "examples/$1" ]] && browserify "examples/$1" "examples/static/$1"
+    if [[ -e "examples/$1" ]]; then
+        echo "[1/2] Linting JS..."
+        eslint "examples/$1" || exit 1
+        echo
+        echo "[2/2] Browserifying for Browsers..."
+        browserify "examples/$1" "examples/static/$1"
+    fi
 }
 
 
 function build_all() {
     echo "[1/3] Linting JS..."
-    eslint es6
+    eslint es6 || exit 1
 
     echo
     echo "[2/3] Babelifying for Node..."

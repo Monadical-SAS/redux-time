@@ -6,9 +6,6 @@ import {AnimationControls} from './controls.js'
 import {AnimationStateVisualizerComponent, AnimationStateVisualizer} from './state-visualizer.js'
 
 
-var window = window || global
-
-
 const shouldAnimate = (anim_queue, timestamp, speed) => {
     return anim_queue.length && speed
 
@@ -37,6 +34,7 @@ class AnimationHandler {
         if (initial_state) {
             this.initState(initial_state)
         }
+        this.rAF = global.requestAnimationFrame || ((func) => setTimeout(func, 20))
     }
     initState(initial_state) {
         const animations = Object.keys(initial_state).map(key =>
@@ -75,7 +73,7 @@ class AnimationHandler {
         })
         // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
             // if (window && window.requestAnimationFrame) {
-                window.requestAnimationFrame(::this.tick)
+                this.rAF(::this.tick)
             // } else {
                 // alert('This should never be reached in the browser.')
                 // setTimeout(::this.tick, (Math.random() * 100) % 50)
