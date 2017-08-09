@@ -343,26 +343,30 @@ var TranslateTo = exports.TranslateTo = function TranslateTo(_ref9) {
         unit = _ref9$unit === undefined ? 'px' : _ref9$unit;
 
     var anims = [];
-    if (start_state.left || end_state.left || amt.left) {
-        anims = [].concat((0, _toConsumableArray3.default)(KeyedAnimation({
+    var has_left = start_state.left || end_state.left || amt.left;
+    if (has_left) {
+        anims = [KeyedAnimation({
             type: 'TRANSLATE_TO_LEFT',
             path: path + '/style',
             key: 'left',
             start_time: start_time, end_time: end_time, duration: duration,
             start_state: start_state, end_state: end_state, amt: amt,
             curve: curve, unit: unit
-        })));
+        })];
     }
-    if (start_state.top || end_state.top || amt.top) {
-        anims = [].concat((0, _toConsumableArray3.default)(anims), (0, _toConsumableArray3.default)(KeyedAnimation({
+    var has_top = start_state.top || end_state.top || amt.top;
+    if (has_top) {
+        anims = [].concat((0, _toConsumableArray3.default)(anims), [KeyedAnimation({
             type: 'TRANSLATE_TO_TOP',
             path: path + '/style',
             key: 'top',
             start_time: start_time, end_time: end_time, duration: duration,
             start_state: start_state, end_state: end_state, amt: amt,
             curve: curve, unit: unit
-        })));
+        })]);
     }
+    if (!has_left && !has_top) throw 'TranslateTo start_state and end_state must have {left or top}';
+    if (!anims.length) debugger;
     return anims;
 };
 

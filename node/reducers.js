@@ -161,13 +161,6 @@ var activeAnimations = exports.activeAnimations = function activeAnimations(anim
     return anims;
 };
 
-// window.parentExists = parentExists
-// window.currentAnimations = currentAnimations
-// window.sortedAnimations = sortedAnimations
-// window.uniqueAnimations = uniqueAnimations
-// window.activeAnimations = activeAnimations
-
-
 var computeAnimatedState = exports.computeAnimatedState = function computeAnimatedState(anim_queue, current_timestamp) {
     var last_timestamp = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
@@ -186,7 +179,11 @@ var computeAnimatedState = exports.computeAnimatedState = function computeAnimat
 
             try {
                 var delta = current_timestamp - animation.start_time;
-                patches.push({ 'split_path': animation.split_path, 'value': animation.tick(delta) });
+                var patch = animation.tick(delta);
+                patches.push({
+                    split_path: animation.split_path,
+                    value: patch
+                });
             } catch (e) {
                 console.log(animation.type, 'Animation tick function threw an exception:', e.message, animation);
             }

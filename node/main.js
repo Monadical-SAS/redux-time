@@ -48,19 +48,32 @@ var shouldAnimate = function shouldAnimate(anim_queue, timestamp, speed) {
 
 var AnimationHandler = function () {
     function AnimationHandler(store, initial_state) {
+        var autostart_animating = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
         (0, _classCallCheck3.default)(this, AnimationHandler);
 
         var speed = store.getState().animations.speed;
-        this.animating = false;
+        this.animating = !autostart_animating;
         this.store = store;
         this.time = new _warpedTime.WarpedTime(null, speed);
         store.subscribe(this.handleStateChange.bind(this));
         if (initial_state) {
             this.initState(initial_state);
         }
-        this.rAF = global.requestAnimationFrame || function (func) {
-            return setTimeout(func, 20);
-        };
+        if (global.requestAnimationFrame) {
+            if (global.DEBUG) console.log('Running animations in a Browser.', { autostart_animating: autostart_animating });
+
+            this.rAF = function (func) {
+                return window.requestAnimationFrame.call(window, func);
+            };
+        } else {
+            if (global.DEBUG) console.log('Running animations in Node.js.', { autostart_animating: autostart_animating });
+
+            this.rAf = function (func) {
+                return setTimeout(function () {
+                    return func();
+                }, 20);
+            };
+        }
     }
 
     (0, _createClass3.default)(AnimationHandler, [{
@@ -85,7 +98,9 @@ var AnimationHandler = function () {
             this.time.setSpeed(animations.speed);
             var timestamp = this.time.getWarpedTime();
             if (!this.animating && shouldAnimate(animations.queue, timestamp, this.time.speed)) {
-                console.log('[i] Starting Animation. Current time:', timestamp, ' Active Animations:', animations);
+                if (global.DEBUG) {
+                    console.log('[i] Starting Animation. Current time:', timestamp, ' Active Animations:', animations.queue);
+                }
                 this.tick();
             }
         }
@@ -110,12 +125,7 @@ var AnimationHandler = function () {
                 speed: animations.speed
             });
             // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
-            // if (window && window.requestAnimationFrame) {
             this.rAF(this.tick.bind(this));
-            // } else {
-            // alert('This should never be reached in the browser.')
-            // setTimeout(::this.tick, (Math.random() * 100) % 50)
-            // }
             // } else {
             // this.animating = false
             // }
@@ -125,7 +135,9 @@ var AnimationHandler = function () {
 }();
 
 var startAnimation = function startAnimation(store, initial_state) {
-    var handler = new AnimationHandler(store, initial_state);
+    var autostart_animating = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+    var handler = new AnimationHandler(store, initial_state, autostart_animating);
     return handler.time;
 };
 
