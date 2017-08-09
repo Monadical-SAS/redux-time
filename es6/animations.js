@@ -223,9 +223,10 @@ export const Translate = ({path, start_time, end_time, duration=1000, start_stat
 
 export const TranslateTo = ({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'}) => {
     let anims = []
-    if (start_state.left || end_state.left || amt.left) {
+    const has_left = start_state.left || end_state.left || amt.left
+    if (has_left) {
         anims = [
-            ...KeyedAnimation({
+            KeyedAnimation({
                 type: 'TRANSLATE_TO_LEFT',
                 path: `${path}/style`,
                 key: 'left',
@@ -235,10 +236,11 @@ export const TranslateTo = ({path, start_time, end_time, duration=1000, start_st
             })
         ]
     }
-    if (start_state.top || end_state.top || amt.top) {
+    const has_top = start_state.top || end_state.top || amt.top
+    if (has_top) {
         anims = [
             ...anims,
-            ...KeyedAnimation({
+            KeyedAnimation({
                 type: 'TRANSLATE_TO_TOP',
                 path: `${path}/style`,
                 key: 'top',
@@ -248,6 +250,8 @@ export const TranslateTo = ({path, start_time, end_time, duration=1000, start_st
             })
         ]
     }
+    if (!has_left && !has_top)
+        throw 'TranslateTo start_state and end_state must have {left or top}'
     return anims
 }
 
