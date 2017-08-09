@@ -27,12 +27,12 @@
     "games",
     "game-engine"
   ],
-  "main": "src/main.js",
+  "main": "node/main.js",
   "dependencies": {
-    "monadical-react-components": "^0.0.5",
+    "monadical-react-components": "^0.0.6",
     "react-redux": "^5.0.5",
     "redux": "^3.6.0",
-    "warped-time": "^0.0.9"
+    "warped-time": "^0.0.11"
   },
   "devDependencies": {
     "aliasify": "^2.1.0",
@@ -84,8 +84,7 @@
     ]
   },
   "scripts": {
-    "lint": "eslint src",
-    "watch": "watchify src/main.js > build/main.js; watchify examples/demo.js -o examples/static/demo.js; watchify examples/ball.js -o examples/static/ball.js; browserify examples/stress-test.js -o examples/static/stress-test.js",
-    "build": "eslint src; browserify src/main.js > build/main.js; browserify examples/demo.js -o examples/static/demo.js; browserify examples/ball.js -o examples/static/ball.js; browserify examples/stress-test.js -o examples/static/stress-test.js"
+    "watch": "./scripts/watch.sh",
+    "build": "./scripts/build.sh"
   }
 }

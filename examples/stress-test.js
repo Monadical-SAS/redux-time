@@ -12,11 +12,11 @@ import {
     startAnimation,
     AnimationControls,
     AnimationStateVisualizer
-} from '../src/main.js'
+} from '../node/main.js'
 
-import {Become, RepeatSequence, Translate} from '../src/animations.js'
+import {Become, RepeatSequence, Translate} from '../node/animations.js'
 
-import {range} from '../src/util.js'
+import {range} from '../node/util.js'
 
 
 

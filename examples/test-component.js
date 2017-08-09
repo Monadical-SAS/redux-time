@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 
 import {ExpandableSection} from 'monadical-react-components'
 
-import {Become, Repeat, Animate, Translate, AnimateCSS} from '../src/animations.js'
+import {Become, Repeat, Animate, Translate, AnimateCSS} from '../node/animations.js'
 
 
 const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/examples/test-component.js"

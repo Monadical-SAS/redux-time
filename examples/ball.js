@@ -11,9 +11,9 @@ import {
     startAnimation,
     AnimationControls,
     AnimationStateVisualizer
-} from '../src/main.js'
+} from '../node/main.js'
 
-import {Become, Animate, Translate, RepeatSequence} from '../src/animations.js'
+import {Become, Animate, Translate, RepeatSequence} from '../node/animations.js'
 
 
 

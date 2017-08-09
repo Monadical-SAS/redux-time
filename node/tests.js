@@ -1,19 +1,18 @@
-import {createStore, combineReducers, applyMiddleware} from 'redux'
+'use strict';
 
+var _redux = require('redux');
 
-import {animations, AnimationHandler, currentAnimations, futureAnimations, pastAnimations, uniqueAnimations, isParent} from './reducers.js'
-import {Become, AnimateCSS, Animate, Repeat, Translate, Opacity, Rotate} from './animations.js'
-import {new_gamestate_animations} from '../poker/process.js'
+var _reducers = require('./reducers.js');
 
+var _animations = require('./animations.js');
 
-const assert = (val, error_msg) => {
+var assert = function assert(val, error_msg) {
     if (!val) {
-        console.log(`[X] AssertionError: ${error_msg} (${val})`)
+        console.log('[X] AssertionError: ' + error_msg + ' (' + val + ')');
     } else {
-        process ? process.stdout.write('.') : console.log('.')
+        process ? process.stdout.write('.') : console.log('.');
     }
-}
-
+};
 
 // const initial_state = {
 //     test: {text: 'initial_state'}
@@ -166,29 +165,12 @@ const assert = (val, error_msg) => {
 // assert(!animatedStore.getState().test.style,                                        'Animations left some dirty style state after completing.')
 
 
-
 // ANIMATION UNIQUIFICATION
-const anim_queue = [
-    {path: '/a/b'},
-    {path: '/a/b/c/d'},
-    {path: '/a/b/c/d/e'},
-    {path: '/a/b/f'},
-    {path: '/a/b'},
-    {path: '/a/b/x'},
-    {path: '/a/b/x/y'},
-    {path: '/a/b/x'},
-]
+var anim_queue = [{ path: '/a/b' }, { path: '/a/b/c/d' }, { path: '/a/b/c/d/e' }, { path: '/a/b/f' }, { path: '/a/b' }, { path: '/a/b/x' }, { path: '/a/b/x/y' }, { path: '/a/b/x' }];
 
-const uniq_anims = uniqueAnimations(anim_queue)
-assert(
-	uniq_anims.length == 2,
-	'uniqueAnimations did not remove overwritten child paths'
-)
-assert(
-	uniq_anims[0].path == '/a/b' && uniq_anims[1].path == '/a/b/x',
-	'uniqueAnimations removed wrong parent/child paths'
-)
+var uniq_anims = (0, _reducers.uniqueAnimations)(anim_queue);
+assert(uniq_anims.length == 2, 'uniqueAnimations did not remove overwritten child paths');
+assert(uniq_anims[0].path == '/a/b' && uniq_anims[1].path == '/a/b/x', 'uniqueAnimations removed wrong parent/child paths');
 
-
-console.log('')
-process.exit(0)
+console.log('');
+process.exit(0);

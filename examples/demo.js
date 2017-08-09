@@ -9,7 +9,7 @@ import {
     startAnimation,
     AnimationControls,
     AnimationStateVisualizer
-} from '../src/main.js'
+} from '../node/main.js'
 
 import {AnimationTester} from './test-component.js'
 
