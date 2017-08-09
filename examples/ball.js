@@ -140,8 +140,8 @@ ReactDOM.render(
     <Provider store={window.store}>
         <div>
             <Ball getTime={window.time.getWarpedTime.bind(window.time)} expanded/>
-            <AnimationControls debug expanded/>
-            <AnimationStateVisualizer debug/>
+            <AnimationControls debug={true} expanded={true}/>
+            <AnimationStateVisualizer debug={true} expanded={false}/>
         </div>
     </Provider>,
     document.getElementById('react'),

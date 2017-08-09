@@ -1,3 +1,6 @@
+import {extend} from 'jquery'
+
+
 export const checkIsValidAnimation = (animation) => {
     if (Array.isArray(animation)) {
         console.log('%cINVALID ANIMATION:', 'color:red', animation)
@@ -61,9 +64,7 @@ export const mod = (num, amt) => ((num%amt)+amt)%amt
 
 export const range = (num) => [...Array(num).keys()]
 
-export const deepCopy = (obj) => {
-    return $.extend(true, {}, obj)  // TODO: remove jquery
-}
+export const deepCopy = (obj) => extend(true, {}, obj)  // TODO: remove jquery
 
 export const flipObj = (obj) =>
     Object.keys(obj).reduce((acc, key) => {
@@ -180,7 +181,7 @@ export function patch(obj, selector, new_val, merge=false, mkpath=false, deepcop
     } else {
         parent[last_key] = new_val
     }
-    return deepcopy ? $.extend(true, {}, obj) : obj
+    return deepcopy ? extend(true, {}, obj) : obj
 }
 
 
@@ -295,7 +296,7 @@ export function applyPatches(obj, patches, flatten_styles=true) {
             // the structure beforehand. Do not use JSON.stringify+parse because
             // Date, function, and Infinity objects dont get safely converted.
             // jQuery is significantly faster than lodash cloneDeep
-            patch_val = $.extend(true, {}, patch_val)
+            patch_val = extend(true, {}, patch_val)
         }
         const keys = [...patch.split_path]
 

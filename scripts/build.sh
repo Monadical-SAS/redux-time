@@ -27,7 +27,6 @@ function build_file() {
     echo
     echo "[2/3] Babelifying for Node..."
     [[ -e "es6/$1" ]] && babel "es6/$1" "node/$1"
-    [[ -e "examples/$1" ]] && babel "examples/$1" "examples/static/$1"
 
     echo
     echo "[3/3] Browserifying for Browsers..."
