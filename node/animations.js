@@ -366,7 +366,6 @@ var TranslateTo = exports.TranslateTo = function TranslateTo(_ref9) {
         })]);
     }
     if (!has_left && !has_top) throw 'TranslateTo start_state and end_state must have {left or top}';
-    if (!anims.length) debugger;
     return anims;
 };
 
