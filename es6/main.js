@@ -25,16 +25,28 @@ const shouldAnimate = (anim_queue, timestamp, speed) => {
 
 
 class AnimationHandler {
-    constructor(store, initial_state) {
+    constructor(store, initial_state, autostart_animating=true) {
         const speed = store.getState().animations.speed
-        this.animating = false
+        this.animating = !autostart_animating
         this.store = store
         this.time = new WarpedTime(null, speed)
         store.subscribe(::this.handleStateChange)
         if (initial_state) {
             this.initState(initial_state)
         }
-        this.rAF = global.requestAnimationFrame || ((func) => setTimeout(func, 20))
+        if (global.requestAnimationFrame) {
+            if (global.DEBUG)
+                console.log('Running animations in a Browser.', {autostart_animating})
+
+            this.rAF = (func) =>
+                window.requestAnimationFrame.call(window, func)
+        } else {
+            if (global.DEBUG)
+                console.log('Running animations in Node.js.', {autostart_animating})
+
+            this.rAf = (func) =>
+                setTimeout(() => func(), 20)
+        }
     }
     initState(initial_state) {
         const animations = Object.keys(initial_state).map(key =>
@@ -51,7 +63,12 @@ class AnimationHandler {
         this.time.setSpeed(animations.speed)
         const timestamp = this.time.getWarpedTime()
         if (!this.animating && shouldAnimate(animations.queue, timestamp, this.time.speed)) {
-            console.log('[i] Starting Animation. Current time:', timestamp, ' Active Animations:', animations)
+            if (global.DEBUG) {
+                console.log('[i] Starting Animation. Current time:',
+                            timestamp,
+                            ' Active Animations:',
+                            animations.queue)
+            }
             this.tick()
         }
     }
@@ -72,12 +89,7 @@ class AnimationHandler {
             speed: animations.speed,
         })
         // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
-            // if (window && window.requestAnimationFrame) {
-                this.rAF(::this.tick)
-            // } else {
-                // alert('This should never be reached in the browser.')
-                // setTimeout(::this.tick, (Math.random() * 100) % 50)
-            // }
+            this.rAF(::this.tick)
         // } else {
             // this.animating = false
         // }
@@ -85,8 +97,8 @@ class AnimationHandler {
 }
 
 
-const startAnimation = (store, initial_state) => {
-    const handler = new AnimationHandler(store, initial_state)
+const startAnimation = (store, initial_state, autostart_animating=true) => {
+    const handler = new AnimationHandler(store, initial_state, autostart_animating)
     return handler.time
 }
 

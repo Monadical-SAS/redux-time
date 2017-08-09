@@ -578,26 +578,30 @@ var TranslateTo = exports.TranslateTo = function TranslateTo(_ref9) {
         unit = _ref9$unit === undefined ? 'px' : _ref9$unit;
 
     var anims = [];
-    if (start_state.left || end_state.left || amt.left) {
-        anims = [].concat((0, _toConsumableArray3.default)(KeyedAnimation({
+    var has_left = start_state.left || end_state.left || amt.left;
+    if (has_left) {
+        anims = [KeyedAnimation({
             type: 'TRANSLATE_TO_LEFT',
             path: path + '/style',
             key: 'left',
             start_time: start_time, end_time: end_time, duration: duration,
             start_state: start_state, end_state: end_state, amt: amt,
             curve: curve, unit: unit
-        })));
+        })];
     }
-    if (start_state.top || end_state.top || amt.top) {
-        anims = [].concat((0, _toConsumableArray3.default)(anims), (0, _toConsumableArray3.default)(KeyedAnimation({
+    var has_top = start_state.top || end_state.top || amt.top;
+    if (has_top) {
+        anims = [].concat((0, _toConsumableArray3.default)(anims), [KeyedAnimation({
             type: 'TRANSLATE_TO_TOP',
             path: path + '/style',
             key: 'top',
             start_time: start_time, end_time: end_time, duration: duration,
             start_state: start_state, end_state: end_state, amt: amt,
             curve: curve, unit: unit
-        })));
+        })]);
     }
+    if (!has_left && !has_top) throw 'TranslateTo start_state and end_state must have {left or top}';
+    if (!anims.length) debugger;
     return anims;
 };
 
@@ -838,19 +842,32 @@ var shouldAnimate = function shouldAnimate(anim_queue, timestamp, speed) {
 
 var AnimationHandler = function () {
     function AnimationHandler(store, initial_state) {
+        var autostart_animating = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
         (0, _classCallCheck3.default)(this, AnimationHandler);
 
         var speed = store.getState().animations.speed;
-        this.animating = false;
+        this.animating = !autostart_animating;
         this.store = store;
         this.time = new _warpedTime.WarpedTime(null, speed);
         store.subscribe(this.handleStateChange.bind(this));
         if (initial_state) {
             this.initState(initial_state);
         }
-        this.rAF = global.requestAnimationFrame || function (func) {
-            return setTimeout(func, 20);
-        };
+        if (global.requestAnimationFrame) {
+            if (global.DEBUG) console.log('Running animations in a Browser.', { autostart_animating: autostart_animating });
+
+            this.rAF = function (func) {
+                return window.requestAnimationFrame.call(window, func);
+            };
+        } else {
+            if (global.DEBUG) console.log('Running animations in Node.js.', { autostart_animating: autostart_animating });
+
+            this.rAf = function (func) {
+                return setTimeout(function () {
+                    return func();
+                }, 20);
+            };
+        }
     }
 
     (0, _createClass3.default)(AnimationHandler, [{
@@ -875,7 +892,9 @@ var AnimationHandler = function () {
             this.time.setSpeed(animations.speed);
             var timestamp = this.time.getWarpedTime();
             if (!this.animating && shouldAnimate(animations.queue, timestamp, this.time.speed)) {
-                console.log('[i] Starting Animation. Current time:', timestamp, ' Active Animations:', animations);
+                if (global.DEBUG) {
+                    console.log('[i] Starting Animation. Current time:', timestamp, ' Active Animations:', animations.queue);
+                }
                 this.tick();
             }
         }
@@ -900,12 +919,7 @@ var AnimationHandler = function () {
                 speed: animations.speed
             });
             // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
-            // if (window && window.requestAnimationFrame) {
             this.rAF(this.tick.bind(this));
-            // } else {
-            // alert('This should never be reached in the browser.')
-            // setTimeout(::this.tick, (Math.random() * 100) % 50)
-            // }
             // } else {
             // this.animating = false
             // }
@@ -915,7 +929,9 @@ var AnimationHandler = function () {
 }();
 
 var startAnimation = function startAnimation(store, initial_state) {
-    var handler = new AnimationHandler(store, initial_state);
+    var autostart_animating = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+    var handler = new AnimationHandler(store, initial_state, autostart_animating);
     return handler.time;
 };
 
@@ -1093,13 +1109,6 @@ var activeAnimations = exports.activeAnimations = function activeAnimations(anim
     return anims;
 };
 
-// window.parentExists = parentExists
-// window.currentAnimations = currentAnimations
-// window.sortedAnimations = sortedAnimations
-// window.uniqueAnimations = uniqueAnimations
-// window.activeAnimations = activeAnimations
-
-
 var computeAnimatedState = exports.computeAnimatedState = function computeAnimatedState(anim_queue, current_timestamp) {
     var last_timestamp = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
@@ -1118,7 +1127,11 @@ var computeAnimatedState = exports.computeAnimatedState = function computeAnimat
 
             try {
                 var delta = current_timestamp - animation.start_time;
-                patches.push({ 'split_path': animation.split_path, 'value': animation.tick(delta) });
+                var patch = animation.tick(delta);
+                patches.push({
+                    split_path: animation.split_path,
+                    value: patch
+                });
             } catch (e) {
                 console.log(animation.type, 'Animation tick function threw an exception:', e.message, animation);
             }

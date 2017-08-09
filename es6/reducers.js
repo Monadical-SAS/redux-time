@@ -87,14 +87,6 @@ export const activeAnimations = (anim_queue, current_timestamp, last_timestamp, 
     return anims
 }
 
-
-// window.parentExists = parentExists
-// window.currentAnimations = currentAnimations
-// window.sortedAnimations = sortedAnimations
-// window.uniqueAnimations = uniqueAnimations
-// window.activeAnimations = activeAnimations
-
-
 export const computeAnimatedState = (anim_queue, current_timestamp, last_timestamp=null) => {
     last_timestamp = last_timestamp === null ? current_timestamp : last_timestamp
 
@@ -104,7 +96,11 @@ export const computeAnimatedState = (anim_queue, current_timestamp, last_timesta
     for (let animation of active_animations) {
         try {
             const delta = current_timestamp - animation.start_time
-            patches.push({'split_path': animation.split_path, 'value': animation.tick(delta)})
+            const patch = animation.tick(delta)
+            patches.push({
+                split_path: animation.split_path,
+                value: patch,
+            })
         } catch(e) {
             console.log(animation.type, 'Animation tick function threw an exception:', e.message, animation)
         }
