@@ -111,8 +111,8 @@ ReactDOM.render(
     <Provider store={window.store}>
         <div>
             <StessTester getTime={window.time.getWarpedTime.bind(window.time)}/>
-            <AnimationControls debug expanded/>
-            <AnimationStateVisualizer debug/>
+            <AnimationControls debug={true} expanded={false}/>
+            <AnimationStateVisualizer debug={true} expanded={false}/>
         </div>
     </Provider>,
     document.getElementById('react'),
