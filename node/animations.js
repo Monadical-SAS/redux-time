@@ -343,7 +343,8 @@ var TranslateTo = exports.TranslateTo = function TranslateTo(_ref9) {
         unit = _ref9$unit === undefined ? 'px' : _ref9$unit;
 
     var anims = [];
-    var has_left = start_state.left || end_state.left || amt.left;
+    var has_left = (start_state || end_state || amt).left !== undefined;
+    var has_top = (start_state || end_state || amt).top !== undefined;
     if (has_left) {
         anims = [KeyedAnimation({
             type: 'TRANSLATE_TO_LEFT',
@@ -354,7 +355,6 @@ var TranslateTo = exports.TranslateTo = function TranslateTo(_ref9) {
             curve: curve, unit: unit
         })];
     }
-    var has_top = start_state.top || end_state.top || amt.top;
     if (has_top) {
         anims = [].concat((0, _toConsumableArray3.default)(anims), [KeyedAnimation({
             type: 'TRANSLATE_TO_TOP',

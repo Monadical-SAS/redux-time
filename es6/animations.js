@@ -223,7 +223,8 @@ export const Translate = ({path, start_time, end_time, duration=1000, start_stat
 
 export const TranslateTo = ({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'}) => {
     let anims = []
-    const has_left = start_state.left || end_state.left || amt.left
+    const has_left = (start_state || end_state || amt).left !== undefined
+    const has_top = (start_state || end_state || amt).top !== undefined
     if (has_left) {
         anims = [
             KeyedAnimation({
@@ -236,7 +237,6 @@ export const TranslateTo = ({path, start_time, end_time, duration=1000, start_st
             })
         ]
     }
-    const has_top = start_state.top || end_state.top || amt.top
     if (has_top) {
         anims = [
             ...anims,

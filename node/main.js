@@ -51,14 +51,6 @@ var AnimationHandler = function () {
         var autostart_animating = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
         (0, _classCallCheck3.default)(this, AnimationHandler);
 
-        var speed = store.getState().animations.speed;
-        this.animating = !autostart_animating;
-        this.store = store;
-        this.time = new _warpedTime.WarpedTime(null, speed);
-        store.subscribe(this.handleStateChange.bind(this));
-        if (initial_state) {
-            this.initState(initial_state);
-        }
         if (global.requestAnimationFrame) {
             if (global.DEBUG) console.log('Running animations in a Browser.', { autostart_animating: autostart_animating });
 
@@ -73,6 +65,14 @@ var AnimationHandler = function () {
                     return func();
                 }, 20);
             };
+        }
+        var speed = store.getState().animations.speed;
+        this.animating = !autostart_animating;
+        this.store = store;
+        this.time = new _warpedTime.WarpedTime(null, speed);
+        store.subscribe(this.handleStateChange.bind(this));
+        if (initial_state) {
+            this.initState(initial_state);
         }
     }
 

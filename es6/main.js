@@ -26,14 +26,6 @@ const shouldAnimate = (anim_queue, timestamp, speed) => {
 
 class AnimationHandler {
     constructor(store, initial_state, autostart_animating=true) {
-        const speed = store.getState().animations.speed
-        this.animating = !autostart_animating
-        this.store = store
-        this.time = new WarpedTime(null, speed)
-        store.subscribe(::this.handleStateChange)
-        if (initial_state) {
-            this.initState(initial_state)
-        }
         if (global.requestAnimationFrame) {
             if (global.DEBUG)
                 console.log('Running animations in a Browser.', {autostart_animating})
@@ -46,6 +38,14 @@ class AnimationHandler {
 
             this.rAf = (func) =>
                 setTimeout(() => func(), 20)
+        }
+        const speed = store.getState().animations.speed
+        this.animating = !autostart_animating
+        this.store = store
+        this.time = new WarpedTime(null, speed)
+        store.subscribe(::this.handleStateChange)
+        if (initial_state) {
+            this.initState(initial_state)
         }
     }
     initState(initial_state) {
