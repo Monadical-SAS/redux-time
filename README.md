@@ -212,7 +212,7 @@ If possible, when submitting an issue report, try to copy one of the `examples/`
 
 Documentation is a work-in-progress, if you see anything unclear or incorrect, please submit a PR or issue!
 
-We encourage you to follow along with the demos in `examples/` to see how the library works.  The examples are short and fairly easy to read!
+We encourage you to follow along with the [demos](https://monadical-sas.github.io/redux-time/examples/) in `examples/` to see how the library works.  The examples are short and fairly easy to read!
 
 - [Basics](#basics)
     + [Installation](#installation)

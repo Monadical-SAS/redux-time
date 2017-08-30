@@ -1,8 +1,11 @@
 import {createStore, combineReducers, applyMiddleware} from 'redux'
 
 
-import {animations, AnimationHandler, currentAnimations, futureAnimations, pastAnimations, uniqueAnimations, isParent} from './reducers.js'
-import {Become, AnimateCSS, Animate, Repeat, Translate, Opacity, Rotate} from './animations.js'
+import {animations, AnimationHandler, currentAnimations, futureAnimations,
+        pastAnimations, uniqueAnimations, isParent} from './reducers.js'
+
+import {Become, AnimateCSS, Animate, Repeat, Translate,
+        Opacity, Rotate} from './animations.js'
 
 
 const assert = (val, error_msg) => {
@@ -13,6 +16,9 @@ const assert = (val, error_msg) => {
     }
 }
 
+// wow
+// very testing
+// such safe
 
 // const initial_state = {
 //     test: {text: 'initial_state'}

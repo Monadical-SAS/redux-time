@@ -17,22 +17,52 @@ const base_style = {
     backgroundColor: 'orange',
 }
 
-const AnimationTesterComponent = ({getTime, text, style, animateFirstState, animateSecondState, animateGreen, animateRed, animateMove, animateRotate, animatePulse, animateBlink, animateBlinkStop, clearAnimations, debug}) =>
+const AnimationTesterComponent = ({
+        getTime, text, style, animateFirstState,animateSecondState,
+        animateGreen, animateRed, animateMove, animateRotate, animatePulse,
+        animateBlink, animateBlinkStop, clearAnimations, debug}) =>
     <ExpandableSection name="Animation Test" source={debug && SOURCE} expanded>
         <pre style={{...base_style, ...style}}>
             <br/>
             {text}
             <br/><br/>
         </pre><br/>
-        <Button title="Instant state change" onClick={animateFirstState.bind(this, getTime())}>1st state</Button>
-        <Button title="Instant state change" onClick={animateSecondState.bind(this, getTime())}>2nd state</Button>
-        <Button title="Instant state change" onClick={animateGreen.bind(this, getTime())}>Green</Button>
-        <Button title="Instant state change" onClick={animateRed.bind(this, getTime())}>Red</Button>
-        <Button title="Instant state change" onClick={animateMove.bind(this, getTime())}>Move</Button>
-        <Button title="Javascript animation" onClick={animateRotate.bind(this, getTime())}>Rotate 3x</Button>
-        <Button title="Javascript animation" onClick={animatePulse.bind(this, getTime())}>Pulse</Button>
-        <Button title="CSS keyframe animation" onClick={animateBlink.bind(this, getTime())}>Blink Forever</Button>
-        <Button title="CSS keyframe animation" onClick={animateBlinkStop.bind(this, getTime())}>Stop Blinking</Button>
+        <Button title="Instant state change"
+                onClick={animateFirstState.bind(this, getTime())}>
+                1st state
+        </Button>
+        <Button title="Instant state change"
+                onClick={animateSecondState.bind(this, getTime())}>
+                2nd state
+        </Button>
+        <Button title="Instant state change"
+                onClick={animateGreen.bind(this, getTime())}>
+                Green
+        </Button>
+        <Button title="Instant state change"
+                onClick={animateRed.bind(this, getTime())}>
+                Red
+        </Button>
+        <Button title="Instant state change"
+                onClick={animateMove.bind(this, getTime())}>
+                Move
+        </Button>
+        <Button title="Javascript animation"
+                onClick={animateRotate.bind(this, getTime())}>
+                Rotate 3x
+        </Button>
+        <Button title="Javascript animation"
+                onClick={animatePulse.bind(this, getTime())}>
+                Pulse
+        </Button>
+        <Button title="CSS keyframe animation"
+                onClick={animateBlink.bind(this, getTime())}>
+                Blink Forever
+        </Button>
+        <Button title="CSS keyframe animation"
+                onClick={animateBlinkStop.bind(this, getTime())}>
+                Stop Blinking
+        </Button>
         <Button onClick={clearAnimations}>Reset</Button>
     </ExpandableSection>
 

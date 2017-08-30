@@ -8,9 +8,14 @@ import {
 } from './util.js'
 
 
-const unit_tick = ({start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null}, key) => {
-    var {start_state, amt, end_state} = checked_animation_amt({start_state, end_state, amt, key})
-    var {start_time, end_time, duration} = checked_animation_duration({start_time, end_time, duration})
+const unit_tick = (
+        {start_time, end_time, duration, start_state, end_state, amt, 
+        curve='linear', unit=null}, key) => {
+    
+    var {start_state, amt, end_state} = checked_animation_amt({
+                                        start_state, end_state, amt, key})
+    var {start_time, end_time, duration} = checked_animation_duration({
+                                            start_time, end_time, duration})
 
     const curve_func = EasingFunctions[curve]
 
@@ -78,9 +83,15 @@ const checked_animation_amt = ({key, start_state, end_state, amt}) => {
         if (amt === undefined) amt = {}
 
         if (key !== undefined)
-            return checked_animation_amt({start_state: start_state[key], end_state: end_state[key], amt: amt[key]})
+            return checked_animation_amt({
+                start_state: start_state[key],
+                end_state: end_state[key],
+                amt: amt[key]
+            })
 
-        if (typeof(start_state) !== 'object' || typeof(end_state) !== 'object' || typeof(amt) !== 'object') {
+        if (typeof(start_state) !== 'object' 
+                || typeof(end_state) !== 'object'
+                || typeof(amt) !== 'object') {
             throw 'Incompatible types passed as {start_state, end_state, amt}, must all be objects or numbers'
         }
 
@@ -89,7 +100,11 @@ const checked_animation_amt = ({key, start_state, end_state, amt}) => {
         if (!keys.length) keys = Object.keys(amt)
 
         return keys.reduce((acc, key) => {
-            const amts = checked_animation_amt({start_state: start_state[key], end_state: end_state[key], amt: amt[key]})
+            const amts = checked_animation_amt({
+                start_state: start_state[key],
+                end_state: end_state[key],
+                amt: amt[key]
+            })
             acc.start_state[key] = amts.start_state
             acc.end_state[key] = amts.end_state
             acc.amt[key] = amts.amt
@@ -98,7 +113,9 @@ const checked_animation_amt = ({key, start_state, end_state, amt}) => {
     }
 }
 
-const KeyedAnimation = ({type, path, key, start_time, end_time, duration, start_state, end_state, amt, curve, unit}) =>
+const KeyedAnimation = ({
+        type, path, key, start_time, end_time, duration, start_state,
+        end_state, amt, curve, unit}) =>
     Animate({
         type,
         path: `${path}/${key}`,
@@ -116,7 +133,8 @@ const KeyedAnimation = ({type, path, key, start_time, end_time, duration, start_
 export const Become = ({path, state, start_time, end_time=Infinity, duration=Infinity}) => {
     if (start_time === undefined) start_time = (new Date).getTime()
 
-    var {start_time, end_time, duration} = checked_animation_duration({start_time, end_time, duration})
+    var {start_time, end_time, duration} = checked_animation_duration(
+        {start_time, end_time, duration})
     if (start_time === undefined || path === undefined) {
         console.log({path, state, start_time, end_time, duration})
         throw 'Become animation must have a start_time and path defined.'
@@ -134,7 +152,9 @@ export const Become = ({path, state, start_time, end_time=Infinity, duration=Inf
     }
 }
 
-export const Animate = ({type, path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null, tick=null}) => {
+export const Animate = ({
+        type, path, start_time, end_time, duration, start_state, end_state,
+        amt, curve='linear', unit=null, tick=null}) => {
     if (start_time === undefined) start_time = (new Date).getTime()
 
     let animation = {
@@ -153,11 +173,21 @@ export const Animate = ({type, path, start_time, end_time, duration, start_state
     }
 
     try {
-        if (typeof(start_state) === 'number' || typeof(end_state) === 'number' || typeof(amt) === 'number') {
-            animation = {...animation, ...checked_animation_amt({start_state, end_state, amt})}
+        if (typeof(start_state) === 'number'
+                || typeof(end_state) === 'number'
+                || typeof(amt) === 'number') {
+            animation = {
+                ...animation,
+                ...checked_animation_amt({start_state, end_state, amt})
+            }
         }
-        if (typeof(start_time) === 'number' || typeof(end_time) === 'number' || typeof(duration) === 'number') {
-            animation = {...animation, ...checked_animation_duration({start_time, end_time, duration})}
+        if (typeof(start_time) === 'number'
+                || typeof(end_time) === 'number'
+                || typeof(duration) === 'number') {
+            animation = {
+                ...animation,
+                ...checked_animation_duration({start_time, end_time, duration})
+            }
         }
         if (!animation.tick) {
             animation.tick = unit_tick(animation)
@@ -171,13 +201,27 @@ export const Animate = ({type, path, start_time, end_time, duration, start_state
     return animation
 }
 
-export const AnimateCSS = ({name, path, start_time, end_time, duration=1000, curve='linear'}) => {
+export const AnimateCSS = ({
+        name, path, start_time, end_time, duration=1000, curve='linear'}) => {
     if (start_time === undefined) start_time = (new Date).getTime()
 
-    var {start_time, end_time, duration} = checked_animation_duration({start_time, end_time, duration})
+    var {start_time, end_time, duration} = checked_animation_duration({
+                                            start_time, end_time, duration})
 
-    const start_state = {name, duration, curve, delay: 0, playState: 'paused'}
-    const end_state = {name, duration, curve, delay: duration, playState: 'paused'}
+    const start_state = {
+        name,
+        duration,
+        curve,
+        delay: 0,
+        playState: 'paused'
+    }
+    const end_state = {
+        name,
+        duration,
+        curve,
+        delay: duration,
+        playState: 'paused'
+    }
 
     return Animate({
         type: `CSS_${name ? name.toUpperCase() : 'END'}`,
@@ -203,15 +247,19 @@ export const AnimateCSS = ({name, path, start_time, end_time, duration=1000, cur
     })
 }
 
-export const Translate = ({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'}) => {
+export const Translate = ({
+        path, start_time, end_time, duration=1000, start_state, end_state,
+        amt, curve='linear', unit='px'}) => {
     if (start_time === undefined) start_time = (new Date).getTime()
     if (start_state === undefined) start_state = {top: 0, left: 0}
     path = `${path}/style/transform/translate`
     const type = 'TRANSLATE'
 
-    const animation = {type, path, start_time, end_time, duration, start_state, end_state, amt, curve, unit}
+    const animation = {type, path, start_time, end_time, duration,
+                       start_state, end_state, amt, curve, unit}
 
-    const left_tick = unit_tick(animation, 'left', 0)  //  TODO: change left => /left to keep state selectors consistent
+    //  TODO: change left => /left to keep state selectors consistent
+    const left_tick = unit_tick(animation, 'left', 0)
     const top_tick =  unit_tick(animation, 'top', 0)
 
     animation.tick = (delta) => ({
@@ -221,7 +269,9 @@ export const Translate = ({path, start_time, end_time, duration=1000, start_stat
     return Animate(animation)
 }
 
-export const TranslateTo = ({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'}) => {
+export const TranslateTo = ({
+        path, start_time, end_time, duration=1000, start_state, end_state,
+        amt, curve='linear', unit='px'}) => {
     let anims = []
     const has_left = (start_state || end_state || amt).left !== undefined
     const has_top = (start_state || end_state || amt).top !== undefined
@@ -255,7 +305,9 @@ export const TranslateTo = ({path, start_time, end_time, duration=1000, start_st
     return anims
 }
 
-export const Opacity = ({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null}) =>
+export const Opacity = ({
+        path, start_time, end_time, duration, start_state, end_state, amt,
+        curve='linear', unit=null}) =>
     Animate({
         type: 'OPACITY',
         path: `${path}/style/opacity`,
@@ -269,7 +321,9 @@ export const Opacity = ({path, start_time, end_time, duration, start_state, end_
         unit,
     })
 
-export const Rotate = ({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit='deg'}) =>
+export const Rotate = ({
+        path, start_time, end_time, duration, start_state, end_state, amt,
+        curve='linear', unit='deg'}) =>
     Animate({
         type: 'ROTATE',
         path: `${path}/style/transform/rotate`,

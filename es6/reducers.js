@@ -12,7 +12,8 @@ export const pastAnimations = (anim_queue, timestamp) =>
     anim_queue.filter(({start_time, duration}) => (start_time + duration < timestamp))
 
 export const currentAnimations = (anim_queue, from_timestamp, to_timestamp) =>
-    // find all animations which began before current_time, and end after the last_timestamp (crucial to render final frame of animations)
+    // find all animations which began before current_time, and end after the
+    //  last_timestamp (crucial to render final frame of animations)
     anim_queue.filter(({start_time, duration}) => (
         (start_time <= from_timestamp) && (start_time + duration >= to_timestamp)
     ))
@@ -22,7 +23,8 @@ export const futureAnimations = (anim_queue, timestamp) =>
 
 export const sortedAnimations = (anim_queue) => {
     return [...anim_queue].sort((a, b) => {
-        // sort by end time, if both are the same, sort by start time, properly handle infinity
+        // sort by end time, if both are the same, sort by start time,
+        //  and properly handle infinity
         if (a.end_time == b.end_time) {
             return a.start_time - b.start_time
         } else {
@@ -45,7 +47,7 @@ export const sortedAnimations = (anim_queue) => {
 
 const parentExists = (paths, path) => {
     let parent = ''
-    for (let key of path.split('/').slice(1)) {             // O(path.length)
+    for (let key of path.split('/').slice(1)) {   // O(path.length)
         parent = `${parent}/${key}`
         if (paths.has(parent)) {
             return true
@@ -68,16 +70,19 @@ export const uniqueAnimations = (anim_queue) => {
     return uniq_anims.reverse()
 }
 
-export const activeAnimations = (anim_queue, current_timestamp, last_timestamp, uniqueify=true) => {
+export const activeAnimations = (
+        anim_queue, current_timestamp, last_timestamp, uniqueify=true) => {
     if (current_timestamp === undefined || last_timestamp === undefined) {
         throw 'Both current_timestamp and last_timestamp must be passed to get activeAnimations'
     }
     let anims
     if (last_timestamp < current_timestamp) {
-        // when playing forwards, find all animations which began before current_time, and end after the time of the last frame
+        // when playing forwards, find all animations which began before
+        //  current_time, and end after the time of the last frame
         anims = sortedAnimations(currentAnimations(anim_queue, current_timestamp, last_timestamp))
     } else if (last_timestamp >= current_timestamp) {
-        // when playing in reverse, flip the two times to keep start/end time calculation math the same
+        // when playing in reverse, flip the two times to keep
+        //  start/end time calculation math the same
         anims = sortedAnimations(currentAnimations(anim_queue, last_timestamp, current_timestamp))
     }
 
@@ -87,7 +92,8 @@ export const activeAnimations = (anim_queue, current_timestamp, last_timestamp, 
     return anims
 }
 
-export const computeAnimatedState = (anim_queue, current_timestamp, last_timestamp=null) => {
+export const computeAnimatedState = (anim_queue, current_timestamp, 
+        last_timestamp=null) => {
     last_timestamp = last_timestamp === null ? current_timestamp : last_timestamp
 
     const active_animations = activeAnimations(anim_queue, current_timestamp, last_timestamp, false)
@@ -143,7 +149,8 @@ export const initial_state = {
 export const animations = (state=initial_state, action) => {
     switch (action.type) {
         case 'CLEAR_ANIMATIONS':
-            const only_initial_state = state.queue.filter(anim => anim.start_time === 0)
+            const only_initial_state = state.queue.filter(anim => 
+                anim.start_time === 0)
             return {
                 ...initial_state,
                 current_timestamp: state.current_timestamp,
@@ -179,8 +186,10 @@ export const animations = (state=initial_state, action) => {
             // add any missing fields
             const new_animation_objs = anim_objs.map(anim => ({
                 ...anim,
-                split_path: anim.path.split('/').slice(1),   // .split is expensive to do later, saves CPU on each TICK
-                start_time: anim.start_time === undefined ?  // set to now if start_time is not provided
+                // .split is expensive to do later, saves CPU on each TICK
+                split_path: anim.path.split('/').slice(1),
+                // set to now if start_time is not provided
+                start_time: anim.start_time === undefined ?
                     (new Date).getTime()
                   : anim.start_time
             }))
@@ -197,7 +206,8 @@ export const animations = (state=initial_state, action) => {
             }
 
         case 'TICK':
-            if (action.current_timestamp === undefined || action.last_timestamp === undefined) {
+            if (action.current_timestamp === undefined 
+                    || action.last_timestamp === undefined) {
                 throw 'TICK action must have a current_timestamp and last_timestamp'
             }
             const animated_state = computeAnimatedState(
