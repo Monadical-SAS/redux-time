@@ -39,7 +39,7 @@
     
  - **Three.js**
  
-   [**Live Demo**](https://monadical-sas.github.io/warped-time/examples/threejs.html) | **Source:** [`warped-time/examples/threejs.js`](https://github.com/Monadical-SAS/warped-time/blob/master/examples/threejs.js)
+   [**Live Demo**](https://monadical-sas.github.io/redux-time/examples/threejs.html) | **Source:** [`redux-time/examples/threejs.js`](https://github.com/Monadical-SAS/redux-time/blob/master/examples/threejs.js)
  
     A demonstration of redux-time being used to animate a [three.js](https://threejs.org) scene (without React):
 
