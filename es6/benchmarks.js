@@ -1,25 +1,37 @@
 import {Become, TranslateTo, Rotate,
         Scale, Opacity} from './animations.js'
 
-import {assert, print} from './tests.js'
+import {assert, assertEqual, print, range} from './util.js'
 
 import {computeAnimatedState} from './reducers.js'
 
-const nested_key = (i, d, bf) => {
-    // populates a tree uniformly
-    // returns /{i mod bf ** d}/{i mod bf ** (d-1)} ... /{i mod bf}
-    // where i is the i-th placement
-    //       d is the depth of the tree
-    //       bf is the branching factor
-    const key = (l) => i % (bf ** (d - l))
-    return `\${[...Array(d).keys()].map(key).join('/')}`
+
+let nested_key = (i, bf, d, l=null) => {
+    // populates a tree uniformly. see tests below for examples
+    if (l === 0) {
+        return ''
+    } else if (!l) {
+        const cropped_i = i % bf ** d
+        return nested_key(cropped_i, bf, d, d)
+    } else {
+        return `${nested_key(Math.floor(i / bf), bf, d, l - 1)}/${i}`
+    }
 }
 
-// assert(nested_key(15, 2, 3) == '/1/2')
-// assert(nested_key(15, 3, 2) == '/1/1/0')
-// assert(nested_key(15, 2, 3) == '/1/2')
-// assert(nested_key(15, 3, 2) == '/1/1/0')
+assertEqual(nested_key(0, 2, 2), '/0/0')
+assertEqual(nested_key(1, 2, 2), '/0/1')
+assertEqual(nested_key(2, 2, 2), '/1/2')
+assertEqual(nested_key(3, 2, 2), '/1/3')
+assertEqual(nested_key(4, 2, 2), '/0/0')
 
+assertEqual(nested_key(15, 2, 1), '/1')
+assertEqual(nested_key(15, 2, 2), '/1/3')
+assertEqual(nested_key(15, 2, 3), '/1/3/7')
+assertEqual(nested_key(15, 2, 4), '/1/3/7/15')
+assertEqual(nested_key(15, 2, 5), '/0/1/3/7/15')
+assertEqual(nested_key(15, 2, 6), '/0/0/1/3/7/15')
+
+assertEqual(nested_key(15, 3, 3), '/1/5/15')
 
 //  create objects
 const create_objects = (n, depth, branching_factor) => {
