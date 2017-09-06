@@ -251,7 +251,7 @@ const flattenIfNotFlattened = (state, path, flatten_func) => {
 }
 
 export const flattenStyles = (state, paths_to_flatten) => {
-    // WARNING: highly optimized code, profile before changing anything
+    // WARNING: optimized code, profile before changing anything
     // this converts the styles stored as dicts in the state tree, to the strings
     // that react components expect as CSS style values
     for (let path of paths_to_flatten) {
@@ -273,9 +273,10 @@ export const flattenStyles = (state, paths_to_flatten) => {
 }
 
 const shouldFlatten = (split_path) => {
-    // WARNING: highly optimized code, profile before changing anything
-    // check to see if a given path introduces some CSS state that needs to be
-    // converted from an object to a css string, e.g. {style: transform: translate: {top: 0, left: 0}}
+    // WARNING: optimized code, profile before changing anything
+    //  check to see if a given path introduces some CSS state that needs
+    //  to be converted from an object to a css string, e.g.
+    //  {style: transform: translate: {top: 0, left: 0}}
     const style_key = split_path.lastIndexOf('style')
     return (style_key != -1
             && (split_path[style_key + 1] == 'transform'
@@ -283,7 +284,7 @@ const shouldFlatten = (split_path) => {
 }
 
 export function applyPatches(obj, patches, flatten_styles=true) {
-    // WARNING: highly optimized code, profile before changing anything
+    // WARNING: optimized code, profile before changing anything
     let output = {}
     const paths_to_flatten = []
 

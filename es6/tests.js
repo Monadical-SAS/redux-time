@@ -7,18 +7,17 @@ import {animations, AnimationHandler, currentAnimations, futureAnimations,
 import {Become, AnimateCSS, Animate, Repeat, Translate,
         Opacity, Rotate} from './animations.js'
 
+const print = (msg) => {
+    process ? process.stdout.write(msg) : console.log(msg)
+}
 
 const assert = (val, error_msg) => {
     if (!val) {
-        console.log(`[X] AssertionError: ${error_msg} (${val})`)
+        print(`[X] AssertionError: ${error_msg} (${val})`)
     } else {
-        process ? process.stdout.write('.') : console.log('.')
+        print('.')
     }
 }
-
-// wow
-// very testing
-// such safe
 
 // const initial_state = {
 //     test: {text: 'initial_state'}
