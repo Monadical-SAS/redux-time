@@ -102,10 +102,9 @@ export const computeAnimatedState = (anim_queue, current_timestamp,
     for (let animation of active_animations) {
         try {
             const delta = current_timestamp - animation.start_time
-            const patch = animation.tick(delta)
             patches.push({
                 split_path: animation.split_path,
-                value: patch,
+                value: animation.tick(delta),
             })
         } catch(e) {
             console.log(animation.type, 'Animation tick function threw an exception:', e.message, animation)
@@ -186,8 +185,6 @@ export const animations = (state=initial_state, action) => {
             // add any missing fields
             const new_animation_objs = anim_objs.map(anim => ({
                 ...anim,
-                // .split is expensive to do later, saves CPU on each TICK
-                split_path: anim.path.split('/').slice(1),
                 // set to now if start_time is not provided
                 start_time: anim.start_time === undefined ?
                     (new Date).getTime()

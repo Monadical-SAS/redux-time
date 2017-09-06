@@ -161,6 +161,7 @@ export const Animate = ({
     let animation = {
         type: type ? type : 'ANIMATE',
         path,
+        split_path: path.split('/').slice(1),
         start_time, end_time, duration,
         start_state, end_state, amt,
         curve,
