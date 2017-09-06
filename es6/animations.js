@@ -8,9 +8,9 @@ import {
 } from './util.js'
 
 
-const unit_tick = (
+const tick_func = (
         {start_time, end_time, duration, start_state, end_state, amt, 
-        curve='linear', unit=null}, key) => {
+        curve='linear', cast_to_unit=null}, key) => {
     
     var {start_state, amt, end_state} = checked_animation_amt({
                                         start_state, end_state, amt, key})
@@ -19,20 +19,20 @@ const unit_tick = (
 
     const curve_func = EasingFunctions[curve]
 
-    return (delta) => {
+    return (time_elapsed) => {
         let new_state
         // These over-boundary cases happen because we need to render
         // an extra frame before/after start/end times to finish off
-        // animations who's (durations) % (frame rate) != 0.
-        if (delta < 0) {
+        // animations whose (durations) % (frame rate) != 0.
+        if (time_elapsed < 0) {
             new_state = start_state
-        } else if (delta >= duration) {
+        } else if (time_elapsed >= duration) {
             new_state = end_state
         } else {
             // tick progression function, the core math at the heart of animation
-            new_state = start_state + curve_func(delta/duration)*amt
+            new_state = start_state + curve_func(time_elapsed/duration)*amt
         }
-        return unit ? `${new_state}${unit}` : new_state
+        return cast_to_unit ? `${new_state}${cast_to_unit}` : new_state
     }
 }
 
@@ -130,7 +130,8 @@ const KeyedAnimation = ({
     })
 
 
-export const Become = ({path, state, start_time, end_time=Infinity, duration=Infinity}) => {
+export const Become = ({path, state, start_time, 
+                        end_time=Infinity, duration=Infinity}) => {
     if (start_time === undefined) start_time = (new Date).getTime()
 
     var {start_time, end_time, duration} = checked_animation_duration(
@@ -190,7 +191,7 @@ export const Animate = ({
             }
         }
         if (!animation.tick) {
-            animation.tick = unit_tick(animation)
+            animation.tick = tick_func(animation)
         }
     } catch(e) {
         console.log('INVALID ANIMATION:', animation)
@@ -259,8 +260,8 @@ export const Translate = ({
                        start_state, end_state, amt, curve, unit}
 
     //  TODO: change left => /left to keep state selectors consistent
-    const left_tick = unit_tick(animation, 'left', 0)
-    const top_tick =  unit_tick(animation, 'top', 0)
+    const left_tick = tick_func(animation, 'left', 0)
+    const top_tick =  tick_func(animation, 'top', 0)
 
     animation.tick = (delta) => ({
         left: left_tick(delta),
