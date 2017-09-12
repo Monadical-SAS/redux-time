@@ -12,9 +12,23 @@ export const assert = (val, error_msg) => {
         print('.')
     }
 }
-
+     
 export const assertEqual = (val1, val2) => {
     assert(val1 === val2, `${val1} !== ${val2}`)
+}
+
+export const assertSortedObjsInOrder = (arr, sort_function, expected_order) => {
+    const arr_with_keys = arr.map((obj, idx)=> {
+        return {
+            ...obj,
+            idx: idx
+        }
+    })
+    const sorted_objs = sort_function(arr_with_keys)
+    const sorted_order = sorted_objs.map((obj) => obj.idx)
+    expected_order.forEach((expected_idx, idx) => {
+        assertEqual(expected_idx, sorted_order[idx])
+    })
 }
 
 export const checkIsValidAnimation = (animation) => {

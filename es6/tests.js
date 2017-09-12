@@ -6,7 +6,19 @@ import {animations, AnimationHandler, currentAnimations, futureAnimations,
 import {Become, AnimateCSS, Animate, Repeat, Translate,
         Opacity, Rotate} from './animations.js'
 
-import {assert, print} from './util.js'
+import {assert, print, assertSortedObjsInOrder} from './util.js'
+
+const sort = (x) => x
+
+assertSortedObjsInOrder([{0:0}, {1:1}, {2:2}], sort, [0,1,2])
+
+const sort2 = (x) => {
+    let output = [...x]
+    output.reverse()
+    return output
+}
+assertSortedObjsInOrder([{0:0}, {1:1}, {2:2}], sort2, [2,1,0])
+
 
 // const initial_state = {
 //     test: {text: 'initial_state'}
