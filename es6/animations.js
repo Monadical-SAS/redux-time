@@ -140,7 +140,7 @@ export const Become = ({path, state, start_time,
         console.log({path, state, start_time, end_time, duration})
         throw 'Become animation must have a start_time and path defined.'
     }
-    return {
+    return Animate({
         type: 'BECOME',
         path,
         state,
@@ -150,7 +150,7 @@ export const Become = ({path, state, start_time,
         tick: (delta) => {
             return state
         },
-    }
+    })
 }
 
 export const Animate = ({

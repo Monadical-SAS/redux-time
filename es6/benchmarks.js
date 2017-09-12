@@ -112,8 +112,11 @@ const do_benchmark = (n, branching_factor, depth, n_frames, print_state) => {
         animated_state = computeAnimatedState(full_queue, 500+i)
     }
     console.log(`${Date.now() - start_time} milliseconds`)
+    console.log(`${1000/((Date.now() - start_time)/n_frames)} FPS`)
     if (print_state) console.log(animated_state)
 }
 
-do_benchmark(10, 2, 2, 50, true)
-// do_benchmark(5000, 4, 5, 50, true)
+do_benchmark(5, 5, 5, 50, false)
+do_benchmark(50, 5, 5, 50, false)
+do_benchmark(500, 5, 5, 50, false)
+do_benchmark(5000, 5, 5, 50, false)

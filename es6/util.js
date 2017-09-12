@@ -300,7 +300,7 @@ const shouldFlatten = (split_path) => {
 }
 
 export function applyPatches(obj, patches, flatten_styles=true) {
-    console.log({obj, patches, flatten_styles})
+    // console.log({obj, patches, flatten_styles})
     // WARNING: optimized code, profile before changing anything
     let output = {}
     const paths_to_flatten = []

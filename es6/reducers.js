@@ -98,7 +98,7 @@ export const computeAnimatedState = (anim_queue, current_timestamp,
 
     const active_animations = activeAnimations(anim_queue, current_timestamp, last_timestamp, false)
     let patches = []
-    console.log({active_animations})
+    //console.log({active_animaions})
     for (let animation of active_animations) {
         try {
             const delta = current_timestamp - animation.start_time
