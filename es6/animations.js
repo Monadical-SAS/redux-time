@@ -10,7 +10,7 @@ import {
 
 const tick_func = (
         {start_time, end_time, duration, start_state, end_state, amt, 
-        curve='linear', cast_to_unit=null}, key) => {
+        curve='linear', unit=null}, key) => {
     
     var {start_state, amt, end_state} = checked_animation_amt({
                                         start_state, end_state, amt, key})
@@ -32,7 +32,7 @@ const tick_func = (
             // tick progression function, the core math at the heart of animation
             new_state = start_state + curve_func(time_elapsed/duration)*amt
         }
-        return cast_to_unit ? `${new_state}${cast_to_unit}` : new_state
+        return unit ? `${new_state}${unit}` : new_state
     }
 }
 

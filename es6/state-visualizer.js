@@ -42,12 +42,12 @@ const AnimationList = ({animations, verbose=true, style}) =>
 
 
 export const AnimationStateVisualizerComponent = ({animations, path, expanded, debug=false}) => {
-    const {queue, current_timestamp, last_timestamp} = animations
-    const active_anims = activeAnimations(queue, current_timestamp, last_timestamp)
+    const {queue, warped_time, former_time} = animations
+    const active_anims = activeAnimations(queue, warped_time, former_time)
 
-    const past_anims = sortedAnimations(pastAnimations(queue, current_timestamp, last_timestamp))
-    const current_anims = sortedAnimations(currentAnimations(queue, current_timestamp, last_timestamp))
-    const future_anims = sortedAnimations(futureAnimations(queue, current_timestamp, last_timestamp))
+    const past_anims = sortedAnimations(pastAnimations(queue, warped_time, former_time))
+    const current_anims = sortedAnimations(currentAnimations(queue, warped_time, former_time))
+    const future_anims = sortedAnimations(futureAnimations(queue, warped_time, former_time))
 
     const col_style = {width: '32.5%', display: 'inline-block', verticalAlign: 'top'}
 

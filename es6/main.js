@@ -14,11 +14,11 @@ const shouldAnimate = (anim_queue, timestamp, speed) => {
 
     // // if going forward in time, and future animations exist
     // if (this.time.speed > 0) {
-    //     return (currentAnimations(animations.queue, timestamp, animations.last_timestamp).length
+    //     return (currentAnimations(animations.queue, timestamp, animations.former_time).length
     //             || futureAnimations(animations.queue, timestamp).length)
     // }
     // else if (this.time.speed < 0) {
-    //     return (currentAnimations(animations.queue, timestamp, animations.last_timestamp).length
+    //     return (currentAnimations(animations.queue, timestamp, animations.former_time).length
     //             || pastAnimations(animations.queue, timestamp).length)
     // }
     // return false
@@ -43,7 +43,7 @@ class AnimationHandler {
         const speed = store.getState().animations.speed
         this.animating = !autostart_animating
         this.store = store
-        this.time = new WarpedTime(null, speed)
+        this.time = new WarpedTime({speed})
         store.subscribe(::this.handleStateChange)
         if (initial_state) {
             this.initState(initial_state)
@@ -85,8 +85,8 @@ class AnimationHandler {
 
         this.store.dispatch({
             type: 'TICK',
-            last_timestamp: animations.current_timestamp || 0,
-            current_timestamp: new_timestamp,
+            former_time: animations.warped_time || 0,
+            warped_time: new_timestamp,
             speed: animations.speed,
         })
         // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {

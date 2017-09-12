@@ -13,7 +13,7 @@ export const pastAnimations = (anim_queue, timestamp) =>
 
 export const currentAnimations = (anim_queue, from_timestamp, to_timestamp) =>
     // find all animations which began before current_time, and end after the
-    //  last_timestamp (crucial to render final frame of animations)
+    //  former_time (crucial to render final frame of animations)
     anim_queue.filter(({start_time, duration}) => (
         (start_time <= from_timestamp) && (start_time + duration >= to_timestamp)
     ))
@@ -71,19 +71,19 @@ export const uniqueAnimations = (anim_queue) => {
 }
 
 export const activeAnimations = (
-        anim_queue, current_timestamp, last_timestamp, uniqueify=true) => {
-    if (current_timestamp === undefined || last_timestamp === undefined) {
-        throw 'Both current_timestamp and last_timestamp must be passed to get activeAnimations'
+        anim_queue, warped_time, former_time, uniqueify=true) => {
+    if (warped_time === undefined || former_time === undefined) {
+        throw 'Both warped_time and former_time must be passed to get activeAnimations'
     }
     let anims
-    if (last_timestamp < current_timestamp) {
+    if (former_time < warped_time) {
         // when playing forwards, find all animations which began before
         //  current_time, and end after the time of the last frame
-        anims = sortedAnimations(currentAnimations(anim_queue, current_timestamp, last_timestamp))
-    } else if (last_timestamp >= current_timestamp) {
+        anims = sortedAnimations(currentAnimations(anim_queue, warped_time, former_time))
+    } else if (former_time >= warped_time) {
         // when playing in reverse, flip the two times to keep
         //  start/end time calculation math the same
-        anims = sortedAnimations(currentAnimations(anim_queue, last_timestamp, current_timestamp))
+        anims = sortedAnimations(currentAnimations(anim_queue, former_time, warped_time))
     }
 
     if (uniqueify)
@@ -92,16 +92,16 @@ export const activeAnimations = (
     return anims
 }
 
-export const computeAnimatedState = (anim_queue, current_timestamp, 
-        last_timestamp=null) => {
-    last_timestamp = last_timestamp === null ? current_timestamp : last_timestamp
+export const computeAnimatedState = (anim_queue, warped_time, 
+        former_time=null) => {
+    former_time = former_time === null ? warped_time : former_time
 
-    const active_animations = activeAnimations(anim_queue, current_timestamp, last_timestamp, false)
+    const active_animations = activeAnimations(anim_queue, warped_time, former_time, false)
     let patches = []
     //console.log({active_animaions})
     for (let animation of active_animations) {
         try {
-            const delta = current_timestamp - animation.start_time
+            const delta = warped_time - animation.start_time
             patches.push({
                 split_path: animation.split_path,
                 value: animation.tick(delta),
@@ -138,8 +138,8 @@ const trimmedAnimationQueue = (anim_queue, max_time_travel) => {
 
 export const initial_state = {
     speed: 1,
-    last_timestamp: 0,
-    current_timestamp: 0,
+    former_time: 0,
+    warped_time: 0,
     max_time_travel: 3000,   // maximum length of the queue before items get trimmed
     queue: [],
     state: {},
@@ -152,13 +152,13 @@ export const animations = (state=initial_state, action) => {
                 anim.start_time === 0)
             return {
                 ...initial_state,
-                current_timestamp: state.current_timestamp,
-                last_timestamp: state.last_timestamp,
+                warped_time: state.warped_time,
+                former_time: state.former_time,
                 queue: only_initial_state,
                 state: computeAnimatedState(
                     only_initial_state,
-                    state.current_timestamp,
-                    state.last_timestamp,
+                    state.warped_time,
+                    state.former_time,
                 )
             }
 
@@ -199,26 +199,26 @@ export const animations = (state=initial_state, action) => {
             return {
                 ...state,
                 speed: action.speed,
-                last_timestamp: state.current_timestamp,
+                former_time: state.warped_time,
             }
 
         case 'TICK':
-            if (action.current_timestamp === undefined 
-                    || action.last_timestamp === undefined) {
-                throw 'TICK action must have a current_timestamp and last_timestamp'
+            if (action.warped_time === undefined 
+                    || action.former_time === undefined) {
+                throw 'TICK action must have a warped_time and former_time'
             }
             const animated_state = computeAnimatedState(
                 state.queue,
-                action.current_timestamp,
-                action.last_timestamp,
+                action.warped_time,
+                action.former_time,
             )
 
             return {
                 ...state,
                 state: animated_state,
                 speed: action.speed || state.speed,
-                current_timestamp: action.current_timestamp,
-                last_timestamp: action.last_timestamp,
+                warped_time: action.warped_time,
+                former_time: action.former_time,
             }
 
         default:
