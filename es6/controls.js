@@ -13,7 +13,7 @@ const mapStateToProps = ({animations}) => ({
 const mapDispatchToProps = (dispatch) => ({
 	setTime: (warped_time) => {
 		dispatch({type: 'SET_WARPED_TIME', warped_time})
-	}
+	},
     setSpeed: (speed) => {
         dispatch({type: 'SET_ANIMATION_SPEED', speed})
     },

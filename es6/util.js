@@ -1,6 +1,22 @@
 import extend from 'extend'
 
 
+export const print = (msg) => {
+    process ? process.stdout.write(msg) : console.log(msg)
+}
+
+export const assert = (val, error_msg) => {
+    if (!val) {
+        print(`[X] AssertionError: ${error_msg} (${val})`)
+    } else {
+        print('.')
+    }
+}
+
+export const assertEqual = (val1, val2) => {
+    assert(val1 === val2, `${val1} !== ${val2}`)
+}
+
 export const checkIsValidAnimation = (animation) => {
     if (Array.isArray(animation)) {
         console.log('%cINVALID ANIMATION:', 'color:red', animation)
@@ -284,6 +300,7 @@ const shouldFlatten = (split_path) => {
 }
 
 export function applyPatches(obj, patches, flatten_styles=true) {
+    console.log({obj, patches, flatten_styles})
     // WARNING: optimized code, profile before changing anything
     let output = {}
     const paths_to_flatten = []

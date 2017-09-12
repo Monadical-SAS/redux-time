@@ -1,23 +1,12 @@
 import {createStore, combineReducers, applyMiddleware} from 'redux'
 
-
 import {animations, AnimationHandler, currentAnimations, futureAnimations,
         pastAnimations, uniqueAnimations, isParent} from './reducers.js'
 
 import {Become, AnimateCSS, Animate, Repeat, Translate,
         Opacity, Rotate} from './animations.js'
 
-const print = (msg) => {
-    process ? process.stdout.write(msg) : console.log(msg)
-}
-
-const assert = (val, error_msg) => {
-    if (!val) {
-        print(`[X] AssertionError: ${error_msg} (${val})`)
-    } else {
-        print('.')
-    }
-}
+import {assert, print} from './util.js'
 
 // const initial_state = {
 //     test: {text: 'initial_state'}

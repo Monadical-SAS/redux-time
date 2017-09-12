@@ -34,86 +34,86 @@ assertEqual(nested_key(15, 2, 6), '/0/0/1/3/7/15')
 assertEqual(nested_key(15, 3, 3), '/1/5/15')
 
 //  create objects
-const create_objects = (n, depth, branching_factor) => {
-    [...Array(n).keys()].map(i => {
+const create_objects = (n, branching_factor, depth) => {
+    return range(n).map(i =>
         Become({
-            path: nested_key(i, depth, branching_factor),
+            path: nested_key(i, branching_factor, depth),
             state: {
-                x: n - i,
-                y: i,
+                left: n - i,
+                top: i,
             },
             start_time: i,
-            end_time: 1000 + i,
         })
-    })
+    )
 }
 
 //  move +100x, +100y
-const move_objects = (n, depth, branching_factor) => {
-    [...Array(n).keys()].map(i => {
+const move_objects = (n, branching_factor, depth) => {
+    return range(n).map(i =>
         TranslateTo({
-            path: nested_key(i, depth, branching_factor),
+            path: nested_key(i, branching_factor, depth),
             start_state: {
-                x: n - i,
-                y: i,
+                left: n - i,
+                top: i,
             },
             end_state: {
-                x: n - i + 100,
-                y: i + 100,
+                left: n - i + 100,
+                top: i + 100,
             },
             start_time: i,
             end_time: 1000 + i,
         })
-    })
+    )
 }
 
 //  rotate 180deg
-const rotate_objects = (n, depth, branching_factor) => {
-    [...Array(n).keys()].map(i => {
+const rotate_objects = (n, branching_factor, depth) => {
+    return range(n).map(i =>
         Rotate({
-            path: nested_key(i, depth, branching_factor),
+            path: nested_key(i, branching_factor, depth),
             start_state: 0,
             end_state: 180,
             start_time: i,
             end_time: 1000 + i,
         })
-    })
+    )
 }
 
 //  opacity -> 0%
-const opacity_objects = (n, depth, branching_factor) => {
-    [...Array(n).keys()].map(i => {
+const opacity_objects = (n, branching_factor, depth) => {
+    return range(n).map(i =>
         Rotate({
-            path: nested_key(i, depth, branching_factor),
+            path: nested_key(i, branching_factor, depth),
             start_state: 1,
             end_state: 0,
             start_time: i,
             end_time: 1000 + i,
         })
-    })
+    )
 }
 
-const full_anim_queue = (n, depth, branching_factor) => {
-    [
-        ...create_objects(n, depth, branching_factor),
-        ...move_objects(n, depth, branching_factor),
-        ...rotate_objects(n, depth, branching_factor),
-        ...opacity_objects(n, depth, branching_factor),
+const full_anim_queue = (n, branching_factor, depth) => {
+    return [
+        ...create_objects(n, branching_factor, depth),
+        // ...move_objects(n, branching_factor, depth),
+        ...rotate_objects(n, branching_factor, depth),
+        ...opacity_objects(n, branching_factor, depth),
     ]
 }
 
-const do_benchmark = (n, depth, branching_factor, n_frames, print_state) => {
-    const full_queue = full_anim_queue(n, depth, branching_factor)
+const do_benchmark = (n, branching_factor, depth, n_frames, print_state) => {
+    const full_queue = full_anim_queue(n, branching_factor, depth)
     let animated_state
-    print(`benchmarking ${n} objects over ${n_frames} frames`)
-    print(`depth ${d}, branching_factor ${bf}`)
+    if (print_state) console.log({full_queue})
+    console.log(`benchmarking ${n} objects over ${n_frames} frames`)
+    console.log(`state has: branching_factor ${branching_factor}, depth ${depth}`)
     const start_time = Date.now()
     for (let i = 0; i < n_frames; i++){
         animated_state = computeAnimatedState(full_queue, 500+i)
     }
-    print(`${Date.now() - start_time} milliseconds`)
-    if (print_state) print(animated_state)
+    console.log(`${Date.now() - start_time} milliseconds`)
+    if (print_state) console.log(animated_state)
 }
 
-print('huh')
-do_benchmark(5000, 4, 5, 50, true)
+do_benchmark(10, 2, 2, 50, true)
+// do_benchmark(5000, 4, 5, 50, true)
