@@ -3,7 +3,7 @@ import {assert, assertEqual, print, assertSortedObjsInOrder,
 
 import {Become, Animate} from './animations.js'
 
-import {activeAnimations, uniqueAnimations} from './reducers.js'
+import {activeAnimations, uniqueAnimations, currentAnimations, finalFrameAnimations} from './reducers.js'
 
 
 export const run_unit_tests = () => {
@@ -39,13 +39,11 @@ assertSortedObjsInOrder([{0:0}, {1:1}, {2:2}], sort2, [2,1,0])
 
 const animation_queue = [
     Become({
-        id: 0,
         path: '/',
         state: 0,
         start_time: 0,
     }),
     Animate({
-        id: 1,
         path: '/',
         start_state: 1,
         end_state: 1,
@@ -53,7 +51,6 @@ const animation_queue = [
         end_time:  60,
     }),
     Animate({
-        id: 2,
         path: '/',
         start_state: 2,
         end_state: 2,
@@ -61,7 +58,6 @@ const animation_queue = [
         end_time:  70,
     }),
     Animate({
-        id: 3,
         path: '/',
         start_state: 3,
         end_state: 3,
@@ -70,32 +66,37 @@ const animation_queue = [
     }),
 ]
 
-// finished loses
+// 3 is the last in the list, and is active @ warped_time
 let active_q = activeAnimations({
     anim_queue: animation_queue,
     former_time: 64,
     warped_time: 66,
 })
-console.log(active_q)
-assert(active_q.pop().id == 2, 'Animation 2 should take precedence')
+assert(active_q.pop().start_state == 3, 'Animation 3 should take precedence')
 
-// finished loses, going backwards as well
+// 3 is last in the list, but 2 is @ warped_time
 active_q = activeAnimations({
     anim_queue: animation_queue,
     former_time: 71,
-    warped_time: 69,
+    warped_time: 60,
 })
-console.log(active_q)
-assert(active_q.pop().id == 3, 'Animation 3 should take precedence')
+assert(active_q.pop().start_state == 2, 'Animation 2 should take precedence')
 
-// finished loses to a BECOME
+// none of the animations take precedence over the BECOME. they all ended.
 active_q = activeAnimations({
     anim_queue: animation_queue,
-    former_time: 76,
-    warped_time: 75,
+    former_time: 50,
+    warped_time: 76,
 })
-console.log(active_q)
-assert(active_q.pop().id == 0, 'Animation 0 should take precedence')
+assert(active_q.pop().start_state == 0, 'Animation 0 should take precedence')
+
+// same thing, but without the become gets Animation 3 in its last frame
+active_q = activeAnimations({
+    anim_queue: animation_queue.slice(1),
+    former_time: 50,
+    warped_time: 76,
+})
+assert(active_q.pop().start_state == 3, 'Animation 3 should take precedence')
 
 
 

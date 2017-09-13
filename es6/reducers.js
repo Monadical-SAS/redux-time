@@ -20,12 +20,12 @@ export const finalFrameAnimations = ({anim_queue, warped_time, former_time}) => 
     const is_between = (anim) => {
         if (warped_time >= former_time) {
         // traveling forward in time or standing still
-            return (former_time < anim.end_time)
-                && (anim.end_time <= warped_time)
+            return (former_time <= anim.end_time)
+                && (anim.end_time < warped_time)
         } else {
         // traveling backward in time
-            return (warped_time <= anim.start_time)
-                && (anim.start_time < former_time)
+            return (warped_time < anim.start_time)
+                && (anim.start_time <= former_time)
         }
     }
 
