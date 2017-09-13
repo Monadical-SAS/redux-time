@@ -99,8 +99,6 @@ active_q = activeAnimations({
 assert(active_q.pop().start_state == 3, 'Animation 3 should take precedence')
 
 
-
-
 // ANIMATION UNIQUIFICATION
 const anim_queue = [
     {path: '/a/b'},
