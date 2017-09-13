@@ -11,12 +11,15 @@ import {
 export const pastAnimations = (anim_queue, timestamp) =>
     anim_queue.filter(({start_time, duration}) => (start_time + duration < timestamp))
 
-export const currentAnimations = (anim_queue, from_timestamp, to_timestamp) =>
+export const currentAnimations = (anim_queue, warped_time, former_time) => {
     // find all animations which began before current_time, and end after the
     //  former_time (crucial to render final frame of animations)
-    anim_queue.filter(({start_time, duration}) => (
-        (start_time <= from_timestamp) && (start_time + duration >= to_timestamp)
-    ))
+    return anim_queue.filter(({start_time, duration}) => {
+        const started_already = start_time <= warped_time
+        const has_not_ended = start_time + duration > former_time
+        return started_already && has_not_ended
+    })
+}
 
 export const futureAnimations = (anim_queue, timestamp) =>
     anim_queue.filter(({start_time, duration}) => (start_time > timestamp))
@@ -26,16 +29,16 @@ export const sortedAnimations = (anim_queue) => {
         // sort by end time, if both are the same, sort by start time,
         //  and properly handle infinity
         if (a.end_time == b.end_time) {
-            return a.start_time - b.start_time
+            return b.start_time - a.start_time
         } else {
             if (a.end_time == Infinity) {
-                return -1
-            }
-            else if (b.end_time == Infinity) {
                 return 1
             }
+            else if (b.end_time == Infinity) {
+                return -1
+            }
             else {
-                return a.end_time - b.end_time
+                return b.end_time - a.end_time
             }
         }
     })
@@ -98,7 +101,7 @@ export const computeAnimatedState = (anim_queue, warped_time,
 
     const active_animations = activeAnimations(anim_queue, warped_time, former_time, false)
     let patches = []
-    //console.log({active_animaions})
+    // console.log({active_animations})
     for (let animation of active_animations) {
         try {
             const delta = warped_time - animation.start_time
@@ -163,6 +166,7 @@ export const animations = (state=initial_state, action) => {
             }
 
         case 'ANIMATE':
+            // Adds animations to the queue
             let anim_objs
             // validate new animations are correctly typed
             if (action.animation && !action.animations) {
@@ -195,7 +199,7 @@ export const animations = (state=initial_state, action) => {
                 queue: [...trimmed_queue, ...new_animation_objs],
             }
 
-        case 'SET_ANIMATION_SPEED':
+        case 'SET_SPEED':
             return {
                 ...state,
                 speed: action.speed,

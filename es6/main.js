@@ -26,20 +26,14 @@ const shouldAnimate = (anim_queue, timestamp, speed) => {
 
 
 class AnimationHandler {
-    constructor(store, initial_state, autostart_animating=true) {
-        if (global.requestAnimationFrame) {
-            if (global.DEBUG)
-                console.log('Running animations in a Browser.', {autostart_animating})
-
-            this.rAF = (func) =>
+    constructor({store, initial_state, autostart_animating=true, ticker=null}) {
+        if (ticker === null) {
+            this.ticker = (func) =>
                 window.requestAnimationFrame.call(window, func)
         } else {
-            if (global.DEBUG)
-                console.log('Running animations in Node.js.', {autostart_animating})
-
-            this.rAf = (func) =>
-                setTimeout(() => func(), 20)
+            this.ticker = ticker
         }
+
         const speed = store.getState().animations.speed
         this.animating = !autostart_animating
         this.store = store
@@ -79,18 +73,18 @@ class AnimationHandler {
             this.start_time = this.start_time || this.time.getActualTime()
             high_res_timestamp = this.start_time + high_res_timestamp/1000
         }
-
         const {animations} = this.store.getState()
         const new_timestamp = this.time.getWarpedTime()
 
         this.store.dispatch({
             type: 'TICK',
+            //TODO: duplicating code from WarpedTime.getWarpedTime
             former_time: animations.warped_time || 0,
             warped_time: new_timestamp,
             speed: animations.speed,
         })
         // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
-            this.rAF(::this.tick)
+            this.ticker(::this.tick)
         // } else {
             // this.animating = false
         // }
