@@ -156,7 +156,6 @@ export const Animate = ({
         type, path, start_time, end_time, duration, start_state, end_state,
         amt, curve='linear', unit=null, tick=null}) => {
     if (start_time === undefined) start_time = (new Date).getTime()
-
     let animation = {
         type: type ? type : 'ANIMATE',
         path,
@@ -183,15 +182,15 @@ export const Animate = ({
                     ...checked_animation_amt({start_state, end_state, amt})
                 }
             }
-            if (typeof(start_time) === 'number'
-                    || typeof(end_time) === 'number'
-                    || typeof(duration) === 'number') {
-                animation = {
-                    ...animation,
-                    ...checked_animation_duration({start_time, end_time, duration})
-                }
-            }
             animation.tick = tick_func(animation)
+        }
+        if (typeof(start_time) === 'number'
+                || typeof(end_time) === 'number'
+                || typeof(duration) === 'number') {
+            animation = {
+                ...animation,
+                ...checked_animation_duration({start_time, end_time, duration})
+            }
         }
     } catch(e) {
         console.log('INVALID ANIMATION:', animation)
@@ -258,7 +257,6 @@ export const Translate = ({
 
     const animation = {type, path, start_time, end_time, duration,
                        start_state, end_state, amt, curve, unit}
-
     //  TODO: change left => /left to keep state selectors consistent
     const left_tick = tick_func(animation, 'left', 0)
     const top_tick =  tick_func(animation, 'top', 0)
