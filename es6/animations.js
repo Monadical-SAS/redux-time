@@ -9,9 +9,9 @@ import {
 
 
 const tick_func = (
-        {start_time, end_time, duration, start_state, end_state, amt, 
+        {start_time, end_time, duration, start_state, end_state, amt,
         curve='linear', unit=null}, key) => {
-    
+
     var {start_state, amt, end_state} = checked_animation_amt({
                                         start_state, end_state, amt, key})
     var {start_time, end_time, duration} = checked_animation_duration({
@@ -89,7 +89,7 @@ const checked_animation_amt = ({key, start_state, end_state, amt}) => {
                 amt: amt[key]
             })
 
-        if (typeof(start_state) !== 'object' 
+        if (typeof(start_state) !== 'object'
                 || typeof(end_state) !== 'object'
                 || typeof(amt) !== 'object') {
             throw 'Incompatible types passed as {start_state, end_state, amt}, must all be objects or numbers'
@@ -130,7 +130,7 @@ const KeyedAnimation = ({
     })
 
 
-export const Become = ({path, state, start_time, 
+export const Become = ({path, state, start_time,
                         end_time=Infinity, duration=Infinity}) => {
     if (start_time === undefined) start_time = (new Date).getTime()
 

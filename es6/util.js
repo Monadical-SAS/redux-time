@@ -12,7 +12,7 @@ export const assert = (val, error_msg) => {
         print('.')
     }
 }
-     
+
 export const assertEqual = (val1, val2) => {
     assert(val1 === val2, `${val1} !== ${val2}`)
 }
@@ -160,6 +160,20 @@ export function deepMerge(obj1, obj2, merge_vals=true) {
         }, new_obj)
 
         return new_obj
+    }
+}
+
+// uniformly populates a tree of size (branching_factor, depth)
+//  used in benchmarks. see unit tests for examples
+export const nested_key = (i, bf, d, l=null) => {
+    // populates a tree uniformly. see tests below for examples
+    if (l === 0) {
+        return ''
+    } else if (!l) {
+        const cropped_i = i % bf ** d
+        return nested_key(cropped_i, bf, d, d)
+    } else {
+        return `${nested_key(Math.floor(i / bf), bf, d, l - 1)}/${i}`
     }
 }
 
@@ -314,7 +328,6 @@ const shouldFlatten = (split_path) => {
 }
 
 export function applyPatches(obj, patches, flatten_styles=true) {
-    // console.log({obj, patches, flatten_styles})
     // WARNING: optimized code, profile before changing anything
     let output = {}
     const paths_to_flatten = []

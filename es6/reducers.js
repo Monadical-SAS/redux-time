@@ -8,41 +8,58 @@ import {
 } from './util.js'
 
 
-export const pastAnimations = (anim_queue, timestamp) =>
-    anim_queue.filter(({start_time, duration}) => (start_time + duration < timestamp))
-
-export const currentAnimations = (anim_queue, warped_time, former_time) => {
-    // find all animations which began before current_time, and end after the
-    //  former_time (crucial to render final frame of animations)
-    return anim_queue.filter(({start_time, duration}) => {
+export const currentAnimations = ({anim_queue, warped_time}) => {
+    return anim_queue.filter(({start_time, end_time}) => {
         const started_already = start_time <= warped_time
-        const has_not_ended = start_time + duration > former_time
+        const has_not_ended = end_time > warped_time
         return started_already && has_not_ended
     })
 }
 
-export const futureAnimations = (anim_queue, timestamp) =>
-    anim_queue.filter(({start_time, duration}) => (start_time > timestamp))
-
-export const sortedAnimations = (anim_queue) => {
-    return [...anim_queue].sort((a, b) => {
-        // sort by end time, if both are the same, sort by start time,
-        //  and properly handle infinity
-        if (a.end_time == b.end_time) {
-            return b.start_time - a.start_time
+export const finalFrameAnimations = ({anim_queue, warped_time, former_time}) => {
+    const is_between = (anim) => {
+        if (warped_time >= former_time) {
+        // traveling forward in time or standing still
+            return (former_time < anim.end_time)
+                && (anim.end_time <= warped_time)
         } else {
-            if (a.end_time == Infinity) {
-                return 1
-            }
-            else if (b.end_time == Infinity) {
-                return -1
-            }
-            else {
-                return b.end_time - a.end_time
-            }
+        // traveling backward in time
+            return (warped_time <= anim.start_time)
+                && (anim.start_time < former_time)
         }
-    })
+    }
+
+    return anim_queue.filter((anim) => is_between(anim))
 }
+
+
+// these are no longer useful -- they only make sense with unidirectional time
+// export const pastAnimations = (anim_queue, timestamp) =>
+//     anim_queue.filter(({start_time, duration}) =>
+//         (start_time + duration < timestamp))
+
+// export const futureAnimations = (anim_queue, timestamp) =>
+//     anim_queue.filter(({start_time, duration}) => (start_time > timestamp))
+
+// export const sortedAnimations = (anim_queue) => {
+//     return [...anim_queue].sort((a, b) => {
+//         // sort by end time, if both are the same, sort by start time,
+//         //  and properly handle infinity
+//         if (a.end_time == b.end_time) {
+//             return b.start_time - a.start_time
+//         } else {
+//             if (a.end_time == Infinity) {
+//                 return 1
+//             }
+//             else if (b.end_time == Infinity) {
+//                 return -1
+//             }
+//             else {
+//                 return b.end_time - a.end_time
+//             }
+//         }
+//     })
+// }
 
 // 0 /a /b /c       3
 // 1 /a /b          2
@@ -73,21 +90,16 @@ export const uniqueAnimations = (anim_queue) => {
     return uniq_anims.reverse()
 }
 
-export const activeAnimations = (
-        anim_queue, warped_time, former_time, uniqueify=true) => {
+export const activeAnimations = ({anim_queue, warped_time,
+                                  former_time, uniqueify}) => {
     if (warped_time === undefined || former_time === undefined) {
         throw 'Both warped_time and former_time must be passed to get activeAnimations'
     }
-    let anims
-    if (former_time < warped_time) {
-        // when playing forwards, find all animations which began before
-        //  current_time, and end after the time of the last frame
-        anims = sortedAnimations(currentAnimations(anim_queue, warped_time, former_time))
-    } else if (former_time >= warped_time) {
-        // when playing in reverse, flip the two times to keep
-        //  start/end time calculation math the same
-        anims = sortedAnimations(currentAnimations(anim_queue, former_time, warped_time))
-    }
+
+    let anims = [
+        ...finalFrameAnimations({anim_queue, former_time, warped_time}),
+        ...currentAnimations({anim_queue, warped_time}),
+    ]
 
     if (uniqueify)
         anims = uniqueAnimations(anims)
@@ -95,11 +107,14 @@ export const activeAnimations = (
     return anims
 }
 
-export const computeAnimatedState = (anim_queue, warped_time, 
+export const computeAnimatedState = (anim_queue, warped_time,
         former_time=null) => {
     former_time = former_time === null ? warped_time : former_time
 
-    const active_animations = activeAnimations(anim_queue, warped_time, former_time, false)
+    const active_animations = activeAnimations({anim_queue,
+                                                warped_time,
+                                                former_time,
+                                                uniqueify: false})
     let patches = []
     // console.log({active_animations})
     for (let animation of active_animations) {
@@ -121,7 +136,8 @@ export const computeAnimatedState = (anim_queue, warped_time,
 const trimmedAnimationQueue = (anim_queue, max_time_travel) => {
     if (anim_queue.length > max_time_travel) {
         // console.log(
-        //     '%c[i] Trimmed old animations from animations.queue', 'color:orange',
+        //     '%c[i] Trimmed old animations from animations.queue',
+        //     'color:orange',
         //     `(queue was longer than ${max_time_travel} items)`
         // )
         const keep_from = anim_queue.length - max_time_travel
@@ -143,7 +159,8 @@ export const initial_state = {
     speed: 1,
     former_time: 0,
     warped_time: 0,
-    max_time_travel: 3000,   // maximum length of the queue before items get trimmed
+    // maximum length of the queue before items get trimmed
+    max_time_travel: 3000,
     queue: [],
     state: {},
 }
@@ -151,7 +168,7 @@ export const initial_state = {
 export const animations = (state=initial_state, action) => {
     switch (action.type) {
         case 'CLEAR_ANIMATIONS':
-            const only_initial_state = state.queue.filter(anim => 
+            const only_initial_state = state.queue.filter(anim =>
                 anim.start_time === 0)
             return {
                 ...initial_state,
@@ -207,7 +224,7 @@ export const animations = (state=initial_state, action) => {
             }
 
         case 'TICK':
-            if (action.warped_time === undefined 
+            if (action.warped_time === undefined
                     || action.former_time === undefined) {
                 throw 'TICK action must have a warped_time and former_time'
             }
