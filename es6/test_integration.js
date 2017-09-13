@@ -161,11 +161,10 @@ assert(handler.store.getState().animations.state.test.text < 100,
 
 handler.store.dispatch({
     type: 'TICK',
-    former_time: start_time + 1005,
-    warped_time: start_time + 1006,
+    former_time: start_time + 1000,
+    warped_time: start_time + 1005,
 })
-// TODO: discuss w/nick what we want to do in this case
-assert(handler.store.getState().animations.state.test.text == 100,
+assert(handler.store.getState().animations.state.test.text > 99,
        'Final animation state was not computed')
 
 handler.store.dispatch({
