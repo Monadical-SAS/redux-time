@@ -58,6 +58,17 @@ const checked_animation_duration = ({start_time, duration, end_time}) => {
 
 
 const checked_animation_amt = ({key, start_state, end_state, amt}) => {
+    // TODO: is it inconceivable that an animation could be defined
+    //  with a tick that defines a transition from a
+    //  numeric -> non-numeric type?
+
+    // e.g. Become does this
+    if (start_state !== undefined
+            && end_state === undefined
+            && amt === undefined) {
+        return {}
+    }
+
     if (typeof(start_state) === 'number') {
         if ([start_state, end_state, amt].filter(a => typeof(a) == 'number').length < 2) {
             console.log({start_state, end_state, amt})
@@ -174,23 +185,17 @@ export const Animate = ({
 
     try {
         if (!animation.tick) {
-            if (typeof(start_state) === 'number'
-                    || typeof(end_state) === 'number'
-                    || typeof(amt) === 'number') {
-                animation = {
-                    ...animation,
-                    ...checked_animation_amt({start_state, end_state, amt})
-                }
-            }
             animation.tick = tick_func(animation)
         }
-        if (typeof(start_time) === 'number'
-                || typeof(end_time) === 'number'
-                || typeof(duration) === 'number') {
-            animation = {
-                ...animation,
-                ...checked_animation_duration({start_time, end_time, duration})
-            }
+
+        animation = {
+            ...animation,
+            ...checked_animation_amt({start_state, end_state, amt})
+        }
+
+        animation = {
+            ...animation,
+            ...checked_animation_duration({start_time, end_time, duration})
         }
     } catch(e) {
         console.log('INVALID ANIMATION:', animation)
