@@ -9,11 +9,11 @@ import {
 
 
 const tick_func = (
-        {start_time, end_time, duration, start_state, end_state, amt,
+        {start_time, end_time, duration, start_state, end_state, delta_state,
         curve='linear', unit=null}, key) => {
 
-    var {start_state, amt, end_state} = checked_animation_amt({
-                                        start_state, end_state, amt, key})
+    var {start_state, delta_state, end_state} = checked_animation_delta_state({
+                                        start_state, end_state, delta_state, key})
     var {start_time, end_time, duration} = checked_animation_duration({
                                             start_time, end_time, duration})
 
@@ -30,7 +30,7 @@ const tick_func = (
             new_state = end_state
         } else {
             // tick progression function, the core math at the heart of animation
-            new_state = start_state + curve_func(time_elapsed/duration)*amt
+            new_state = start_state + curve_func(time_elapsed/duration)*delta_state
         }
         return unit ? `${new_state}${unit}` : new_state
     }
@@ -57,7 +57,7 @@ const checked_animation_duration = ({start_time, duration, end_time}) => {
 }
 
 
-const checked_animation_amt = ({key, start_state, end_state, amt}) => {
+const checked_animation_delta_state = ({key, start_state, end_state, delta_state}) => {
     // TODO: is it inconceivable that an animation could be defined
     //  with a tick that defines a transition from a
     //  numeric -> non-numeric type?
@@ -65,68 +65,68 @@ const checked_animation_amt = ({key, start_state, end_state, amt}) => {
     // e.g. Become does this
     if (start_state !== undefined
             && end_state === undefined
-            && amt === undefined) {
+            && delta_state === undefined) {
         return {}
     }
 
     if (typeof(start_state) === 'number') {
-        if ([start_state, end_state, amt].filter(a => typeof(a) == 'number').length < 2) {
-            console.log({start_state, end_state, amt})
-            throw 'Need at least 2/3 to calculate animation: start_state, end_state, amt'
+        if ([start_state, end_state, delta_state].filter(a => typeof(a) == 'number').length < 2) {
+            console.log({start_state, end_state, delta_state})
+            throw 'Need at least 2/3 to calculate animation: start_state, end_state, delta_state'
         }
 
         if (start_state === undefined)
-            start_state = end_state - amt
+            start_state = end_state - delta_state
         if (end_state === undefined)
-            end_state = start_state + amt
-        if (amt === undefined)
-            amt = end_state - start_state
+            end_state = start_state + delta_state
+        if (delta_state === undefined)
+            delta_state = end_state - start_state
 
-        if (start_state + amt != end_state) {
-            console.log({start_state, end_state, amt})
-            throw 'Conflicting values, Animation end_state != start + amt'
+        if (start_state + delta_state != end_state) {
+            console.log({start_state, end_state, delta_state})
+            throw 'Conflicting values, Animation end_state != start + delta_state'
         }
 
-        return {start_state, end_state, amt}
+        return {start_state, end_state, delta_state}
     } else {
         if (start_state === undefined) start_state = {}
         if (end_state === undefined) end_state = {}
-        if (amt === undefined) amt = {}
+        if (delta_state === undefined) delta_state = {}
 
         if (key !== undefined)
-            return checked_animation_amt({
+            return checked_animation_delta_state({
                 start_state: start_state[key],
                 end_state: end_state[key],
-                amt: amt[key]
+                delta_state: delta_state[key]
             })
 
         if (typeof(start_state) !== 'object'
                 || typeof(end_state) !== 'object'
-                || typeof(amt) !== 'object') {
-            throw 'Incompatible types passed as {start_state, end_state, amt}, must all be objects or numbers'
+                || typeof(delta_state) !== 'object') {
+            throw 'Incompatible types passed as {start_state, end_state, delta_state}, must all be objects or numbers'
         }
 
         let keys = Object.keys(start_state)
         if (!keys.length) keys = Object.keys(end_state)
-        if (!keys.length) keys = Object.keys(amt)
+        if (!keys.length) keys = Object.keys(delta_state)
 
         return keys.reduce((acc, key) => {
-            const amts = checked_animation_amt({
+            const delta_states = checked_animation_delta_state({
                 start_state: start_state[key],
                 end_state: end_state[key],
-                amt: amt[key]
+                delta_state: delta_state[key]
             })
-            acc.start_state[key] = amts.start_state
-            acc.end_state[key] = amts.end_state
-            acc.amt[key] = amts.amt
+            acc.start_state[key] = delta_states.start_state
+            acc.end_state[key] = delta_states.end_state
+            acc.delta_state[key] = delta_states.delta_state
             return acc
-        }, {start_state: {}, end_state: {}, amt: {}})
+        }, {start_state: {}, end_state: {}, delta_state: {}})
     }
 }
 
 const KeyedAnimation = ({
         type, path, key, start_time, end_time, duration, start_state,
-        end_state, amt, curve, unit}) =>
+        end_state, delta_state, curve, unit}) =>
     Animate({
         type,
         path: `${path}/${key}`,
@@ -136,7 +136,7 @@ const KeyedAnimation = ({
         duration,
         start_state: start_state && start_state[key],
         end_state: end_state && end_state[key],
-        amt: amt && amt[key],
+        delta_state: delta_state && delta_state[key],
         curve, unit,
     })
 
@@ -165,14 +165,14 @@ export const Become = ({path, state, start_time,
 
 export const Animate = ({
         type, path, start_time, end_time, duration, start_state, end_state,
-        amt, curve='linear', unit=null, tick=null}) => {
+        delta_state, curve='linear', unit=null, tick=null}) => {
     if (start_time === undefined) start_time = (new Date).getTime()
     let animation = {
         type: type ? type : 'ANIMATE',
         path,
         split_path: path.split('/').slice(1),
         start_time, end_time, duration,
-        start_state, end_state, amt,
+        start_state, end_state, delta_state,
         curve,
         unit,
         tick,
@@ -190,7 +190,7 @@ export const Animate = ({
 
         animation = {
             ...animation,
-            ...checked_animation_amt({start_state, end_state, amt})
+            ...checked_animation_delta_state({start_state, end_state, delta_state})
         }
 
         animation = {
@@ -237,7 +237,7 @@ export const AnimateCSS = ({
         curve,
         start_state,
         end_state,
-        amt: {delay: duration},
+        delta_state: {delay: duration},
         tick: (delta) => {
             if (delta <= 0) {
                 return start_state
@@ -254,14 +254,14 @@ export const AnimateCSS = ({
 
 export const Translate = ({
         path, start_time, end_time, duration=1000, start_state, end_state,
-        amt, curve='linear', unit='px'}) => {
+        delta_state, curve='linear', unit='px'}) => {
     if (start_time === undefined) start_time = (new Date).getTime()
     if (start_state === undefined) start_state = {top: 0, left: 0}
     path = `${path}/style/transform/translate`
     const type = 'TRANSLATE'
 
     const animation = {type, path, start_time, end_time, duration,
-                       start_state, end_state, amt, curve, unit}
+                       start_state, end_state, delta_state, curve, unit}
     //  TODO: change left => /left to keep state selectors consistent
     const left_tick = tick_func(animation, 'left', 0)
     const top_tick =  tick_func(animation, 'top', 0)
@@ -275,10 +275,10 @@ export const Translate = ({
 
 export const TranslateTo = ({
         path, start_time, end_time, duration=1000, start_state, end_state,
-        amt, curve='linear', unit='px'}) => {
+        delta_state, curve='linear', unit='px'}) => {
     let anims = []
-    const has_left = (start_state || end_state || amt).left !== undefined
-    const has_top = (start_state || end_state || amt).top !== undefined
+    const has_left = (start_state || end_state || delta_state).left !== undefined
+    const has_top = (start_state || end_state || delta_state).top !== undefined
     if (has_left) {
         anims = [
             KeyedAnimation({
@@ -286,7 +286,7 @@ export const TranslateTo = ({
                 path: `${path}/style`,
                 key: 'left',
                 start_time, end_time, duration,
-                start_state, end_state, amt,
+                start_state, end_state, delta_state,
                 curve, unit,
             })
         ]
@@ -299,7 +299,7 @@ export const TranslateTo = ({
                 path: `${path}/style`,
                 key: 'top',
                 start_time, end_time, duration,
-                start_state, end_state, amt,
+                start_state, end_state, delta_state,
                 curve, unit,
             })
         ]
@@ -310,7 +310,7 @@ export const TranslateTo = ({
 }
 
 export const Opacity = ({
-        path, start_time, end_time, duration, start_state, end_state, amt,
+        path, start_time, end_time, duration, start_state, end_state, delta_state,
         curve='linear', unit=null}) =>
     Animate({
         type: 'OPACITY',
@@ -320,13 +320,13 @@ export const Opacity = ({
         duration,
         start_state,
         end_state,
-        amt,
+        delta_state,
         curve,
         unit,
     })
 
 export const Rotate = ({
-        path, start_time, end_time, duration, start_state, end_state, amt,
+        path, start_time, end_time, duration, start_state, end_state, delta_state,
         curve='linear', unit='deg'}) =>
     Animate({
         type: 'ROTATE',
@@ -336,7 +336,7 @@ export const Rotate = ({
         duration,
         start_state,
         end_state,
-        amt,
+        delta_state,
         curve,
         unit,
     })

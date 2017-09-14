@@ -192,7 +192,7 @@ handler.store.dispatch({
     animation: Animate({
         path: '/test/text',
         start_state: 0,
-        amt: 100,
+        delta_state: 100,
         start_time: start_time + 2100,
         duration: 1000,
     }),
@@ -202,7 +202,7 @@ handler.store.dispatch({
     animation: Animate({
         path: '/test/text',
         start_state: 200,
-         amt: 100,
+         delta_state: 100,
          start_time: start_time + 2200,
          duration: 2000,
      }),
@@ -212,7 +212,7 @@ handler.store.dispatch({
     animation: Animate({
         path: '/test/text',
         start_state: 400,
-        amt: 100,
+        delta_state: 100,
         start_time: start_time + 2300,
         duration: 1000,
     }),
@@ -273,7 +273,7 @@ handler.store.dispatch({
         Animate({
             path: '/test/text',
             start_state: 600,
-            amt: 100,
+            delta_state: 100,
             start_time: start_time + 5000,
             duration: 200,
         }), 5
@@ -311,7 +311,7 @@ handler.store.dispatch({
     animation: Animate({
         path: '/test/text',
         start_state: 600,
-        amt: 100,
+        delta_state: 100,
         start_time: start_time + 8000,
         duration: 200,
     }),
