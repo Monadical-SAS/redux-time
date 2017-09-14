@@ -61,7 +61,6 @@ const checked_animation_delta_state = ({key, start_state, end_state, delta_state
     // TODO: is it inconceivable that an animation could be defined
     //  with a tick that defines a transition from a
     //  numeric -> non-numeric type?
-
     // e.g. Become does this
     if (start_state !== undefined
             && end_state === undefined
@@ -88,8 +87,7 @@ const checked_animation_delta_state = ({key, start_state, end_state, delta_state
         }
 
         return {start_state, end_state, delta_state}
-    } else {
-        if (start_state === undefined) start_state = {}
+    } else if (typeof(start_state) === 'object') {
         if (end_state === undefined) end_state = {}
         if (delta_state === undefined) delta_state = {}
 
@@ -100,6 +98,7 @@ const checked_animation_delta_state = ({key, start_state, end_state, delta_state
                 delta_state: delta_state[key]
             })
 
+        console.log({key, start_state, end_state, delta_state})
         if (typeof(start_state) !== 'object'
                 || typeof(end_state) !== 'object'
                 || typeof(delta_state) !== 'object') {
@@ -111,6 +110,7 @@ const checked_animation_delta_state = ({key, start_state, end_state, delta_state
         if (!keys.length) keys = Object.keys(delta_state)
 
         return keys.reduce((acc, key) => {
+            //  Recursively check that deltas in state add up
             const delta_states = checked_animation_delta_state({
                 start_state: start_state[key],
                 end_state: end_state[key],
@@ -121,6 +121,8 @@ const checked_animation_delta_state = ({key, start_state, end_state, delta_state
             acc.delta_state[key] = delta_states.delta_state
             return acc
         }, {start_state: {}, end_state: {}, delta_state: {}})
+    } else {
+        return {start_state, end_state, delta_state}
     }
 }
 
@@ -142,7 +144,7 @@ const KeyedAnimation = ({
 
 export const Become = ({path, state, start_time,
                         end_time=Infinity, duration=Infinity}) => {
-    if (start_time === undefined) start_time = (new Date).getTime()
+    if (start_time === undefined) start_time = Date.now()
 
     var {start_time, end_time, duration} = checked_animation_duration(
         {start_time, end_time, duration})
@@ -167,6 +169,7 @@ export const Animate = ({
         type, path, start_time, end_time, duration, start_state, end_state,
         delta_state, curve='linear', unit=null, tick=null}) => {
     if (start_time === undefined) start_time = (new Date).getTime()
+
     let animation = {
         type: type ? type : 'ANIMATE',
         path,
@@ -187,7 +190,7 @@ export const Animate = ({
         if (!animation.tick) {
             animation.tick = tick_func(animation)
         }
-
+        //console.log({start_state, end_state, delta_state})
         animation = {
             ...animation,
             ...checked_animation_delta_state({start_state, end_state, delta_state})
@@ -208,7 +211,7 @@ export const Animate = ({
 
 export const AnimateCSS = ({
         name, path, start_time, end_time, duration=1000, curve='linear'}) => {
-    if (start_time === undefined) start_time = (new Date).getTime()
+    if (start_time === undefined) start_time = Date.now()
 
     var {start_time, end_time, duration} = checked_animation_duration({
                                             start_time, end_time, duration})
@@ -227,7 +230,6 @@ export const AnimateCSS = ({
         delay: duration,
         playState: 'paused'
     }
-
     return Animate({
         type: `CSS_${name ? name.toUpperCase() : 'END'}`,
         path: `${path}/style/animation/${name}`,
@@ -246,7 +248,7 @@ export const AnimateCSS = ({
                 return end_state
             }
             else {
-                return {name, duration, curve, delay: delta, playState: 'paused'}
+                return {...start_state, delay: delta}
             }
         },
     })
