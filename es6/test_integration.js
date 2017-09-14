@@ -192,7 +192,7 @@ handler.store.dispatch({
     animation: Animate({
         path: '/test/text',
         start_state: 0,
-        amt: 100,
+        delta_state: 100,
         start_time: start_time + 2100,
         duration: 1000,
     }),
@@ -202,7 +202,7 @@ handler.store.dispatch({
     animation: Animate({
         path: '/test/text',
         start_state: 200,
-         amt: 100,
+         delta_state: 100,
          start_time: start_time + 2200,
          duration: 2000,
      }),
@@ -212,7 +212,7 @@ handler.store.dispatch({
     animation: Animate({
         path: '/test/text',
         start_state: 400,
-        amt: 100,
+        delta_state: 100,
         start_time: start_time + 2300,
         duration: 1000,
     }),
@@ -268,17 +268,16 @@ assert(handler.store.getState().animations.state.test.text == 0,
 
 // REPEATED ANIMATIONS
 handler.store.dispatch({
-  type: 'ANIMATE',
-  animation: Repeat(
-    Animate({
-      path: '/test/text',
-      start_state: 600,
-      amt: 100,
-      start_time: start_time + 5000,
-      duration: 200,
-    }),
-    5
-  ),
+    type: 'ANIMATE',
+    animation: Repeat(
+        Animate({
+            path: '/test/text',
+            start_state: 600,
+            delta_state: 100,
+            start_time: start_time + 5000,
+            duration: 200,
+        }), 5
+    ),
 })
 
 handler.store.dispatch({
@@ -308,14 +307,14 @@ assert(handler.store.getState().animations.state.test.text == 0,
 
 // RUNLOOP MECHANICS
 handler.store.dispatch({
-  type: 'ANIMATE',
-  animation: Animate({
-    path: '/test/text',
-    start_state: 600,
-    amt: 100,
-    start_time: start_time + 8000,
-    duration: 200,
-  }),
+    type: 'ANIMATE',
+    animation: Animate({
+        path: '/test/text',
+        start_state: 600,
+        delta_state: 100,
+        start_time: start_time + 8000,
+        duration: 200,
+    }),
 })
 let queue = handler.store.getState().animations.queue
 
@@ -379,16 +378,16 @@ seq.map((animation => handler.store.dispatch({type: 'ANIMATE', animation})))
 queue = handler.store.getState().animations.queue
 
 let new_current_animations = currentAnimations({
-  anim_queue: queue,
-  warped_time: start_time + 9001,
+    anim_queue: queue,
+    warped_time: start_time + 9001,
 })
 
 assert(new_current_animations.length == seq.length - 1,
        'Queue was not the right length after adding several animations.')
 
 new_current_animations = currentAnimations({
-  anim_queue: queue,
-  warped_time: start_time + 20000,
+    anim_queue: queue,
+    warped_time: start_time + 20000,
 })
 assert(uniqueAnimations(new_current_animations).length == 1,
     'Unique current queue was not the right length after animations finished.')

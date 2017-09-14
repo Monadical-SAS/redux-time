@@ -93,7 +93,7 @@ class AnimationHandler {
 
 
 const startAnimation = (store, initial_state, autostart_animating=true) => {
-    const handler = new AnimationHandler(store, initial_state, autostart_animating)
+    const handler = new AnimationHandler({store, initial_state, autostart_animating})
     return handler.time
 }
 

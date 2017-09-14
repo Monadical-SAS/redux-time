@@ -39,7 +39,7 @@ export const checkIsValidAnimation = (animation) => {
     }
     if (!(animation.type && animation.path)) {
         console.log('%cINVALID ANIMATION:', 'color:red', animation)
-        console.log('Got unrecognized aniamtion object missing a type or path.')
+        console.log('Got unrecognized anidelta_stateion object missing a type or path.')
         throw 'Animation must be passed in as a single Animation object!'
     }
 }
@@ -90,7 +90,7 @@ export const EasingFunctions = {
     easeInOutQuint: (t) => (t<.5 ? 16*t*t*t*t*t : 1+16*(--t)*t*t*t*t),
 }
 
-export const mod = (num, amt) => ((num%amt)+amt)%amt
+export const mod = (num, delta_state) => ((num%delta_state)+delta_state)%delta_state
 
 export const range = (num) => [...Array(num).keys()]
 
@@ -289,6 +289,10 @@ const flattenAnimation = (animation) => {
 
 const flattenIfNotFlattened = (state, path, flatten_func) => {
     const state_slice = select(state, path)
+    if (!state_slice) {
+        // State no longer exists because it was overwritten by a later patch
+        return
+    }
     if (typeof(state_slice) !== 'string') {
         patch(state, path, flatten_func(state_slice), false, false, false)
     }
