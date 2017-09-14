@@ -289,6 +289,10 @@ const flattenAnimation = (animation) => {
 
 const flattenIfNotFlattened = (state, path, flatten_func) => {
     const state_slice = select(state, path)
+    if (!state_slice) {
+        // State no longer exists because it was overwritten by a later patch
+        return
+    }
     if (typeof(state_slice) !== 'string') {
         patch(state, path, flatten_func(state_slice), false, false, false)
     }
