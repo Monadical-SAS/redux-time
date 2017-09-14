@@ -1,22 +1,22 @@
+import React from "react";
 import {connect} from 'react-redux'
 import {ExpandableSection} from 'monadical-react-components'
 
-const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/examples/test-component.js"
-const COMPONENT_HEIGHT = 200
+const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/es6/timeline.js"
+const COMPONENT_HEIGHT = 280
 
 const page_start_time = Date.now()
-const scale = 50                     // 20px = 1sec
 
 const offset = (time) =>
     time - page_start_time
 
 
-const AnimRow = (anim, idx) => {
+const AnimRow = (anim, idx, scale) => {
     const {type, start_time, end_time} = anim
 
     const style = {
         position: 'absolute',
-        top: (idx * 25) % (COMPONENT_HEIGHT - 20),
+        top: (idx * 25) % (COMPONENT_HEIGHT - 40),
         left: offset(start_time)/scale,
         height: 20,
         width: end_time !== Infinity ?
@@ -27,14 +27,24 @@ const AnimRow = (anim, idx) => {
         overflow: 'hidden',
     }
 
-    return <div style={style}>{type}</div>
+    return <div className="anim" style={style}>
+            {type}
+            <br/>
+            <div className="anim_details">
+                Start time: {`${anim.start_time}`}<br/>
+                End time: {`${anim.end_time}`}<br/>
+                Start state: {JSON.stringify(anim.start_state)}<br/>
+                End state: {JSON.stringify(anim.end_state)}<br/>
+                Curve: {`${anim.curve}`}<br/>
+            </div>
+        </div>
 }
 
-const CurrentFrame = ({warped_time, former_time}) => {
+const CurrentFrame = ({former_time, scale}) => {
 
     const style = {
         position: 'absolute',
-        top: COMPONENT_HEIGHT - 20,
+        top: COMPONENT_HEIGHT - 40,
         left: offset(former_time) / scale,
         height: 20,
         width: '30px',
@@ -44,13 +54,64 @@ const CurrentFrame = ({warped_time, former_time}) => {
     return <div style={style}>&gt;|</div>
 }
 
-const TimelineComponent = ({queue, warped_time, former_time, debug}) =>
-    <ExpandableSection style={{overflow: "auto"}} name="Animations Timeline" source={debug && SOURCE} expanded>
-        <div style={{width: '100%', height: `${COMPONENT_HEIGHT}px`, position: 'relative', overflow: 'scroll'}}>
-            {queue.map(AnimRow)}
-            <CurrentFrame warped_time={warped_time} former_time={former_time}/>
-        </div>
-    </ExpandableSection>
+class TimelineComponent extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            scale: 50,
+        }
+    }
+
+    changeScale(new_scale) {
+        this.setState({
+            scale: 50 - new_scale,
+        })
+    }
+
+    render() {
+        const {queue, former_time, debug} = this.props
+        return <ExpandableSection name="Animations Timeline" source={debug && SOURCE} expanded>
+            <style>{`
+                .anim_details {
+                    display: none;
+                }
+
+                .anim:hover .anim_details {
+                    display: inline-block;
+                }
+                .anim:hover {
+                    width: auto !important;
+                    height: auto !important;
+                    z-index: 1001;
+                }
+                `}
+            </style>
+            <div style={{width: '100%', height: `${COMPONENT_HEIGHT}px`, overflow: 'scroll'}}>
+                <div style={{width: 'auto'}}>
+                    {queue.map((anim, idx) => AnimRow(anim, idx, this.state.scale))}
+                    <CurrentFrame former_time={former_time} scale={this.state.scale}/>
+                </div>
+                <div style={{width: '100%', height: 'auto'}}>
+                    <div style={{width: '70%', display: 'block',
+                        marginLeft: 'auto', marginRight: 'auto'}}>
+                        Zoom 🔍
+                        <input type="range"
+                               min="0"
+                               max="50"
+                               step="0.5"
+                               onChange={(e) => this.changeScale(Number(e.target.value))}
+                               value={50 - this.state.scale}
+                               style={{
+                                   height: '10px', display: 'block',
+                                   width: "100%",
+                               }}
+                        />
+                    </div>
+                </div>
+            </div>
+        </ExpandableSection>
+    }
+}
 
 const mapStateToProps = ({animations}) => ({
     queue: animations.queue,
@@ -58,6 +119,6 @@ const mapStateToProps = ({animations}) => ({
     former_time: animations.former_time,
 })
 
-export const Timeline = connect(
+export const AnimationTimeline = connect(
     mapStateToProps,
 )(TimelineComponent)
