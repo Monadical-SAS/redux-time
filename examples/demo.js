@@ -8,6 +8,7 @@ import {
     animations,
     startAnimation,
     AnimationControls,
+    AnimationTimeline,
     AnimationStateVisualizer
 } from '../node/main.js'
 
@@ -29,6 +30,7 @@ ReactDOM.render(
     <Provider store={window.store}>
         <div>
             <AnimationTester getTime={window.time.getWarpedTime.bind(window.time)} debug/>
+            <AnimationTimeline debug={true} expanded={true}/>
             <AnimationControls debug/>
             <AnimationStateVisualizer path="test_state" debug/>
         </div>

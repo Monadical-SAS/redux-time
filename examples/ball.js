@@ -10,7 +10,8 @@ import {
     animations,
     startAnimation,
     AnimationControls,
-    AnimationStateVisualizer
+    AnimationStateVisualizer,
+    AnimationTimeline,
 } from '../node/main.js'
 
 import {Become, Animate, Translate, RepeatSequence} from '../node/animations.js'
@@ -140,6 +141,7 @@ ReactDOM.render(
     <Provider store={window.store}>
         <div>
             <Ball getTime={window.time.getWarpedTime.bind(window.time)} expanded/>
+            <AnimationTimeline debug={true} expanded={true}/>
             <AnimationControls debug={true} expanded={true}/>
             <AnimationStateVisualizer debug={true} expanded={false}/>
         </div>
