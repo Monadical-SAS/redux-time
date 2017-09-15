@@ -34,12 +34,12 @@ export const finalFrameAnimations = ({anim_queue, warped_time, former_time}) => 
 
 
 // these are no longer useful -- they only make sense with unidirectional time
-// export const pastAnimations = (anim_queue, timestamp) =>
-//     anim_queue.filter(({start_time, duration}) =>
-//         (start_time + duration < timestamp))
+export const pastAnimations = (anim_queue, timestamp) =>
+    anim_queue.filter(({start_time, duration}) =>
+        (start_time + duration < timestamp))
 
-// export const futureAnimations = (anim_queue, timestamp) =>
-//     anim_queue.filter(({start_time, duration}) => (start_time > timestamp))
+export const futureAnimations = (anim_queue, timestamp) =>
+    anim_queue.filter(({start_time, duration}) => (start_time > timestamp))
 
 // export const sortedAnimations = (anim_queue) => {
 //     return [...anim_queue].sort((a, b) => {

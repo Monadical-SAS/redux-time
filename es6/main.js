@@ -5,6 +5,7 @@ import {Become} from './animations.js'
 import {AnimationControls} from './controls.js'
 import {AnimationStateVisualizerComponent,
         AnimationStateVisualizer} from './state-visualizer.js'
+import {AnimationTimeline} from "./timeline.js"
 
 
 const shouldAnimate = (anim_queue, timestamp, speed) => {
@@ -93,10 +94,10 @@ class AnimationHandler {
 
 
 const startAnimation = (store, initial_state, autostart_animating=true) => {
-    const handler = new AnimationHandler(store, initial_state, autostart_animating)
+    const handler = new AnimationHandler({store, initial_state, autostart_animating})
     return handler.time
 }
 
 
 export {animations, startAnimation, AnimationHandler, AnimationControls,
-        AnimationStateVisualizer, AnimationStateVisualizerComponent}
+        AnimationStateVisualizer, AnimationStateVisualizerComponent, AnimationTimeline}

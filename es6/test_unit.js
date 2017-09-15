@@ -1,9 +1,10 @@
 import {assert, assertEqual, print, assertSortedObjsInOrder,
-        nested_key} from './util.js'
+        nested_key, assertThrows, immutify} from './util.js'
 
-import {Become, Animate} from './animations.js'
+import {Become, Animate, TranslateTo} from './animations.js'
 
-import {activeAnimations, uniqueAnimations, currentAnimations, finalFrameAnimations} from './reducers.js'
+import {activeAnimations, uniqueAnimations, currentAnimations,
+        finalFrameAnimations} from './reducers.js'
 
 
 export const run_unit_tests = () => {
@@ -66,12 +67,15 @@ const animation_queue = [
     }),
 ]
 
+console.log(animation_queue)
+
 // 3 is the last in the list, and is active @ warped_time
 let active_q = activeAnimations({
     anim_queue: animation_queue,
     former_time: 64,
     warped_time: 66,
 })
+console.log(active_q)
 assert(active_q.pop().start_state == 3, 'Animation 3 should take precedence')
 
 // 3 is last in the list, but 2 is @ warped_time
@@ -120,5 +124,20 @@ assert(
  uniq_anims[0].path == '/a/b' && uniq_anims[1].path == '/a/b/x',
  'uniqueAnimations removed wrong parent/child paths'
 )
+
+// test immutify
+const immutable_obj = immutify({a: 1, b: 2})
+assertThrows(() => {immutable_obj.a = 5})
+
+// Test KeyedAnimation error checking
+const good_translate = TranslateTo({
+    path: '/a',
+    start_time: 0,
+    end_time: 1000,
+    start_state: {top: 0, left: 0},
+    end_state: {top:100, left: -100},
+})
+
+console.log({good_translate})
 
 }

@@ -5,8 +5,8 @@ import {
     checkIsValidAnimation,
     checkIsValidSequence,
     EasingFunctions,
+    immutify,
 } from './util.js'
-
 
 const tick_func = (
         {start_time, end_time, duration, start_state, end_state, delta_state,
@@ -15,18 +15,9 @@ const tick_func = (
     const curve_func = EasingFunctions[curve]
 
     return (time_elapsed) => {
-        let new_state
-        // These over-boundary cases happen because we need to render
-        // an extra frame before/after start/end times to finish off
-        // animations whose (durations) % (frame rate) != 0.
-        if (time_elapsed < 0) {
-            new_state = start_state
-        } else if (time_elapsed >= duration) {
-            new_state = end_state
-        } else {
-            // tick progression function, the core math at the heart of animation
-            new_state = start_state + curve_func(time_elapsed/duration)*delta_state
-        }
+        const bounded_time = Math.min(Math.max(time_elapsed, 0), duration)
+        const curve = curve_func(bounded_time/duration)
+        const new_state = start_state + curve * delta_state
         return unit ? `${new_state}${unit}` : new_state
     }
 }
@@ -70,7 +61,7 @@ const KeyedAnimation = ({
 
 export const Become = ({path, state, start_time,
                         end_time=Infinity, duration=Infinity}) => {
-    if (start_time === undefined) start_time = (new Date).getTime()
+    if (start_time === undefined) start_time = Date.now()
 
     var {start_time, end_time, duration} = checked_animation_duration(
         {start_time, end_time, duration})
@@ -85,10 +76,80 @@ export const Become = ({path, state, start_time,
         start_time,
         end_time,
         duration,
-        tick: (delta) => {
+        tick: (time_elapsed) => {
             return state
         },
     })
+}
+
+
+const checked_animation_delta_state = ({key, start_state, end_state, delta_state}) => {
+    // TODO: is it inconceivable that an animation could be defined
+    //  with a tick that defines a transition from a
+    //  numeric -> non-numeric type?
+    // e.g. Become does this
+    if (start_state !== undefined
+            && end_state === undefined
+            && delta_state === undefined) {
+        return {}
+    }
+
+    if (typeof(start_state) === 'number') {
+        if ([start_state, end_state, delta_state].filter(a => typeof(a) == 'number').length < 2) {
+            console.log({start_state, end_state, delta_state})
+            throw 'Need at least 2/3 to calculate animation: start_state, end_state, delta_state'
+        }
+
+        if (start_state === undefined)
+            start_state = end_state - delta_state
+        if (end_state === undefined)
+            end_state = start_state + delta_state
+        if (delta_state === undefined)
+            delta_state = end_state - start_state
+
+        if (start_state + delta_state != end_state) {
+            console.log({start_state, end_state, delta_state})
+            throw 'Conflicting values, Animation end_state != start + delta_state'
+        }
+
+        return {start_state, end_state, delta_state}
+    } else if (typeof(start_state) === 'object') {
+        if (end_state === undefined) end_state = {}
+        if (delta_state === undefined) delta_state = {}
+
+        if (key !== undefined)
+            return checked_animation_delta_state({
+                start_state: start_state[key],
+                end_state: end_state[key],
+                delta_state: delta_state[key]
+            })
+
+        console.log({key, start_state, end_state, delta_state})
+        if (typeof(start_state) !== 'object'
+                || typeof(end_state) !== 'object'
+                || typeof(delta_state) !== 'object') {
+            throw 'Incompatible types passed as {start_state, end_state, delta_state}, must all be objects or numbers'
+        }
+
+        let keys = Object.keys(start_state)
+        if (!keys.length) keys = Object.keys(end_state)
+        if (!keys.length) keys = Object.keys(delta_state)
+
+        return keys.reduce((acc, key) => {
+            //  Recursively check that deltas in state add up
+            const delta_states = checked_animation_delta_state({
+                start_state: start_state[key],
+                end_state: end_state[key],
+                delta_state: delta_state[key]
+            })
+            acc.start_state[key] = delta_states.start_state
+            acc.end_state[key] = delta_states.end_state
+            acc.delta_state[key] = delta_states.delta_state
+            return acc
+        }, {start_state: {}, end_state: {}, delta_state: {}})
+    } else {
+        return {start_state, end_state, delta_state}
+    }
 }
 
 export const startEndDeltaCheck = (start, end, delta) => {
@@ -147,30 +208,31 @@ export const Animate = ({
      _end_state,
      _delta_state] = startEndDeltaCheck(start_state, end_state, delta_state)
 
-    _tick = tick || tick_func(animation)
     _type = type ? type : 'ANIMATE'
     _split_path = path.split('/').slice(1)
 
-    return {
-        get type() {return _type},
-        get path() {return _path},
-        get split_path() {return _split_path},
-        get start_time() {return _start_time},
-        get end_time() {return _end_time},
-        get duration() {return _duration},
-        get start_state() {return _start_state},
-        get end_state() {return _end_state},
-        get delta_state() {return _delta_state},
-        get tick() {return _tick},
+    let animation = {
+        type: _type,
+        split_path: _split_path,
+        start_time: _start_time,
+        end_time: _end_time,
+        duration: _duration,
+        start_state: _start_state,
+        end_state: _end_state,
+        delta_state: _delta_state,
 
-        get curve() {return curve},
-        get unit() {return unit},
+        path: path,
+        curve: curve,
+        unit: unit,
     }
+    _tick = tick || tick_func(animation)
+    animation.tick = _tick
+    return immutify(animation)
 }
 
 export const AnimateCSS = ({
         name, path, start_time, end_time, duration=1000, curve='linear'}) => {
-    if (start_time === undefined) start_time = (new Date).getTime()
+    if (start_time === undefined) start_time = Date.now()
 
     var {start_time, end_time, duration} = checked_animation_duration({
                                             start_time, end_time, duration})
@@ -189,7 +251,6 @@ export const AnimateCSS = ({
         delay: duration,
         playState: 'paused'
     }
-
     return Animate({
         type: `CSS_${name ? name.toUpperCase() : 'END'}`,
         path: `${path}/style/animation/${name}`,
@@ -200,15 +261,15 @@ export const AnimateCSS = ({
         start_state,
         end_state,
         delta_state: {delay: duration},
-        tick: (delta) => {
-            if (delta <= 0) {
+        tick: (time_elapsed) => {
+            if (time_elapsed <= 0) {
                 return start_state
             }
-            else if (delta >= duration) {
+            else if (time_elapsed >= duration) {
                 return end_state
             }
             else {
-                return {name, duration, curve, delay: delta, playState: 'paused'}
+                return {...start_state, delay: time_elapsed}
             }
         },
     })
@@ -228,9 +289,9 @@ export const Translate = ({
     const left_tick = tick_func(animation, 'left', 0)
     const top_tick =  tick_func(animation, 'top', 0)
 
-    animation.tick = (delta) => ({
-        left: left_tick(delta),
-        top: top_tick(delta),
+    animation.tick = (time_elapsed) => ({
+        left: left_tick(time_elapsed),
+        top: top_tick(time_elapsed),
     })
     return Animate(animation)
 }
@@ -308,7 +369,7 @@ export const Repeat = (animation, repeat=Infinity) => {
     checkIsValidAnimation(animation)
     let {tick, start_time, duration} = animation
     if (start_time === undefined) start_time = (new Date).getTime()
-    const repeated_tick = (delta) => tick(mod(delta, duration))
+    const repeated_tick = (time_elapsed) => tick(mod(time_elapsed, duration))
     return {
         ...animation,
         repeat,
@@ -327,7 +388,7 @@ export const Reverse = (animation) => {
         ...animation,
         start_time: end_time,
         end_time: start_time,
-        tick: (delta) => tick(duration - delta),
+        tick: (time_elapsed) => tick(duration - time_elapsed),
     }
 }
 

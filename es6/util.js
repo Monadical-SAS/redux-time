@@ -1,5 +1,19 @@
 import extend from 'extend'
 
+export const immutify = (obj) =>
+    Object.keys(obj).reduce((new_obj, key) => {
+        const val = obj[key]
+        if (typeof(val) === 'function') {
+            val.inspect = val.toString
+        }
+        Object.defineProperty(new_obj, key, {
+            enumerable: true,
+            configurable: false,
+            writable: false,
+            value: val,
+        })
+        return new_obj
+    }, {})
 
 export const print = (msg) => {
     process ? process.stdout.write(msg) : console.log(msg)
@@ -10,6 +24,15 @@ export const assert = (val, error_msg) => {
         print(`[X] AssertionError: ${error_msg} (${val})`)
     } else {
         print('.')
+    }
+}
+
+export const assertThrows = (func) => {
+    try {
+        func()
+        assert(false, `${func.toString()} should have thrown an error`)
+    } catch (err) {
+        assert(true)
     }
 }
 
@@ -289,6 +312,10 @@ const flattenAnimation = (animation) => {
 
 const flattenIfNotFlattened = (state, path, flatten_func) => {
     const state_slice = select(state, path)
+    if (!state_slice) {
+        // State no longer exists because it was overwritten by a later patch
+        return
+    }
     if (typeof(state_slice) !== 'string') {
         patch(state, path, flatten_func(state_slice), false, false, false)
     }

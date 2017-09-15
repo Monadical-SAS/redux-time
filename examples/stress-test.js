@@ -89,13 +89,13 @@ const ADD_BALLS_ANIMATIONS = (start_time, num) => {
     return new_anims
 }
 
-const FPS = (speed, current_timestamp, last_timestamp) =>
-    Math.round((speed * 1000)/(current_timestamp - last_timestamp)) || 0
+const FPS = (speed, warped_time, former_time) =>
+    Math.round((speed * 1000)/(warped_time - former_time)) || 0
 
 
 const mapStateToProps = ({animations}) => ({
     balls: animations.state.balls,
-    fps: FPS(animations.speed, animations.current_timestamp, animations.last_timestamp),
+    fps: FPS(animations.speed, animations.warped_time, animations.former_time),
     speed: animations.speed,
 })
 const mapDispatchToProps = (dispatch) => ({
