@@ -4,7 +4,7 @@ import {connect} from 'react-redux'
 
 import {ExpandableSection} from 'monadical-react-components'
 
-import {Become, Repeat, Animate, Translate, AnimateCSS} from '../node/animations.js'
+import {Become, Repeat, Animate, Translate, AnimateCSS, Rotate} from '../node/animations.js'
 
 
 const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/examples/test-component.js"
@@ -25,7 +25,8 @@ const AnimationTesterComponent = ({
         <pre style={{...base_style, ...style}}>
             <br/>
             {text}
-            <br/><br/>
+            <br/>
+            <br/>
         </pre><br/>
         <Button title="Instant state change"
                 onClick={animateFirstState.bind(this, getTime())}>
@@ -115,8 +116,8 @@ const mapDispatchToProps = (dispatch) => ({
         })})
     },
     animateRotate: (start_time) => {
-        const Spin = Animate({
-            path: '/test_state/style/transform/rotate',
+        const Spin = Rotate({
+            path: '/test_state',
             start_state: 0,
             end_state: 360,
             duration: 3000,
