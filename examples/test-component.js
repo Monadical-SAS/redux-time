@@ -11,6 +11,7 @@ const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/examples
 
 const base_style = {
     width: 200,
+    height: 'auto',
     margin: 'auto',
     overflow: 'hidden',
     border: '1px dashed red',
