@@ -12,11 +12,6 @@ const tick_func = (
         {start_time, end_time, duration, start_state, end_state, delta_state,
         curve='linear', unit=null}, key) => {
 
-    var {start_state, delta_state, end_state} = checked_animation_delta_state({
-                                        start_state, end_state, delta_state, key})
-    var {start_time, end_time, duration} = checked_animation_duration({
-                                            start_time, end_time, duration})
-
     const curve_func = EasingFunctions[curve]
 
     return (time_elapsed) => {
@@ -57,73 +52,6 @@ const checked_animation_duration = ({start_time, duration, end_time}) => {
 }
 
 
-const checked_animation_delta_state = ({key, start_state, end_state, delta_state}) => {
-    // TODO: is it inconceivable that an animation could be defined
-    //  with a tick that defines a transition from a
-    //  numeric -> non-numeric type?
-
-    // e.g. Become does this
-    if (start_state !== undefined
-            && end_state === undefined
-            && delta_state === undefined) {
-        return {}
-    }
-
-    if (typeof(start_state) === 'number') {
-        if ([start_state, end_state, delta_state].filter(a => typeof(a) == 'number').length < 2) {
-            console.log({start_state, end_state, delta_state})
-            throw 'Need at least 2/3 to calculate animation: start_state, end_state, delta_state'
-        }
-
-        if (start_state === undefined)
-            start_state = end_state - delta_state
-        if (end_state === undefined)
-            end_state = start_state + delta_state
-        if (delta_state === undefined)
-            delta_state = end_state - start_state
-
-        if (start_state + delta_state != end_state) {
-            console.log({start_state, end_state, delta_state})
-            throw 'Conflicting values, Animation end_state != start + delta_state'
-        }
-
-        return {start_state, end_state, delta_state}
-    } else {
-        if (start_state === undefined) start_state = {}
-        if (end_state === undefined) end_state = {}
-        if (delta_state === undefined) delta_state = {}
-
-        if (key !== undefined)
-            return checked_animation_delta_state({
-                start_state: start_state[key],
-                end_state: end_state[key],
-                delta_state: delta_state[key]
-            })
-
-        if (typeof(start_state) !== 'object'
-                || typeof(end_state) !== 'object'
-                || typeof(delta_state) !== 'object') {
-            throw 'Incompatible types passed as {start_state, end_state, delta_state}, must all be objects or numbers'
-        }
-
-        let keys = Object.keys(start_state)
-        if (!keys.length) keys = Object.keys(end_state)
-        if (!keys.length) keys = Object.keys(delta_state)
-
-        return keys.reduce((acc, key) => {
-            const delta_states = checked_animation_delta_state({
-                start_state: start_state[key],
-                end_state: end_state[key],
-                delta_state: delta_state[key]
-            })
-            acc.start_state[key] = delta_states.start_state
-            acc.end_state[key] = delta_states.end_state
-            acc.delta_state[key] = delta_states.delta_state
-            return acc
-        }, {start_state: {}, end_state: {}, delta_state: {}})
-    }
-}
-
 const KeyedAnimation = ({
         type, path, key, start_time, end_time, duration, start_state,
         end_state, delta_state, curve, unit}) =>
@@ -163,47 +91,81 @@ export const Become = ({path, state, start_time,
     })
 }
 
+export const startEndDeltaCheck = (start, end, delta) => {
+    if (typeof(start) === 'object') {
+        throw "TODO: find an example of where this is used & clean update"
+
+        let keys = Object.keys(start_state)
+        if (!keys.length) keys = Object.keys(end_state)
+        if (!keys.length) keys = Object.keys(delta_state)
+
+        return keys.reduce((acc, key) => {
+            const delta_states = checked_animation_delta_state({
+                start_state: start_state[key],
+                end_state: end_state[key],
+                delta_state: delta_state[key]
+            })
+            acc.start_state[key] = delta_states.start_state
+            acc.end_state[key] = delta_states.end_state
+            acc.delta_state[key] = delta_states.delta_state
+            return acc
+        }, {start_state: {}, end_state: {}, delta_state: {}})
+
+    } else if (typeof(start) === 'number'
+                && (delta !== undefined || end !== undefined)) {
+        // calculate the missing value
+        if (end === undefined && delta !== undefined) {
+            return [start, state + delta, delta]
+        } else if (end !== undefined && delta === undefined) {
+            return [start, end, end - start]
+        }
+    }
+    if (typeof(start) === 'number'
+            && typeof(end) === 'number'
+            && typeof(delta) === 'number') {
+        if (start + delta !== end) {
+            throw `start (${start}) + delta (${delta}) !== end (${end})`
+        }
+    }
+    return [start, end, delta]
+}
+
 export const Animate = ({
         type, path, start_time, end_time, duration, start_state, end_state,
         delta_state, curve='linear', unit=null, tick=null}) => {
+
     if (start_time === undefined) start_time = (new Date).getTime()
-    let animation = {
-        type: type ? type : 'ANIMATE',
-        path,
-        split_path: path.split('/').slice(1),
-        start_time, end_time, duration,
-        start_state, end_state, delta_state,
-        curve,
-        unit,
-        tick,
+
+    let _start_time, _end_time, _duration, _start_state,
+        _end_state, _delta_state, _tick, _split_path, _type
+
+    [_start_time,
+     _end_time,
+     _duration] = startEndDeltaCheck(start_time, end_time, duration)
+
+    [_start_state,
+     _end_state,
+     _delta_state] = startEndDeltaCheck(start_state, end_state, delta_state)
+
+    _tick = tick || tick_func(animation)
+    _type = type ? type : 'ANIMATE'
+    _split_path = path.split('/').slice(1)
+
+    return {
+        get type() {return _type},
+        get path() {return _path},
+        get split_path() {return _split_path},
+        get start_time() {return _start_time},
+        get end_time() {return _end_time},
+        get duration() {return _duration},
+        get start_state() {return _start_state},
+        get end_state() {return _end_state},
+        get delta_state() {return _delta_state},
+        get tick() {return _tick},
+
+        get curve() {return curve},
+        get unit() {return unit},
     }
-
-    if (path === undefined) {
-        console.log(animation)
-        throw 'Animate animation must have a path defined.'
-    }
-
-    try {
-        if (!animation.tick) {
-            animation.tick = tick_func(animation)
-        }
-
-        animation = {
-            ...animation,
-            ...checked_animation_delta_state({start_state, end_state, delta_state})
-        }
-
-        animation = {
-            ...animation,
-            ...checked_animation_duration({start_time, end_time, duration})
-        }
-    } catch(e) {
-        console.log('INVALID ANIMATION:', animation)
-        throw `Exception while creating animation object ${type}:\n  ${e} ${e.message ? e.message : ''}`
-    }
-
-    // console.log(animation.type, animation)
-    return animation
 }
 
 export const AnimateCSS = ({
