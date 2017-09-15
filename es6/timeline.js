@@ -89,26 +89,25 @@ class TimelineComponent extends React.Component {
 
                 `}
             </style>
+            <div style={{width: '100%', height: 'auto', postion: 'relative'}}>
+                <div style={{width: '70%', display: 'block',
+                    marginLeft: 'auto', marginRight: 'auto'}}>
+                    Zoom 🔍
+                    <input type="range"
+                           min="0"
+                           max="50"
+                           step="0.5"
+                           onChange={(e) => this.changeScale(Number(e.target.value))}
+                           value={50 - this.state.scale}
+                           style={{
+                               height: '10px', display: 'block',
+                               width: "100%",
+                           }}
+                    />
+                </div>
+            </div>
             <div style={{width: '100%', height: `${COMPONENT_HEIGHT}px`,
                          overflow: 'scroll', position: 'relative'}}>
-
-                <div style={{width: '100%', height: 'auto', postion: 'relative'}}>
-                    <div style={{width: '70%', display: 'block',
-                        marginLeft: 'auto', marginRight: 'auto'}}>
-                        Zoom 🔍
-                        <input type="range"
-                               min="0"
-                               max="50"
-                               step="0.5"
-                               onChange={(e) => this.changeScale(Number(e.target.value))}
-                               value={50 - this.state.scale}
-                               style={{
-                                   height: '10px', display: 'block',
-                                   width: "100%",
-                               }}
-                        />
-                    </div>
-                </div>
                 <div style={{position: 'relative'}}>
                     {queue.map((anim, idx) => AnimRow(anim, idx, this.state.scale))}
                     <CurrentFrame warped_time={warped_time} scale={this.state.scale}/>
