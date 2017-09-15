@@ -6,7 +6,6 @@ import {
     pastAnimations,
     currentAnimations,
     futureAnimations,
-    sortedAnimations,
     activeAnimations,
 } from './reducers.js'
 
@@ -43,11 +42,11 @@ const AnimationList = ({animations, verbose=true, style}) =>
 
 export const AnimationStateVisualizerComponent = ({animations, path, expanded, debug=false}) => {
     const {queue, warped_time, former_time} = animations
-    const active_anims = activeAnimations(queue, warped_time, former_time)
+    const active_anims = activeAnimations({anim_queue: queue, warped_time, former_time})
 
-    const past_anims = sortedAnimations(pastAnimations(queue, warped_time, former_time))
-    const current_anims = sortedAnimations(currentAnimations(queue, warped_time, former_time))
-    const future_anims = sortedAnimations(futureAnimations(queue, warped_time, former_time))
+    const past_anims = pastAnimations(queue, warped_time, former_time)
+    const current_anims = currentAnimations({anim_queue: queue, warped_time, former_time})
+    const future_anims = futureAnimations(queue, warped_time, former_time)
 
     const col_style = {width: '32.5%', display: 'inline-block', verticalAlign: 'top'}
 
