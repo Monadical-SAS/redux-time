@@ -3,7 +3,7 @@ import {connect} from 'react-redux'
 import {ExpandableSection} from 'monadical-react-components'
 
 const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/es6/timeline.js"
-const COMPONENT_HEIGHT = 280
+const COMPONENT_HEIGHT = 320
 
 const page_start_time = Date.now()
 
@@ -16,7 +16,7 @@ const AnimRow = (anim, idx, scale) => {
 
     const style = {
         position: 'absolute',
-        top: (idx * 25) % (COMPONENT_HEIGHT - 40),
+        top: (idx * 25) % (COMPONENT_HEIGHT - 70),
         left: offset(start_time)/scale,
         height: 20,
         width: end_time !== Infinity ?
@@ -40,18 +40,17 @@ const AnimRow = (anim, idx, scale) => {
         </div>
 }
 
-const CurrentFrame = ({former_time, scale}) => {
+const CurrentFrame = ({warped_time, scale}) => {
 
     const style = {
         position: 'absolute',
-        top: COMPONENT_HEIGHT - 40,
-        left: offset(former_time) / scale,
+        top: COMPONENT_HEIGHT - 70,
+        left: (offset(warped_time) / scale) - 1,
         height: 20,
-        width: '30px',
         color: 'blue',
     }
 
-    return <div style={style}>&gt;|</div>
+    return <div style={style}>|</div>
 }
 
 class TimelineComponent extends React.Component {
@@ -69,7 +68,7 @@ class TimelineComponent extends React.Component {
     }
 
     render() {
-        const {queue, former_time, debug} = this.props
+        const {queue, warped_time, debug} = this.props
         return <ExpandableSection name="Animations Timeline" source={debug && SOURCE} expanded>
             <style>{`
                 .anim_details {
@@ -80,18 +79,20 @@ class TimelineComponent extends React.Component {
                     display: inline-block;
                 }
                 .anim:hover {
-                    width: auto !important;
+                    min-width: 200px !important;
                     height: auto !important;
                     z-index: 1001;
                 }
+                .section-animations-timeline{
+                    z-index: 1;
+                }
+
                 `}
             </style>
-            <div style={{width: '100%', height: `${COMPONENT_HEIGHT}px`, overflow: 'scroll'}}>
-                <div style={{width: 'auto'}}>
-                    {queue.map((anim, idx) => AnimRow(anim, idx, this.state.scale))}
-                    <CurrentFrame former_time={former_time} scale={this.state.scale}/>
-                </div>
-                <div style={{width: '100%', height: 'auto'}}>
+            <div style={{width: '100%', height: `${COMPONENT_HEIGHT}px`,
+                         overflow: 'scroll', position: 'relative'}}>
+
+                <div style={{width: '100%', height: 'auto', postion: 'relative'}}>
                     <div style={{width: '70%', display: 'block',
                         marginLeft: 'auto', marginRight: 'auto'}}>
                         Zoom 🔍
@@ -107,6 +108,10 @@ class TimelineComponent extends React.Component {
                                }}
                         />
                     </div>
+                </div>
+                <div style={{position: 'relative'}}>
+                    {queue.map((anim, idx) => AnimRow(anim, idx, this.state.scale))}
+                    <CurrentFrame warped_time={warped_time} scale={this.state.scale}/>
                 </div>
             </div>
         </ExpandableSection>
