@@ -30,6 +30,7 @@
   "main": "node/main.js",
   "dependencies": {
     "extend": "^3.0.1",
+    "lodash.isequal": "^4.5.0",
     "monadical-react-components": "^0.0.6",
     "react-redux": "^5.0.5",
     "redux": "^3.6.0",

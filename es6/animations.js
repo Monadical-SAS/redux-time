@@ -8,9 +8,10 @@ import {
     immutify,
 } from './util.js'
 
-const tick_func = (
-        {start_time, end_time, duration, start_state, end_state, delta_state,
-        curve='linear', unit=null}, key) => {
+import isEqual from 'lodash.isequal'
+
+const tick_func = ({duration, start_state, delta_state,
+                    curve='linear', unit=null}) => {
 
     const curve_func = EasingFunctions[curve]
 
@@ -18,30 +19,14 @@ const tick_func = (
         const bounded_time = Math.min(Math.max(time_elapsed, 0), duration)
         const curve = curve_func(bounded_time/duration)
         const new_state = start_state + curve * delta_state
-        return unit ? `${new_state}${unit}` : new_state
+
+        return add_unit(new_state, unit)
     }
 }
 
-const checked_animation_duration = ({start_time, duration, end_time}) => {
-    if ([start_time, end_time, duration].filter(a => typeof(a) == 'number').length < 2) {
-        console.log({start_time, end_time, duration})
-        throw 'Need at least 2/3 to calculate animation: start_time, end_time, duration'
-    }
-
-    if (start_time === undefined)
-        start_time = end_time - duration
-    if (end_time === undefined)
-        end_time = start_time + duration
-    if (duration === undefined)
-        duration = end_time - start_time
-
-    if (start_time + duration != end_time) {
-        console.log({start_time, end_time, duration})
-        throw 'Conflicting values, Animation end_time != start_time + duration'
-    }
-    return {start_time, duration, end_time}
+const add_unit = (val, unit) => {
+    return unit ? `${val}${unit}` : val
 }
-
 
 const KeyedAnimation = ({
         type, path, key, start_time, end_time, duration, start_state,
@@ -63,8 +48,10 @@ export const Become = ({path, state, start_time,
                         end_time=Infinity, duration=Infinity}) => {
     if (start_time === undefined) start_time = Date.now()
 
-    var {start_time, end_time, duration} = checked_animation_duration(
-        {start_time, end_time, duration})
+    if (exactlyOneIsUndefined(duration, end_time)) {
+        let [duration,
+             end_time] = calculateTheOther(start_time, duration, end_time)
+    }
     if (start_time === undefined || path === undefined) {
         console.log({path, state, start_time, end_time, duration})
         throw 'Become animation must have a start_time and path defined.'
@@ -73,6 +60,7 @@ export const Become = ({path, state, start_time,
         type: 'BECOME',
         path,
         start_state: state,
+        end_state: state,
         start_time,
         end_time,
         duration,
@@ -83,102 +71,34 @@ export const Become = ({path, state, start_time,
 }
 
 
-const checked_animation_delta_state = ({key, start_state, end_state, delta_state}) => {
-    // TODO: is it inconceivable that an animation could be defined
-    //  with a tick that defines a transition from a
-    //  numeric -> non-numeric type?
-    // e.g. Become does this
-    if (start_state !== undefined
-            && end_state === undefined
-            && delta_state === undefined) {
-        return {}
-    }
+export const calculateTheOther = (start, delta, end) => {
+    // if (typeof(start) === 'object') {
+    //     throw "TODO: find an example of where this is used & clean update"
 
-    if (typeof(start_state) === 'number') {
-        if ([start_state, end_state, delta_state].filter(a => typeof(a) == 'number').length < 2) {
-            console.log({start_state, end_state, delta_state})
-            throw 'Need at least 2/3 to calculate animation: start_state, end_state, delta_state'
-        }
+    //     let keys = Object.keys(start_state)
+    //     if (!keys.length) keys = Object.keys(end_state)
+    //     if (!keys.length) keys = Object.keys(delta_state)
 
-        if (start_state === undefined)
-            start_state = end_state - delta_state
-        if (end_state === undefined)
-            end_state = start_state + delta_state
-        if (delta_state === undefined)
-            delta_state = end_state - start_state
+    //     return keys.reduce((acc, key) => {
+    //         const delta_states = checked_animation_delta_state({
+    //             start_state: start_state[key],
+    //             end_state: end_state[key],
+    //             delta_state: delta_state[key]
+    //         })
+    //         acc.start_state[key] = delta_states.start_state
+    //         acc.end_state[key] = delta_states.end_state
+    //         acc.delta_state[key] = delta_states.delta_state
+    //         return acc
+    //     }, {start_state: {}, end_state: {}, delta_state: {}})
 
-        if (start_state + delta_state != end_state) {
-            console.log({start_state, end_state, delta_state})
-            throw 'Conflicting values, Animation end_state != start + delta_state'
-        }
-
-        return {start_state, end_state, delta_state}
-    } else if (typeof(start_state) === 'object') {
-        if (end_state === undefined) end_state = {}
-        if (delta_state === undefined) delta_state = {}
-
-        if (key !== undefined)
-            return checked_animation_delta_state({
-                start_state: start_state[key],
-                end_state: end_state[key],
-                delta_state: delta_state[key]
-            })
-
-        console.log({key, start_state, end_state, delta_state})
-        if (typeof(start_state) !== 'object'
-                || typeof(end_state) !== 'object'
-                || typeof(delta_state) !== 'object') {
-            throw 'Incompatible types passed as {start_state, end_state, delta_state}, must all be objects or numbers'
-        }
-
-        let keys = Object.keys(start_state)
-        if (!keys.length) keys = Object.keys(end_state)
-        if (!keys.length) keys = Object.keys(delta_state)
-
-        return keys.reduce((acc, key) => {
-            //  Recursively check that deltas in state add up
-            const delta_states = checked_animation_delta_state({
-                start_state: start_state[key],
-                end_state: end_state[key],
-                delta_state: delta_state[key]
-            })
-            acc.start_state[key] = delta_states.start_state
-            acc.end_state[key] = delta_states.end_state
-            acc.delta_state[key] = delta_states.delta_state
-            return acc
-        }, {start_state: {}, end_state: {}, delta_state: {}})
-    } else {
-        return {start_state, end_state, delta_state}
-    }
-}
-
-export const startEndDeltaCheck = (start, end, delta) => {
-    if (typeof(start) === 'object') {
-        throw "TODO: find an example of where this is used & clean update"
-
-        let keys = Object.keys(start_state)
-        if (!keys.length) keys = Object.keys(end_state)
-        if (!keys.length) keys = Object.keys(delta_state)
-
-        return keys.reduce((acc, key) => {
-            const delta_states = checked_animation_delta_state({
-                start_state: start_state[key],
-                end_state: end_state[key],
-                delta_state: delta_state[key]
-            })
-            acc.start_state[key] = delta_states.start_state
-            acc.end_state[key] = delta_states.end_state
-            acc.delta_state[key] = delta_states.delta_state
-            return acc
-        }, {start_state: {}, end_state: {}, delta_state: {}})
-
-    } else if (typeof(start) === 'number'
+    // } else
+    if (typeof(start) === 'number'
                 && (delta !== undefined || end !== undefined)) {
         // calculate the missing value
         if (end === undefined && delta !== undefined) {
-            return [start, state + delta, delta]
+            return [delta, start + delta]
         } else if (end !== undefined && delta === undefined) {
-            return [start, end, end - start]
+            return [end - start, end]
         }
     }
     if (typeof(start) === 'number'
@@ -188,25 +108,39 @@ export const startEndDeltaCheck = (start, end, delta) => {
             throw `start (${start}) + delta (${delta}) !== end (${end})`
         }
     }
-    return [start, end, delta]
+    return [delta, end]
+}
+
+const exactlyOneIsUndefined = (val1, val2) => {
+    return ((val1 === undefined || val2 === undefined)
+            && !(val1 === undefined && val2 === undefined))
+}
+
+const isNumber = (val) => {
+    return typeof(val) === 'number'
 }
 
 export const Animate = ({
         type, path, start_time, end_time, duration, start_state, end_state,
         delta_state, curve='linear', unit=null, tick=null}) => {
 
-    if (start_time === undefined) start_time = (new Date).getTime()
-
-    let _start_time, _end_time, _duration, _start_state,
+    let _start_time, _end_time, _duration,
         _end_state, _delta_state, _tick, _split_path, _type
 
-    [_start_time,
-     _end_time,
-     _duration] = startEndDeltaCheck(start_time, end_time, duration)
+    _start_time = (start_time === undefined) ? Date.now() : start_time
 
-    [_start_state,
-     _end_state,
-     _delta_state] = startEndDeltaCheck(start_state, end_state, delta_state)
+    if (exactlyOneIsUndefined(delta_state, end_state)) {
+        [_delta_state,
+         _end_state] = calculateTheOther(start_state, delta_state, end_state)
+    } else {
+        [_delta_state, _end_state] = [delta_state, end_state]
+    }
+    if (exactlyOneIsUndefined(duration, end_time)) {
+        [_duration,
+         _end_time] = calculateTheOther(_start_time, duration, end_time)
+    } else {
+        [_duration, _end_time] = [duration, end_time]
+    }
 
     _type = type ? type : 'ANIMATE'
     _split_path = path.split('/').slice(1)
@@ -217,16 +151,27 @@ export const Animate = ({
         start_time: _start_time,
         end_time: _end_time,
         duration: _duration,
-        start_state: _start_state,
         end_state: _end_state,
         delta_state: _delta_state,
 
+        start_state: start_state,
         path: path,
         curve: curve,
         unit: unit,
     }
     _tick = tick || tick_func(animation)
     animation.tick = _tick
+
+    const end_state_unit = add_unit(_end_state, unit)
+
+    if (end_state !== undefined && !isEqual(_tick(_duration), end_state_unit)){
+        throw `Invalid animation--end_state !== tick(duration) for animation:`
+            + `\n${JSON.stringify(animation, null, '  ')}`
+            + `\ntick(${_duration}): ${JSON.stringify(_tick(_duration), null, '  ')}`
+            + ` !== ${end_state_unit}`
+            + `${isEqual(_tick(_duration), end_state_unit)}`
+    }
+
     return immutify(animation)
 }
 
@@ -234,9 +179,10 @@ export const AnimateCSS = ({
         name, path, start_time, end_time, duration=1000, curve='linear'}) => {
     if (start_time === undefined) start_time = Date.now()
 
-    var {start_time, end_time, duration} = checked_animation_duration({
-                                            start_time, end_time, duration})
-
+    if (exactlyOneIsUndefined(duration, end_time)) {
+        let [duration,
+             end_time] = calculateTheOther(start_time, duration, end_time)
+    }
     const start_state = {
         name,
         duration,
