@@ -1,11 +1,10 @@
 import {assert, assertEqual, print, assertSortedObjsInOrder,
         nested_key, assertThrows, immutify} from './util.js'
 
-import {Become, Animate, Style} from './animations.js'
+import {Become, Animate, Style, computeTheOther} from './animations.js'
 
 import {activeAnimations, uniqueAnimations, currentAnimations,
-        finalFrameAnimations} from './reducers.js'
-
+        finalFrameAnimations, computeAnimatedState} from './reducers.js'
 
 export const run_unit_tests = () => {
 
@@ -125,7 +124,32 @@ assert(
 const immutable_obj = immutify({a: 1, b: 2})
 assertThrows(() => {immutable_obj.a = 5})
 
-// Test KeyedAnimation error checking
+// test computeTheOther
+const start_state = {
+    a: 0,
+    b: 10,
+}
+const delta_state = {
+    a: 10,
+    b: -10,
+}
+const end_state = {
+    a: 10,
+    b: 0,
+}
+let [calc_delta, calc_end] = computeTheOther(start_state, undefined, end_state)
+assertEqual(calc_delta, delta_state)
+assertEqual(calc_end, end_state)
+[calc_delta, calc_end] = computeTheOther(start_state, delta_state, undefined)
+assertEqual(calc_delta, delta_state)
+assertEqual(calc_end, end_state)
+
+// Test Style merges instead of overwriting
+const original_style = Become({
+    path: '/a/b',
+    start_time: 0,
+    state: 0,
+})
 const restyle = Style({
     path: '/a',
     start_time: 0,
@@ -134,5 +158,9 @@ const restyle = Style({
     end_state: {top:100, left: -100},
 })
 
-
+assertEqual(
+    computeAnimatedState([original_style, restyle], 500),
+    {a: {top: 50, left: -50, b: 0}}
+)
+process.exit(0)
 }

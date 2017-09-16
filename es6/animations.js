@@ -36,7 +36,7 @@ export const Become = ({path, state, start_time,
 
     if (exactlyOneIsUndefined(duration, end_time)) {
         let [duration,
-             end_time] = calculateTheOther(start_time, duration, end_time)
+             end_time] = computeTheOther(start_time, duration, end_time)
     }
     if (start_time === undefined || path === undefined) {
         console.log({path, state, start_time, end_time, duration})
@@ -56,30 +56,21 @@ export const Become = ({path, state, start_time,
     })
 }
 
-export const calculateTheOther = (start, delta, end) => {
-    // if (typeof(start) === 'object') {
-    //     throw "TODO: find an example of where this is used & clean update"
-
-    //     let keys = Object.keys(start_state)
-    //     if (!keys.length) keys = Object.keys(end_state)
-    //     if (!keys.length) keys = Object.keys(delta_state)
-
-    //     return keys.reduce((acc, key) => {
-    //         const delta_states = checked_animation_delta_state({
-    //             start_state: start_state[key],
-    //             end_state: end_state[key],
-    //             delta_state: delta_state[key]
-    //         })
-    //         acc.start_state[key] = delta_states.start_state
-    //         acc.end_state[key] = delta_states.end_state
-    //         acc.delta_state[key] = delta_states.delta_state
-    //         return acc
-    //     }, {start_state: {}, end_state: {}, delta_state: {}})
-
-    // } else
+export const computeTheOther = (start, delta, end) => {
+    if (typeof(start) === 'object') {
+        let new_delta = delta ? {...delta} : {}
+        let new_end = end ? {...end} : {}
+        Object.keys(start).forEach((key) => {
+            let [_delta, _end] = computeTheOther(start[key],
+                                                   new_delta[key],
+                                                   new_end[key])
+            new_delta[key] = _delta
+            new_end[key] = _end
+        })
+        return [new_delta, new_end]
+    }
     if (typeof(start) === 'number'
                 && (delta !== undefined || end !== undefined)) {
-        // calculate the missing value
         if (end === undefined && delta !== undefined) {
             return [delta, start + delta]
         } else if (end !== undefined && delta === undefined) {
@@ -130,13 +121,13 @@ export const Animate = ({
 
     if (exactlyOneIsUndefined(delta_state, end_state)) {
         [_delta_state,
-         _end_state] = calculateTheOther(start_state, delta_state, end_state)
+         _end_state] = computeTheOther(start_state, delta_state, end_state)
     } else {
         [_delta_state, _end_state] = [delta_state, end_state]
     }
     if (exactlyOneIsUndefined(duration, end_time)) {
         [_duration,
-         _end_time] = calculateTheOther(_start_time, duration, end_time)
+         _end_time] = computeTheOther(_start_time, duration, end_time)
     } else {
         [_duration, _end_time] = [duration, end_time]
     }
@@ -174,7 +165,7 @@ export const AnimateCSS = ({
 
     if (exactlyOneIsUndefined(duration, end_time)) {
         let [duration,
-             end_time] = calculateTheOther(start_time, duration, end_time)
+             end_time] = computeTheOther(start_time, duration, end_time)
     }
     const start_state = {
         name,
@@ -223,15 +214,13 @@ export const Translate = ({
     if (start_time === undefined) start_time = (new Date).getTime()
     if (start_state === undefined) start_state = {top: 0, left: 0}
 
-    start_state.forEach((key) => {
-        if (exactlyOneIsUndefined(delta_state[key], end_state[key])) {
-            let [delta, end] = calculateTheOther(start_state[key],
-                                                 delta_state[key],
-                                                 end_state[key])
-            delta_state[key] = delta
-            end_state[key] = end
-        }
-    })
+    console.log('---------------------------')
+    console.log({delta_state, end_state})
+    if (exactlyOneIsUndefined(delta_state, end_state)) {
+        let [delta_state,
+             end_state] = computeTheOther(start_state, delta_state, end_state)
+    }
+    console.log({delta_state, end_state})
 
     path = `${path}/style/transform/translate`
     const type = 'TRANSLATE'
@@ -268,19 +257,33 @@ export const Style = ({
 
     if (exactlyOneIsUndefined(duration, end_time)) {
         let [duration,
-             end_time] = calculateTheOther(start_time, duration, end_time)
+             end_time] = computeTheOther(start_time, duration, end_time)
     }
 
     if (exactlyOneIsUndefined(delta_state, end_state)) {
-        let delta_state = delta_state || {}
-        let end_state = end_state || {}
-        Object.keys(start_state).forEach((key) => {
-            let [delta, end] = calculateTheOther(start_state[key],
-                                                 delta_state[key],
-                                                 end_state[key])
-            delta_state[key] = delta
-            end_state[key] = end
+        let [delta_state,
+             end_state] = computeTheOther(start_state, delta_state, end_state)
+    }
+
+    console.log({delta_state, end_state})
+
+    const tick_funcs = {}
+    Object.keys(start_state).forEach((key) => {
+        tick_funcs[key] = tick_func({
+            duration,
+            start_state: start_state[key],
+            delta_state: delta_state[key],
+            curve,
+            unit
         })
+    })
+
+    const tick = (time_elapsed) => {
+        const output = {}
+        Object.keys(start_state).forEach((key) =>{
+            output[key] = tick_funcs[key](time_elapsed)
+        })
+        return output
     }
 
     return Animate({
@@ -293,6 +296,7 @@ export const Style = ({
         end_state,
         curve,
         unit,
+        tick,
         merge: true,
     })
 }

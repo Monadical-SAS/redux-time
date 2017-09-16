@@ -1,4 +1,5 @@
 import extend from 'extend'
+import isEqual from 'lodash.isequal'
 
 export const immutify = (obj) =>
     Object.keys(obj).reduce((new_obj, key) => {
@@ -37,7 +38,10 @@ export const assertThrows = (func) => {
 }
 
 export const assertEqual = (val1, val2) => {
-    assert(val1 === val2, `${val1} !== ${val2}`)
+    assert(
+        isEqual(val1, val2),
+        `${JSON.stringify(val1)} !== ${JSON.stringify(val2)}`
+    )
 }
 
 export const assertSortedObjsInOrder = (arr, sort_function, expected_order) => {
