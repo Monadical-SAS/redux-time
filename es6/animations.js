@@ -8,6 +8,8 @@ import {
     immutify,
 } from './util.js'
 
+import {computeAnimatedState} from './reducers.js'
+
 import isEqual from 'lodash.isequal'
 
 const tick_func = ({duration, start_state, delta_state,
@@ -27,22 +29,6 @@ const tick_func = ({duration, start_state, delta_state,
 const add_unit = (val, unit) => {
     return unit ? `${val}${unit}` : val
 }
-
-const KeyedAnimation = ({
-        type, path, key, start_time, end_time, duration, start_state,
-        end_state, delta_state, curve, unit}) =>
-    Animate({
-        type,
-        path: `${path}/${key}`,
-        key,
-        start_time,
-        end_time,
-        duration,
-        start_state: start_state && start_state[key],
-        end_state: end_state && end_state[key],
-        delta_state: delta_state && delta_state[key],
-        curve, unit,
-    })
 
 export const Become = ({path, state, start_time,
                         end_time=Infinity, duration=Infinity}) => {
@@ -69,7 +55,6 @@ export const Become = ({path, state, start_time,
         },
     })
 }
-
 
 export const calculateTheOther = (start, delta, end) => {
     // if (typeof(start) === 'object') {
@@ -120,9 +105,23 @@ const isNumber = (val) => {
     return typeof(val) === 'number'
 }
 
+const validateAnimation = (animation) => {
+    const end_time = animation.end_time
+    const end_state = animation.end_state
+
+    const computed_end_state = computeAnimatedState([animation], _end_time)
+    if (!isEqual(computed_end_state, end_state)) {
+        throw `Invalid Animate: end_state !== computed_end_state for animation:`
+            + `\n${JSON.stringify(animation, null, '  ')}:`
+            + `${JSON.stringify(computed_end_state, null, '  ')} !==`
+            + `${JSON.stringify(end_state, null, '  ')}`
+    }
+}
+
 export const Animate = ({
         type, path, start_time, end_time, duration, start_state, end_state,
-        delta_state, curve='linear', unit=null, tick=null}) => {
+        delta_state, merge=false, curve='linear', unit=null, tick=null,
+        error_checking=true}) => {
 
     let _start_time, _end_time, _duration,
         _end_state, _delta_state, _tick, _split_path, _type
@@ -158,18 +157,12 @@ export const Animate = ({
         path: path,
         curve: curve,
         unit: unit,
+        merge: merge,
     }
     _tick = tick || tick_func(animation)
     animation.tick = _tick
 
-    const end_state_unit = add_unit(_end_state, unit)
-
-    if (end_state !== undefined && !isEqual(_tick(_duration), end_state_unit)){
-        throw `Invalid animation--end_state !== tick(duration) for animation:`
-            + `\n${JSON.stringify(animation, null, '  ')}`
-            + `\ntick(${_duration}): ${JSON.stringify(_tick(_duration), null, '  ')}`
-            + ` !== ${end_state_unit}`
-            + `${isEqual(_tick(_duration), end_state_unit)}`
+    if (error_checking) {
     }
 
     return immutify(animation)
@@ -224,16 +217,42 @@ export const AnimateCSS = ({
 export const Translate = ({
         path, start_time, end_time, duration=1000, start_state, end_state,
         delta_state, curve='linear', unit='px'}) => {
+
+    // this is CSS Transform(translate(x, y))
+
     if (start_time === undefined) start_time = (new Date).getTime()
     if (start_state === undefined) start_state = {top: 0, left: 0}
+
+    start_state.forEach((key) => {
+        if (exactlyOneIsUndefined(delta_state[key], end_state[key])) {
+            let [delta, end] = calculateTheOther(start_state[key],
+                                                 delta_state[key],
+                                                 end_state[key])
+            delta_state[key] = delta
+            end_state[key] = end
+        }
+    })
+
     path = `${path}/style/transform/translate`
     const type = 'TRANSLATE'
 
     const animation = {type, path, start_time, end_time, duration,
                        start_state, end_state, delta_state, curve, unit}
-    //  TODO: change left => /left to keep state selectors consistent
-    const left_tick = tick_func(animation, 'left', 0)
-    const top_tick =  tick_func(animation, 'top', 0)
+
+    const left_tick = tick_func({
+        duration,
+        curve,
+        unit,
+        start_state: start_state['left'],
+        delta_state: delta_state['left'],
+    })
+    const top_tick = tick_func({
+        duration,
+        curve,
+        unit,
+        start_state: start_state['top'],
+        delta_state: delta_state['top'],
+    })
 
     animation.tick = (time_elapsed) => ({
         left: left_tick(time_elapsed),
@@ -242,40 +261,40 @@ export const Translate = ({
     return Animate(animation)
 }
 
-export const TranslateTo = ({
+export const Style = ({
         path, start_time, end_time, duration=1000, start_state, end_state,
         delta_state, curve='linear', unit='px'}) => {
-    let anims = []
-    const has_left = (start_state || end_state || delta_state).left !== undefined
-    const has_top = (start_state || end_state || delta_state).top !== undefined
-    if (has_left) {
-        anims = [
-            KeyedAnimation({
-                type: 'TRANSLATE_TO_LEFT',
-                path: `${path}/style`,
-                key: 'left',
-                start_time, end_time, duration,
-                start_state, end_state, delta_state,
-                curve, unit,
-            })
-        ]
+    if (start_time === undefined) start_time = (new Date).getTime()
+
+    if (exactlyOneIsUndefined(duration, end_time)) {
+        let [duration,
+             end_time] = calculateTheOther(start_time, duration, end_time)
     }
-    if (has_top) {
-        anims = [
-            ...anims,
-            KeyedAnimation({
-                type: 'TRANSLATE_TO_TOP',
-                path: `${path}/style`,
-                key: 'top',
-                start_time, end_time, duration,
-                start_state, end_state, delta_state,
-                curve, unit,
-            })
-        ]
+
+    if (exactlyOneIsUndefined(delta_state, end_state)) {
+        let delta_state = delta_state || {}
+        let end_state = end_state || {}
+        Object.keys(start_state).forEach((key) => {
+            let [delta, end] = calculateTheOther(start_state[key],
+                                                 delta_state[key],
+                                                 end_state[key])
+            delta_state[key] = delta
+            end_state[key] = end
+        })
     }
-    if (!has_left && !has_top)
-        throw 'TranslateTo start_state and end_state must have {left or top}'
-    return anims
+
+    return Animate({
+        path,
+        start_time,
+        duration,
+        end_time,
+        start_state,
+        delta_state,
+        end_state,
+        curve,
+        unit,
+        merge: true,
+    })
 }
 
 export const Opacity = ({

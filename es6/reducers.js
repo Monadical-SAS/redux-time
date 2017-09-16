@@ -119,11 +119,22 @@ export const computeAnimatedState = (anim_queue, warped_time,
     // console.log({active_animations})
     for (let animation of active_animations) {
         try {
-            const delta = warped_time - animation.start_time
-            patches.push({
-                split_path: animation.split_path,
-                value: animation.tick(delta),
-            })
+            const delta = warped_time - start_time
+            if (animation.merge) {
+                values = animation.tick(delta)
+                Object.keys(animation.start_state).forEach((key) => {
+                    patches.push({
+                        split_path: [...animation.split_path, key],
+                        value: values[key],
+                    })
+                })
+            } else {
+                patches.push({
+                    split_path: animation.split_path,
+                    value: animation.tick(delta),
+                })
+            }
+
         } catch(e) {
             console.log(animation.type, 'Animation tick function threw an exception:', e.message, animation)
         }

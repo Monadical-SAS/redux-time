@@ -1,7 +1,7 @@
 import {assert, assertEqual, print, assertSortedObjsInOrder,
         nested_key, assertThrows, immutify} from './util.js'
 
-import {Become, Animate, TranslateTo} from './animations.js'
+import {Become, Animate, Style} from './animations.js'
 
 import {activeAnimations, uniqueAnimations, currentAnimations,
         finalFrameAnimations} from './reducers.js'
@@ -23,7 +23,6 @@ assertEqual(nested_key(15, 2, 5), '/0/1/3/7/15')
 assertEqual(nested_key(15, 2, 6), '/0/0/1/3/7/15')
 
 assertEqual(nested_key(15, 3, 3), '/1/5/15')
-
 
 // Util tests
 const sort = (x) => x
@@ -67,15 +66,12 @@ const animation_queue = [
     }),
 ]
 
-console.log(animation_queue)
-
 // 3 is the last in the list, and is active @ warped_time
 let active_q = activeAnimations({
     anim_queue: animation_queue,
     former_time: 64,
     warped_time: 66,
 })
-console.log(active_q)
 assert(active_q.pop().start_state == 3, 'Animation 3 should take precedence')
 
 // 3 is last in the list, but 2 is @ warped_time
@@ -130,7 +126,7 @@ const immutable_obj = immutify({a: 1, b: 2})
 assertThrows(() => {immutable_obj.a = 5})
 
 // Test KeyedAnimation error checking
-const good_translate = TranslateTo({
+const restyle = Style({
     path: '/a',
     start_time: 0,
     end_time: 1000,
@@ -138,6 +134,5 @@ const good_translate = TranslateTo({
     end_state: {top:100, left: -100},
 })
 
-console.log({good_translate})
 
 }

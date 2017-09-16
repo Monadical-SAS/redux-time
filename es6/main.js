@@ -28,6 +28,7 @@ const shouldAnimate = (anim_queue, timestamp, speed) => {
 
 class AnimationHandler {
     constructor({store, initial_state, autostart_animating=true, ticker=null}) {
+
         if (ticker === null) {
             this.ticker = (func) =>
                 window.requestAnimationFrame.call(window, func)
@@ -94,10 +95,15 @@ class AnimationHandler {
 
 
 const startAnimation = (store, initial_state, autostart_animating=true) => {
-    const handler = new AnimationHandler({store, initial_state, autostart_animating})
+    const handler = new AnimationHandler({
+        store,
+        initial_state,
+        autostart_animating
+    })
     return handler.time
 }
 
 
 export {animations, startAnimation, AnimationHandler, AnimationControls,
-        AnimationStateVisualizer, AnimationStateVisualizerComponent, AnimationTimeline}
+        AnimationStateVisualizer, AnimationStateVisualizerComponent,
+        AnimationTimeline}
