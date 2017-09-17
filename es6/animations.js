@@ -6,9 +6,8 @@ import {
     checkIsValidSequence,
     EasingFunctions,
     immutify,
+    computeAnimatedState,
 } from './util.js'
-
-import {computeAnimatedState} from './reducers.js'
 
 import isEqual from 'lodash.isequal'
 

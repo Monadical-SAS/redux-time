@@ -1,11 +1,10 @@
 import {assert, assertEqual, print, assertSortedObjsInOrder,
-        nested_key, assertThrows, immutify} from './util.js'
+        nested_key, assertThrows, immutify, activeAnimations,
+        uniqueAnimations, currentAnimations, finalFrameAnimations,
+        computeAnimatedState} from './util.js'
 
 import {Become, Animate, Style, Translate,
         computeTheOther, RepeatSequence} from './animations.js'
-
-import {activeAnimations, uniqueAnimations, currentAnimations,
-        finalFrameAnimations, computeAnimatedState} from './reducers.js'
 
 export const run_unit_tests = () => {
 

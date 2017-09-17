@@ -1,9 +1,8 @@
 import {Become, TranslateTo, Rotate,
         Scale, Opacity} from './animations.js'
 
-import {assert, assertEqual, print, range, nested_key} from './util.js'
-
-import {computeAnimatedState} from './reducers.js'
+import {computeAnimatedState, assert, assertEqual, print,
+        range, nested_key} from './util.js'
 
 
 //  create objects

@@ -1,6 +1,6 @@
 import {WarpedTime} from 'warped-time'
 
-import {animations} from './reducers.js'
+import {animationsReducer} from './reducers.js'
 import {Become} from './animations.js'
 import {AnimationControls} from './controls.js'
 import {AnimationStateVisualizerComponent,
@@ -26,7 +26,7 @@ const shouldAnimate = (anim_queue, timestamp, speed) => {
 }
 
 
-class AnimationHandler {
+class AnimationsHandler {
     constructor({store, initial_state, autostart_animating=true, ticker=null}) {
 
         if (ticker === null) {
@@ -95,7 +95,7 @@ class AnimationHandler {
 
 
 const startAnimation = (store, initial_state, autostart_animating=true) => {
-    const handler = new AnimationHandler({
+    const handler = new AnimationsHandler({
         store,
         initial_state,
         autostart_animating
@@ -104,6 +104,6 @@ const startAnimation = (store, initial_state, autostart_animating=true) => {
 }
 
 
-export {animations, startAnimation, AnimationHandler, AnimationControls,
+export {animationsReducer, startAnimation, AnimationsHandler, AnimationControls,
         AnimationStateVisualizer, AnimationStateVisualizerComponent,
         AnimationTimeline}

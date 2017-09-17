@@ -7,7 +7,7 @@ import {
     currentAnimations,
     futureAnimations,
     activeAnimations,
-} from './reducers.js'
+} from './util.js'
 
 import {ExpandableSection} from 'monadical-react-components'
 
