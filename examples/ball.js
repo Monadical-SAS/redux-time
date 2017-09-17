@@ -7,7 +7,7 @@ import {Provider, connect} from 'react-redux'
 import {ExpandableSection} from 'monadical-react-components'
 
 import {
-    animations,
+    animationsReducer,
     startAnimation,
     AnimationControls,
     AnimationStateVisualizer,
@@ -20,8 +20,18 @@ import {Become, Animate, Translate, RepeatSequence} from '../node/animations.js'
 
 const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/examples/ball.js"
 
+const initial_ball_state = {following: false}
+const ballReducer = (state=initial_ball_state, action) => {
+    console.log({state, action})
+    switch (action.type) {
+        case 'BALL_SET_FOLLOWING':
+            return {following: action.following}
+        default:
+            return state
+    }
+}
 
-window.initial_state = {
+const initial_animation_state = {
     ball: {
         style: {
             position: 'relative',
@@ -32,11 +42,14 @@ window.initial_state = {
             height: 100,
             borderRadius: 50,
             zIndex: 1000,
-        },
+        }
     }
 }
-window.store = createStore(combineReducers({animations}))
-window.time = startAnimation(window.store, window.initial_state)
+window.store = createStore(combineReducers({
+    animations: animationsReducer,
+    ball: ballReducer,
+}))
+window.time = startAnimation(window.store, initial_animation_state)
 
 const BOUNCE_ANIMATIONS = (start_time) =>
     RepeatSequence([
@@ -110,27 +123,60 @@ const FOLLOW_ANIMATIONS = () => {
     ]
 }
 
+const STOP_FOLLOWING = () => {
+    return [
+        Become({
+            path: '/ball/style',
+            state: {
+                position: 'relative',
+                top: '0%',
+                left: '45%',
+                backgroundColor: 'red',
+                width: 100,
+                height: 100,
+                borderRadius: 50,
+                zIndex: 1000,
+            }
+        })
+    ]
+}
 
-const BallComponent = ({ball, queue, animateBallBounce, animateBallFollow, getTime}) =>
-    <ExpandableSection name="Ball" source={SOURCE} expanded>
+
+const BallComponent = ({ball, following, animateBallBounce, animateBallFollow, getTime}) => {
+    console.log({ball, animateBallBounce, animateBallFollow, getTime})
+    return <ExpandableSection name="Ball" source={SOURCE} expanded>
         <div
             className="ball"
             style={ball.style}
             onClick={() => animateBallBounce(getTime())}
-            onContextMenu={animateBallFollow}>
+            onContextMenu={animateBallFollow.bind(this, following)}>
         </div>
     </ExpandableSection>
+}
 
-const mapStateToProps = ({animations}) => ({ball: animations.state.ball})
-const mapDispatchToProps = (dispatch) => ({
+const mapStateToProps = ({animations, ball}) => {
+    console.log({animations, ball})
+    return {
+        ball: animations.state.ball,
+        following: ball.following,
+    }
+}
+
+const mapDispatchToProps = (dispatch, props) => ({
     animateBallBounce: (start_time) => {
         console.log(BOUNCE_ANIMATIONS(start_time))
         dispatch({type: 'ANIMATE', animations: BOUNCE_ANIMATIONS(start_time)})
     },
-    animateBallFollow: (e) => {
+    animateBallFollow: (following, e) => {
         e.preventDefault()
         console.log(FOLLOW_ANIMATIONS())
-        dispatch({type: 'ANIMATE', animations: FOLLOW_ANIMATIONS()})
+        console.log({e, following})
+        if (following) {
+            dispatch({type: 'ANIMATE', animations: STOP_FOLLOWING()})
+        } else {
+            dispatch({type: 'ANIMATE', animations: FOLLOW_ANIMATIONS()})
+        }
+        dispatch({type: 'BALL_SET_FOLLOWING', following: !following})
     },
 })
 
