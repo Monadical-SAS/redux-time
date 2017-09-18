@@ -33,7 +33,7 @@ assert(store.getState().animations.warped_time == 0,
 // ANIMATION HANDLER SETUP
 const handler = new AnimationsHandler({
     store,
-    ticker: (func) => setTimeout(() => func(), 20)
+    frameLoop: (func) => setTimeout(() => func(), 20)
 })
 
 assert(
