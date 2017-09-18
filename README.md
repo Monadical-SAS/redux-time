@@ -33,13 +33,12 @@ At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum
 ## Key Features
 
 - all state is a function of the current point in time
+- this, and the functional design of the library provides clean testability
 - time-travel debugging (e.g. slow down, reverse, jump to point in time)
 - compose animations with pure functions e.g.: `Repeat(Rotate(...), 10)`
-- define animations with a Javscript `tick` function or with CSS keyframes
 - seamlessly animate existing React + Redux codebase without major changes
 - animate any state tree value manually, or use provided Animation functions for common animations e.g.: `Translate`, `Rotate`, `Opacity`
-- works in all browsers with `requestAnimationFrame` and in node with `setTimemout`
-- it's fast! computing state takes about `0.5ms` per 100 active animations (the bottleneck is usually React & the DOM, check out [Inferno] + canvas if you really want speed!)
+- It's fast! Run `benchmarks.js`: on my laptop I can compute the animated state over 100 times per second with 5000 concurrent animations.
 - fully compatible with CSS animation libraries like [Animate.css](https://daneden.github.io/animate.css/), you already have access to 1000s of pre-written animations out there that plug right into `redux-time`!
 
 ## Intro
@@ -58,12 +57,12 @@ Every tick function is a pure function of the `start_state`, `end_state`, and de
 
 ```javascript
 import {createStore, combineReducers} from 'redux'
-import {animations, startAnimation} from 'redux-time'
+import {animationsReducer, startAnimation} from 'redux-time'
 
 const initial_state = {
     ball: {style: {top: 0, left: 0}},
 }
-window.store = createStore(combineReducers({animations}))
+window.store = createStore(combineReducers({animations: animationsReducer}))
 window.time = startAnimation(store, initial_state)
 ```
 
@@ -112,7 +111,7 @@ const move_ball = [
 window.store.dispatch({type: 'ANIMATE', animations: move_ball})
 ```
 
-**You're done!** The proper intermediate state is calculated from the animation and rendered on every tick, and the ball moves on the screen!
+**You're done!** The proper intermediate state is computed from the animation and rendered on every tick, and the ball moves on the screen!
 
 See the demo of this code in action here: [ball.html](https://monadical-sas.github.io/redux-time/examples/ball.html), and the full code for the example in [`examples/ball.js`](https://github.com/Monadical-SaS/redux-time/blob/master/examples/ball.js)
 
@@ -143,7 +142,7 @@ The dictionary is returned as the new `animations.state`, and redux then rerende
 // redux-time dispatches this for you on every requestAnimationFrame
 store.dispatch({type: 'TICK', warped_time: 1499000000})
 
-// then the redux-time animatons reducer uses your Translate's animation.tick(delta) func to calculate the animated state:
+// then the redux-time animatons reducer uses your Translate's animation.tick(delta) func to compute the animated state:
 const new_state = {
     ball: {
         style: {top: 55, left: 0},
@@ -248,10 +247,10 @@ npm install --add redux-time
 
 Then add this to your page's entry point, next to `createStore`:
 ```javascript
-import {animations, startAnimation} from 'redux-time'
+import {animationsReducer, startAnimation} from 'redux-time'
 
 // add animations to your reducers
-window.store = createStore(combineReducers({..., animations}))  
+window.store = createStore(combineReducers({..., animations: animationsReducer}))  
 
 // start the animation runloop off with your initial_state
 window.initial_state = {ball: {text: 'Hello world!'}}
@@ -599,7 +598,7 @@ Animate({
     ... 
 })
 ```
-All patches are stored internally as a dictionary of `{transform_function_name: value}`, but they get converted to strings when the animated state is calculated on every `TICK`.
+All patches are stored internally as a dictionary of `{transform_function_name: value}`, but they get converted to strings when the animated state is computed on every `TICK`.
 
 Your component will receive `style={transform: 'translate3d(x, y, z)}` as a valid CSS string, so you can plug it right in with `style={style}` and it will work.
 
@@ -641,7 +640,7 @@ Become({
     }
 })
 ```
-All CSS animations are stored internally as a dictionary of `{css_animation_name: {name, duration, delay, playState}}`, but they get converted to strings when the animated state is calculated on every `TICK`.
+All CSS animations are stored internally as a dictionary of `{css_animation_name: {name, duration, delay, playState}}`, but they get converted to strings when the animated state is computed on every `TICK`.
 
 Your component will receive `style={animation: 'blink 1000ms linear -25ms paused'}` as a valid CSS string, so you can plug it right in with `style={style}` and it will work.
 
