@@ -24,10 +24,12 @@ const initial_ball_state = {following: false}
 const ballReducer = (state=initial_ball_state, action) => {
     console.log({state, action})
     switch (action.type) {
-        case 'BALL_SET_FOLLOWING':
+        case 'BALL_SET_FOLLOWING':{
             return {following: action.following}
-        default:
+        }
+        default:{
             return state
+        }
     }
 }
 
@@ -123,39 +125,28 @@ const FOLLOW_ANIMATIONS = () => {
     ]
 }
 
-const STOP_FOLLOWING = () => {
+const STOP_FOLLOWING_ANIMATIONS = () => {
     return [
         Become({
             path: '/ball/style',
-            state: {
-                position: 'relative',
-                top: '0%',
-                left: '45%',
-                backgroundColor: 'red',
-                width: 100,
-                height: 100,
-                borderRadius: 50,
-                zIndex: 1000,
-            }
+            state: initial_animation_state.ball.style,
         })
     ]
 }
 
 
 const BallComponent = ({ball, following, animateBallBounce, animateBallFollow, getTime}) => {
-    console.log({ball, animateBallBounce, animateBallFollow, getTime})
     return <ExpandableSection name="Ball" source={SOURCE} expanded>
         <div
             className="ball"
             style={ball.style}
             onClick={() => animateBallBounce(getTime())}
-            onContextMenu={animateBallFollow.bind(this, following)}>
+            onContextMenu={(e) => animateBallFollow(following, e)}>
         </div>
     </ExpandableSection>
 }
 
 const mapStateToProps = ({animations, ball}) => {
-    console.log({animations, ball})
     return {
         ball: animations.state.ball,
         following: ball.following,
@@ -172,7 +163,7 @@ const mapDispatchToProps = (dispatch, props) => ({
         console.log(FOLLOW_ANIMATIONS())
         console.log({e, following})
         if (following) {
-            dispatch({type: 'ANIMATE', animations: STOP_FOLLOWING()})
+            dispatch({type: 'ANIMATE', animations: STOP_FOLLOWING_ANIMATIONS()})
         } else {
             dispatch({type: 'ANIMATE', animations: FOLLOW_ANIMATIONS()})
         }
