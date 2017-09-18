@@ -20,11 +20,14 @@ export const print = (msg) => {
     process ? process.stdout.write(msg) : console.log(msg)
 }
 
-export const assert = (val, error_msg) => {
+export const assert = (val, error_msg='') => {
     if (!val) {
+        const call_stack = (new Error).stack
         print(`[X] AssertionError: ${error_msg} (${val})`)
+        print(call_stack)
+        process.exit(1)
     } else {
-        print('.')
+        process ? process.stdout.write('.') : console.log('.')
     }
 }
 

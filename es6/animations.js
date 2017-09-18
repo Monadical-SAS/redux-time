@@ -35,11 +35,11 @@ export const Become = ({path, state, start_time,
     if (start_time === undefined) start_time = Date.now()
 
     if (exactlyOneIsUndefined(duration, end_time)) {
-        let [duration,
+        [duration,
              end_time] = computeTheOther(start_time, duration, end_time)
     }
     if (start_time === undefined || path === undefined) {
-        console.log({path, state, start_time, end_time, duration})
+        // console.log({path, state, start_time, end_time, duration})
         throw 'Become animation must have a start_time and path defined.'
     }
     return Animate({
@@ -62,25 +62,20 @@ export const computeTheOther = (start, delta, end) => {
         let new_end = end ? {...end} : {}
         Object.keys(start).forEach((key) => {
             let [_delta, _end] = computeTheOther(start[key],
-                                                   new_delta[key],
-                                                   new_end[key])
+                                                 new_delta[key],
+                                                 new_end[key])
             new_delta[key] = _delta
             new_end[key] = _end
         })
         return [new_delta, new_end]
     }
-    if (typeof(start) === 'number'
-                && (delta !== undefined || end !== undefined)) {
+    if (typeof(start) === 'number') {
         if (end === undefined && delta !== undefined) {
             return [delta, start + delta]
         } else if (end !== undefined && delta === undefined) {
             return [end - start, end]
-        }
-    }
-    if (typeof(start) === 'number'
-            && typeof(end) === 'number'
-            && typeof(delta) === 'number') {
-        if (start + delta !== end) {
+        } else if (start + delta !== end) {
+            console.log((new Error()).stack)
             throw `start (${start}) + delta (${delta}) !== end (${end})`
         }
     }
@@ -164,7 +159,7 @@ export const AnimateCSS = ({
     if (start_time === undefined) start_time = Date.now()
 
     if (exactlyOneIsUndefined(duration, end_time)) {
-        let [duration,
+        [duration,
              end_time] = computeTheOther(start_time, duration, end_time)
     }
     const start_state = {
@@ -214,13 +209,10 @@ export const Translate = ({
     if (start_time === undefined) start_time = (new Date).getTime()
     if (start_state === undefined) start_state = {top: 0, left: 0}
 
-    console.log('---------------------------')
-    console.log({delta_state, end_state})
     if (exactlyOneIsUndefined(delta_state, end_state)) {
         let [delta_state,
              end_state] = computeTheOther(start_state, delta_state, end_state)
     }
-    console.log({delta_state, end_state})
 
     path = `${path}/style/transform/translate`
     const type = 'TRANSLATE'
@@ -256,16 +248,15 @@ export const Style = ({
     if (start_time === undefined) start_time = (new Date).getTime()
 
     if (exactlyOneIsUndefined(duration, end_time)) {
-        let [duration,
-             end_time] = computeTheOther(start_time, duration, end_time)
+        [duration,
+            end_time] = computeTheOther(start_time, duration, end_time)
     }
+
 
     if (exactlyOneIsUndefined(delta_state, end_state)) {
-        let [delta_state,
-             end_state] = computeTheOther(start_state, delta_state, end_state)
+        [delta_state,
+            end_state] = computeTheOther(start_state, delta_state, end_state)
     }
-
-    console.log({delta_state, end_state})
 
     const tick_funcs = {}
     Object.keys(start_state).forEach((key) => {

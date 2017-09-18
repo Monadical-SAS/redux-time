@@ -116,13 +116,12 @@ export const computeAnimatedState = (anim_queue, warped_time,
                                                 former_time,
                                                 uniqueify: false})
     let patches = []
-    console.log({active_animations})
+    // console.log({active_animations})
     for (let animation of active_animations) {
         try {
             const delta = warped_time - animation.start_time
             if (animation.merge) {
                 const values = animation.tick(delta)
-                console.log(JSON.stringify(values))
                 Object.keys(animation.start_state).forEach((key) => {
                     patches.push({
                         split_path: [...animation.split_path, key],
@@ -140,7 +139,7 @@ export const computeAnimatedState = (anim_queue, warped_time,
             console.log(animation.type, 'Animation tick function threw an exception:', e.message, animation)
         }
     }
-    console.log({patches})
+    // console.log({patches})
     return applyPatches({}, patches)
 }
 

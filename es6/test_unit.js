@@ -124,7 +124,7 @@ assert(
 const immutable_obj = immutify({a: 1, b: 2})
 assertThrows(() => {immutable_obj.a = 5})
 
-// test computeTheOther
+// test computeTheOther on objects
 const start_state = {
     a: 0,
     b: 10,
@@ -140,9 +140,10 @@ const end_state = {
 let [calc_delta, calc_end] = computeTheOther(start_state, undefined, end_state)
 assertEqual(calc_delta, delta_state)
 assertEqual(calc_end, end_state)
-[calc_delta, calc_end] = computeTheOther(start_state, delta_state, undefined)
-assertEqual(calc_delta, delta_state)
-assertEqual(calc_end, end_state)
+
+let [calc_delta2, calc_end2] = computeTheOther(start_state, delta_state, undefined)
+assertEqual(calc_delta2, delta_state)
+assertEqual(calc_end2, end_state)
 
 // Test Style merges instead of overwriting
 const original_style = Become({
@@ -156,6 +157,7 @@ const restyle = Style({
     end_time: 1000,
     start_state: {top: 0, left: 0},
     end_state: {top:100, left: -100},
+    unit: ''
 })
 
 assertEqual(
