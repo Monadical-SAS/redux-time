@@ -33,12 +33,12 @@ At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum
 ## Key Features
 
 - all state is a function of the current point in time
-- this, and the functional design of the library provides clean testability
+- define animations in Javascript or with [CSS @keyframes](https://developer.mozilla.org/en-US/docs/Web/CSS/%40keyframes)
 - time-travel debugging (e.g. slow down, reverse, jump to point in time)
 - compose animations with pure functions e.g.: `Repeat(Rotate(...), 10)`
 - seamlessly animate existing React + Redux codebase without major changes
 - animate any state tree value manually, or use provided Animation functions for common animations e.g.: `Translate`, `Rotate`, `Opacity`
-- It's fast! Run `benchmarks.js`: on my laptop I can compute the animated state over 100 times per second with 5000 concurrent animations. The bottleneck is usually rendering--check out [Inferno] + canvas if you really want speed!
+- It's fast! Run `benchmarks.js`: on my laptop I can compute the animated state at over 100FPS with 5000 concurrent animations. The bottleneck is usually rendering--check out [Inferno] + canvas if you really want speed!
 - fully compatible with CSS animation libraries like [Animate.css](https://daneden.github.io/animate.css/), you already have access to 1000s of pre-written animations out there that plug right into `redux-time`!
 
 ## Intro
@@ -142,11 +142,7 @@ The dictionary is returned as the new `animations.state`, and redux then rerende
 // redux-time dispatches this for you on every requestAnimationFrame
 store.dispatch({type: 'TICK', warped_time: 1499000000})
 
-<<<<<<< HEAD
 // then the redux-time animatons reducer uses your Translate's animation.tick(delta) func to compute the animated state:
-=======
-// then the redux-time animations reducer uses your Translate's animation.tick(delta) func to calculate the animated state:
->>>>>>> master
 const new_state = {
     ball: {
         style: {top: 55, left: 0},
@@ -176,11 +172,7 @@ window.socket.onmessage = (message) => {
         const {table, players} = new_state
         const animations = Sequential([
             // bounce the ball, rotate the arrow, flash the box red, etc...
-<<<<<<< HEAD
-            ...get_game_animations(action.anidelta_stateions),
-=======
             ...get_game_animations(action.animations),
->>>>>>> master
 
             // once the animations complete,
             // set the whole ui gamestate to the server's state
@@ -348,7 +340,7 @@ An "animation" in `redux-time` is defined as a normal JS object with the followi
     duration,    // duration of the animation in ms (Infinity is allowed)
     end_time,    // optional instead of duration (Infinity is allowed)
     start_state, // initial state of the animation, e.g. {top: 0, left:0}
-    delta_state,         // total amount to add to the start_state, e.g. {top: 10, left: 0}
+    delta_state, // total amount to add to the start_state, e.g. {top: 10, left: 0}
     end_state,   // optional instead of delta_state
     curve,       // timing interpolation curve, can be a custom function like bezier() or 'linear', 'easeInOutQuad', etc.
     unit,        // defaults to 'px', can also be 'vw', '%', 'em', null, etc.
@@ -420,7 +412,7 @@ import {...} from 'redux-time/src/animations'
     TranslateTo({path, start_time, end_time, duration=1000, start_state, end_state, delta_state, curve='linear', unit='px'})
     // Must be used with ... because it's actually two animations!
 
-    // anidelta_statee an element changing opacity
+    // animate an element changing opacity
     Opacity({path, start_time, end_time, duration, start_state, end_state, delta_state, curve='linear', unit=null})
 
     // rotate an element using transform: rotate(deg)
