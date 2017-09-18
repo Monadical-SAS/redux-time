@@ -210,8 +210,8 @@ export const Translate = ({
     if (start_state === undefined) start_state = {top: 0, left: 0}
 
     if (exactlyOneIsUndefined(delta_state, end_state)) {
-        let [delta_state,
-             end_state] = computeTheOther(start_state, delta_state, end_state)
+        [delta_state,
+            end_state] = computeTheOther(start_state, delta_state, end_state)
     }
 
     path = `${path}/style/transform/translate`

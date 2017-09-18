@@ -1,7 +1,8 @@
 import {assert, assertEqual, print, assertSortedObjsInOrder,
         nested_key, assertThrows, immutify} from './util.js'
 
-import {Become, Animate, Style, computeTheOther} from './animations.js'
+import {Become, Animate, Style, Translate,
+        computeTheOther, RepeatSequence} from './animations.js'
 
 import {activeAnimations, uniqueAnimations, currentAnimations,
         finalFrameAnimations, computeAnimatedState} from './reducers.js'
@@ -164,5 +165,35 @@ assertEqual(
     computeAnimatedState([original_style, restyle], 500),
     {a: {top: 50, left: -50, b: 0}}
 )
+
+// Test translate
+const bounce = RepeatSequence([
+    Translate({
+        path: '/ball',
+        start_state: {top: 0, left: 0},
+        end_state:  {top: -200, left: 0},
+        duration: 500,
+    }),
+    Translate({
+        path: '/ball',
+        start_state: {top: -200, left: 0},
+        end_state: {top: 0, left: 0},
+        duration: 500,
+    }),
+], 10, 0)
+
+const translateObj = (left, top) => {
+    return {
+        style: {
+            transform: `translate(${left}px, ${top}px)`
+        }
+    }
+}
+
+assertEqual(computeAnimatedState(bounce, 250), {ball: translateObj(0, -100)})
+assertEqual(computeAnimatedState(bounce, 1250), {ball: translateObj(0, -100)})
+assertEqual(computeAnimatedState(bounce, 500), {ball: translateObj(0, -200)})
+assertEqual(computeAnimatedState(bounce, 1500), {ball: translateObj(0, -200)})
+
 process.exit(0)
 }
