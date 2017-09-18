@@ -35,22 +35,29 @@ const tick_func = ({duration, start_state, delta_state, end_state,
     }
 }
 
-export const Become = ({path, state, start_time,
-                        end_time=Infinity, duration=Infinity}) => {
+export const Become = ({path, state, start_time, end_time, duration}) => {
     if (start_time === undefined) start_time = Date.now()
 
-    if (exactlyOneIsUndefined(duration, end_time)) {
-        [duration, end_time] = computeTheOther(start_time, duration, end_time)
+    if (end_time === undefined && duration === undefined) {
+        duration = Infinity
+        end_time = Infinity
     }
-    if (start_time === undefined || path === undefined) {
-        // console.log({path, state, start_time, end_time, duration})
-        throw 'Become animation must have a start_time and path defined.'
+
+    if (end_time !== Infinity || duration !== Infinity) {
+        if (exactlyOneIsUndefined(duration, end_time)) {
+            [duration, end_time] = computeTheOther(start_time, duration, end_time)
+        } else {
+            // console.log({path, state, start_time, end_time, duration})
+            throw 'Invalid call to Become: you may define end_time or duration, but not both.'
+        }
     }
+
     return Animate({
         type: 'BECOME',
         path,
         start_state: state,
-        end_state: state,
+        delta_state: null,
+        end_state: null,
         start_time,
         end_time,
         duration,
@@ -113,8 +120,7 @@ const validateAnimation = (animation) => {
 
 export const Animate = ({
         type, path, start_time, end_time, duration, start_state, end_state,
-        delta_state, merge=false, curve='linear', unit=null, tick=null,
-        error_checking=true}) => {
+        delta_state, merge=false, curve='linear', unit=null, tick=null}) => {
 
     let _start_time, _end_time, _duration,
         _end_state, _delta_state, _tick, _split_path, _type
@@ -130,6 +136,10 @@ export const Animate = ({
         [_duration, _end_time] = computeTheOther(_start_time, duration, end_time)
     } else {
         [_duration, _end_time] = [duration, end_time]
+    }
+
+    if (_start_time > _end_time) {
+        throw `Invalid call to Animate w/path ${path}. start_time (${start_time}) > end_time (${end_time}).`
     }
 
     _split_path = path.split('/').slice(1)
@@ -151,9 +161,6 @@ export const Animate = ({
     }
     _tick = tick || tick_func(animation)
     animation.tick = _tick
-
-    if (error_checking) {
-    }
 
     return immutify(animation)
 }
