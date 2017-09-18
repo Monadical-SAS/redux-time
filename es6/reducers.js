@@ -85,7 +85,7 @@ export const animationsReducer = (state=initial_state, action) => {
                 ...anim,
                 // set to now if start_time is not provided
                 start_time: anim.start_time === undefined ?
-                    (new Date).getTime()
+                    Date.now()
                   : anim.start_time
             }))
             return {

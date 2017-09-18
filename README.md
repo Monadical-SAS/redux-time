@@ -102,7 +102,7 @@ const move_ball = [
         start_state: {top: 0, left: 0},
         end_state: {top: 100, left: 0},
         duration: 1000,
-        // start_time: (new Date).getTime() + 500,   // optional, defaults to starting immediately
+        // start_time: Date.now() + 500,   // optional, defaults to starting immediately
         // curve: 'easeOutQuad',                     // optional, defaults to 'linear'
         // unit: '%',                                // optional, defaults to 'px'
     })
@@ -264,7 +264,7 @@ window.time = startAnimation(window.store, window.initial_state)
 window.store.dispatch({type: 'ANIMATE', animation: Become({
     path: '/ball/text',
     state: 'An instant state change happened!',
-    // start_time: (new Date).getTime(),     // optional, default is now
+    // start_time: Date.now(),     // optional, default is now
     // duration: Infinity,                   // optional milliseconds duration
 })})
 
@@ -273,7 +273,7 @@ window.store.dispatch({type: 'ANIMATE', animation: Animate({
     path: '/ball/text',
     start_state: 0,
     end_state: 100,
-    start_time: (new Date).getTime() + 1000,  // begins after 1000ms
+    start_time: Date.now() + 1000,  // begins after 1000ms
     duration: 10000,
     curve: 'easeInOutQuad',
 })})
@@ -336,7 +336,7 @@ An "animation" in `redux-time` is defined as a normal JS object with the followi
 {
     type,        // human readable description, e.g. TRANSLATE or OPACITY
     path,        // an RFC-6902 style javascript patch path, e.g. /ball/style/top or /path/to/array/0
-    start_time,  // determines when animation is active, defaults to immediately (new Date).getTime()
+    start_time,  // determines when animation is active, defaults to immediately Date.now()
     duration,    // duration of the animation in ms (Infinity is allowed)
     end_time,    // optional instead of duration (Infinity is allowed)
     start_state, // initial state of the animation, e.g. {top: 0, left:0}
@@ -457,7 +457,7 @@ To queue an animation that you don't want to have start immediately, set the `st
 ```javascript
 const delayed_rotate = Rotate({
     path: '/square',
-    start_time: (new Date).getTime() + 1000,   // to start 1sec from now
+    start_time: Date.now() + 1000,   // to start 1sec from now
     duration: 1000,
     start_state: 0,
     delta_state: 360,

@@ -205,7 +205,7 @@ export const Translate = ({
 
     // this is CSS Transform(translate(x, y))
 
-    if (start_time === undefined) start_time = (new Date).getTime()
+    if (start_time === undefined) start_time = Date.now()
     if (start_state === undefined) start_state = {top: 0, left: 0}
 
     if (exactlyOneIsUndefined(delta_state, end_state)) {
@@ -244,7 +244,7 @@ export const Translate = ({
 export const Style = ({
         path, start_time, end_time, duration=1000, start_state, end_state,
         delta_state, curve='linear', unit='px'}) => {
-    if (start_time === undefined) start_time = (new Date).getTime()
+    if (start_time === undefined) start_time = Date.now()
 
     if (exactlyOneIsUndefined(duration, end_time)) {
         [duration,
@@ -327,7 +327,7 @@ export const Rotate = ({
 export const Repeat = (animation, repeat=Infinity) => {
     checkIsValidAnimation(animation)
     let {tick, start_time, duration} = animation
-    if (start_time === undefined) start_time = (new Date).getTime()
+    if (start_time === undefined) start_time = Date.now()
     const repeated_tick = (time_elapsed) => tick(mod(time_elapsed, duration))
     return {
         ...animation,
@@ -342,7 +342,7 @@ export const Repeat = (animation, repeat=Infinity) => {
 export const Reverse = (animation) => {
     checkIsValidAnimation(animation)
     let {tick, start_time, duration} = animation
-    if (start_time === undefined) start_time = (new Date).getTime()
+    if (start_time === undefined) start_time = Date.now()
     return {
         ...animation,
         start_time: end_time,
@@ -359,7 +359,7 @@ export const Reverse = (animation) => {
 // make each animation in a sequence start after the last one ends
 export const Sequential = (animations, start_time) => {
     checkIsValidSequence(animations)
-    if (start_time === undefined) start_time = (new Date).getTime()
+    if (start_time === undefined) start_time = Date.now()
     const seq = []
     let last_end = start_time
     for (let animation of animations) {
