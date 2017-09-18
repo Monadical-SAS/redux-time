@@ -82,7 +82,10 @@ const do_benchmark = (n, branching_factor, depth, n_frames, print_state) => {
     console.log(`state has: branching_factor ${branching_factor}, depth ${depth}`)
     const start_time = Date.now()
     for (let i = 0; i < n_frames; i++){
-        animated_state = computeAnimatedState(full_queue, 500+i)
+        animated_state = computeAnimatedState({
+            animations: full_queue,
+            warped_time: 500+i
+        })
     }
     console.log(`\t${Date.now() - start_time} milliseconds`)
     console.log(`\t${1000/((Date.now() - start_time)/n_frames)} FPS`)

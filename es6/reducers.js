@@ -52,11 +52,11 @@ export const animationsReducer = (state=initial_state, action) => {
                 warped_time: state.warped_time,
                 former_time: state.former_time,
                 queue: only_initial_state,
-                state: computeAnimatedState(
-                    only_initial_state,
-                    state.warped_time,
-                    state.former_time,
-                )
+                state: computeAnimatedState({
+                    animations: only_initial_state,
+                    warped_time: state.warped_time,
+                    former_time: state.former_time,
+                })
             }
 
         case 'ANIMATE':
@@ -105,11 +105,11 @@ export const animationsReducer = (state=initial_state, action) => {
                     || action.former_time === undefined) {
                 throw 'TICK action must have a warped_time and former_time'
             }
-            const animated_state = computeAnimatedState(
-                state.queue,
-                action.warped_time,
-                action.former_time,
-            )
+            const animated_state = computeAnimatedState({
+                animations: state.queue,
+                warped_time: action.warped_time,
+                former_time: action.former_time,
+            })
 
             return {
                 ...state,

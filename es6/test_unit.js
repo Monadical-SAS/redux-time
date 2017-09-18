@@ -161,7 +161,7 @@ const restyle = Style({
 })
 
 assertEqual(
-    computeAnimatedState([original_style, restyle], 500),
+    computeAnimatedState({animations: [original_style, restyle], warped_time: 500}),
     {a: {top: 50, left: -50, b: 0}}
 )
 
@@ -189,10 +189,22 @@ const translateObj = (left, top) => {
     }
 }
 
-assertEqual(computeAnimatedState(bounce, 250), {ball: translateObj(0, -100)})
-assertEqual(computeAnimatedState(bounce, 1250), {ball: translateObj(0, -100)})
-assertEqual(computeAnimatedState(bounce, 500), {ball: translateObj(0, -200)})
-assertEqual(computeAnimatedState(bounce, 1500), {ball: translateObj(0, -200)})
+assertEqual(
+    computeAnimatedState({animations: bounce, warped_time: 250}),
+    {ball: translateObj(0, -100)}
+)
+assertEqual(
+    computeAnimatedState({animations: bounce, warped_time: 1250}),
+    {ball: translateObj(0, -100)}
+)
+assertEqual(
+    computeAnimatedState({animations: bounce, warped_time: 500}),
+    {ball: translateObj(0, -200)}
+)
+assertEqual(
+    computeAnimatedState({animations: bounce, warped_time: 1500}),
+    {ball: translateObj(0, -200)}
+)
 
 process.exit(0)
 }

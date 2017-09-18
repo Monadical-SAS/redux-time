@@ -99,7 +99,10 @@ const validateAnimation = (animation) => {
     const end_time = animation.end_time
     const end_state = animation.end_state
 
-    const computed_end_state = computeAnimatedState([animation], _end_time)
+    const computed_end_state = computeAnimatedState({
+        animations:[animation],
+        warped_time:_end_time
+    })
     if (!isEqual(computed_end_state, end_state)) {
         throw `Invalid Animate: end_state !== computed_end_state for animation:`
             + `\n${JSON.stringify(animation, null, '  ')}:`

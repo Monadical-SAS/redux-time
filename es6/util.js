@@ -438,6 +438,7 @@ export const pastAnimations = (anim_queue, timestamp) =>
 export const futureAnimations = (anim_queue, timestamp) =>
     anim_queue.filter(({start_time, duration}) => (start_time > timestamp))
 
+
 // export const sortedAnimations = (anim_queue) => {
 //     return [...anim_queue].sort((a, b) => {
 //         // sort by end time, if both are the same, sort by start time,
@@ -504,8 +505,28 @@ export const activeAnimations = ({anim_queue, warped_time,
     return anims
 }
 
-export const computeAnimatedState = (anim_queue, warped_time,
-        former_time=null) => {
+const patchesFromAnimation = (animation, warped_time) => {
+    const patches = []
+    const delta = warped_time - animation.start_time
+    if (animation.merge) {
+        const values = animation.tick(delta)
+        Object.keys(animation.start_state).forEach((key) => {
+            patches.push({
+                split_path: [...animation.split_path, key],
+                value: values[key],
+            })
+        })
+    } else {
+        patches.push({
+            split_path: animation.split_path,
+            value: animation.tick(delta),
+        })
+    }
+    return patches
+}
+
+export const computeAnimatedState = ({
+        anim_queue, warped_time, former_time=null}) => {
     former_time = former_time === null ? warped_time : former_time
 
     const active_animations = activeAnimations({anim_queue,
@@ -516,22 +537,7 @@ export const computeAnimatedState = (anim_queue, warped_time,
     // console.log({active_animations})
     for (let animation of active_animations) {
         try {
-            const delta = warped_time - animation.start_time
-            if (animation.merge) {
-                const values = animation.tick(delta)
-                Object.keys(animation.start_state).forEach((key) => {
-                    patches.push({
-                        split_path: [...animation.split_path, key],
-                        value: values[key],
-                    })
-                })
-            } else {
-                patches.push({
-                    split_path: animation.split_path,
-                    value: animation.tick(delta),
-                })
-            }
-
+            getPatches()
         } catch(e) {
             console.log(animation.type, 'Animation tick function threw an exception:', e.message, animation)
         }
