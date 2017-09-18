@@ -133,6 +133,13 @@ export const flipObj = (obj) =>
         return acc
     }, {})
 
+export const mapObj = (obj, func) => {
+    return Object.keys(obj).reduce((acc, key) => {
+        acc[key] = func(key, obj[key])
+        return acc
+    }, {})
+}
+
 export function *reversed(iterator) {
     for (let idx=iterator.length-1; idx >= 0; idx--) {
         yield iterator[idx]

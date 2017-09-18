@@ -7,26 +7,32 @@ import {
     EasingFunctions,
     immutify,
     computeAnimatedState,
+    mapObj,
 } from './util.js'
 
 import isEqual from 'lodash.isequal'
 
-const tick_func = ({duration, start_state, delta_state,
+const fmtWithUnit = (val, unit) => {
+    return unit ? `${val}${unit}` : val
+}
+
+const tick_func = ({duration, start_state, delta_state, end_state
                     curve='linear', unit=null}) => {
 
     const curve_func = EasingFunctions[curve]
 
     return (time_elapsed) => {
-        const bounded_time = Math.min(Math.max(time_elapsed, 0), duration)
-        const curve = curve_func(bounded_time/duration)
-        const new_state = start_state + curve * delta_state
+        if (time_elapsed < 0) {
+            return start_state
+        }
+        if (time_elapsed > duration) {
+            return end_state
+        }
+        const curve_value = curve_func(time_elapsed/duration)
+        const new_state = start_state + curve_value * delta_state
 
-        return add_unit(new_state, unit)
+        return fmtWithUnit(new_state, unit)
     }
-}
-
-const add_unit = (val, unit) => {
-    return unit ? `${val}${unit}` : val
 }
 
 export const Become = ({path, state, start_time,
@@ -34,8 +40,7 @@ export const Become = ({path, state, start_time,
     if (start_time === undefined) start_time = Date.now()
 
     if (exactlyOneIsUndefined(duration, end_time)) {
-        [duration,
-             end_time] = computeTheOther(start_time, duration, end_time)
+        [duration, end_time] = computeTheOther(start_time, duration, end_time)
     }
     if (start_time === undefined || path === undefined) {
         // console.log({path, state, start_time, end_time, duration})
@@ -49,7 +54,7 @@ export const Become = ({path, state, start_time,
         start_time,
         end_time,
         duration,
-        tick: (time_elapsed) => {
+        tick: (_) => {
             return state
         },
     })
@@ -114,23 +119,20 @@ export const Animate = ({
     _start_time = (start_time === undefined) ? Date.now() : start_time
 
     if (exactlyOneIsUndefined(delta_state, end_state)) {
-        [_delta_state,
-         _end_state] = computeTheOther(start_state, delta_state, end_state)
+        [_delta_state, _end_state] = computeTheOther(start_state, delta_state, end_state)
     } else {
         [_delta_state, _end_state] = [delta_state, end_state]
     }
     if (exactlyOneIsUndefined(duration, end_time)) {
-        [_duration,
-         _end_time] = computeTheOther(_start_time, duration, end_time)
+        [_duration, _end_time] = computeTheOther(_start_time, duration, end_time)
     } else {
         [_duration, _end_time] = [duration, end_time]
     }
 
-    _type = type ? type : 'ANIMATE'
     _split_path = path.split('/').slice(1)
 
     let animation = {
-        type: _type,
+        type: type || 'ANIMATE',
         split_path: _split_path,
         start_time: _start_time,
         end_time: _end_time,
@@ -158,8 +160,7 @@ export const AnimateCSS = ({
     if (start_time === undefined) start_time = Date.now()
 
     if (exactlyOneIsUndefined(duration, end_time)) {
-        [duration,
-             end_time] = computeTheOther(start_time, duration, end_time)
+        [duration, end_time] = computeTheOther(start_time, duration, end_time)
     }
     const start_state = {
         name,
@@ -169,11 +170,8 @@ export const AnimateCSS = ({
         playState: 'paused'
     }
     const end_state = {
-        name,
-        duration,
-        curve,
+        ...start_state,
         delay: duration,
-        playState: 'paused'
     }
     return Animate({
         type: `CSS_${name ? name.toUpperCase() : 'END'}`,
@@ -209,8 +207,7 @@ export const Translate = ({
     if (start_state === undefined) start_state = {top: 0, left: 0}
 
     if (exactlyOneIsUndefined(delta_state, end_state)) {
-        [delta_state,
-            end_state] = computeTheOther(start_state, delta_state, end_state)
+        [delta_state, end_state] = computeTheOther(start_state, delta_state, end_state)
     }
 
     path = `${path}/style/transform/translate`
@@ -247,19 +244,16 @@ export const Style = ({
     if (start_time === undefined) start_time = Date.now()
 
     if (exactlyOneIsUndefined(duration, end_time)) {
-        [duration,
-            end_time] = computeTheOther(start_time, duration, end_time)
+        [duration, end_time] = computeTheOther(start_time, duration, end_time)
     }
 
 
     if (exactlyOneIsUndefined(delta_state, end_state)) {
-        [delta_state,
-            end_state] = computeTheOther(start_state, delta_state, end_state)
+        [delta_state, end_state] = computeTheOther(start_state, delta_state, end_state)
     }
 
-    const tick_funcs = {}
-    Object.keys(start_state).forEach((key) => {
-        tick_funcs[key] = tick_func({
+    const tick_funcs = mapObj(start_state, (key) => {
+        return tick_func({
             duration,
             start_state: start_state[key],
             delta_state: delta_state[key],
@@ -269,11 +263,9 @@ export const Style = ({
     })
 
     const tick = (time_elapsed) => {
-        const output = {}
-        Object.keys(start_state).forEach((key) =>{
+        return mapObj(start_state, (key) => {
             output[key] = tick_funcs[key](time_elapsed)
         })
-        return output
     }
 
     return Animate({
