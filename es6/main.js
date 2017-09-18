@@ -71,6 +71,12 @@ class AnimationsHandler {
     }
     tick(high_res_timestamp) {
         this.animating = true
+        // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
+            this.ticker(::this.tick)
+        // } else {
+            // this.animating = false
+        // }
+
         if (high_res_timestamp) {
             this.start_time = this.start_time || this.time.getActualTime()
             high_res_timestamp = this.start_time + high_res_timestamp/1000
@@ -85,11 +91,6 @@ class AnimationsHandler {
             warped_time: new_timestamp,
             speed: animations.speed,
         })
-        // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
-            this.ticker(::this.tick)
-        // } else {
-            // this.animating = false
-        // }
     }
 }
 
