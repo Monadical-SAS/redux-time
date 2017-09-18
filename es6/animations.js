@@ -16,7 +16,7 @@ const fmtWithUnit = (val, unit) => {
     return unit ? `${val}${unit}` : val
 }
 
-const tick_func = ({duration, start_state, delta_state, end_state
+const tick_func = ({duration, start_state, delta_state, end_state,
                     curve='linear', unit=null}) => {
 
     const curve_func = EasingFunctions[curve]
@@ -267,7 +267,7 @@ export const Style = ({
 
     const tick = (time_elapsed) => {
         return mapObj(start_state, (key) => {
-            output[key] = tick_funcs[key](time_elapsed)
+            return tick_funcs[key](time_elapsed)
         })
     }
 

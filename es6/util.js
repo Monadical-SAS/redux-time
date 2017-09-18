@@ -133,6 +133,7 @@ export const flipObj = (obj) =>
         return acc
     }, {})
 
+// equivalent to {key: func(key, val) for key, val in obj.items()}
 export const mapObj = (obj, func) => {
     return Object.keys(obj).reduce((acc, key) => {
         acc[key] = func(key, obj[key])
@@ -370,7 +371,7 @@ const shouldFlatten = (split_path) => {
 
 export function applyPatches(obj, patches, flatten_styles=true) {
     // WARNING: optimized code, profile before changing anything
-    let output = {}
+    const output = {}
     const paths_to_flatten = []
 
     // O(n) application of patches onto a single object
@@ -505,6 +506,8 @@ export const activeAnimations = ({anim_queue, warped_time,
 }
 
 const patchesFromAnimation = (animation, warped_time) => {
+    // console.log('patchesFromAnimation')
+    // console.log({animation, warped_time})
     const patches = []
     const delta = warped_time - animation.start_time
     if (animation.merge) {
@@ -525,10 +528,10 @@ const patchesFromAnimation = (animation, warped_time) => {
 }
 
 export const computeAnimatedState = ({
-        anim_queue, warped_time, former_time=null}) => {
+        animations, warped_time, former_time=null}) => {
     former_time = former_time === null ? warped_time : former_time
 
-    const active_animations = activeAnimations({anim_queue,
+    const active_animations = activeAnimations({anim_queue: animations,
                                                 warped_time,
                                                 former_time,
                                                 uniqueify: false})
@@ -536,12 +539,11 @@ export const computeAnimatedState = ({
     // console.log({active_animations})
     for (let animation of active_animations) {
         try {
-            getPatches()
+            patches = [...patches, ...patchesFromAnimation(animation, warped_time)]
         } catch(e) {
-            console.log(animation.type, 'Animation tick function threw an exception:', e.message, animation)
+            console.log(animation.type, 'Animation tick function threw an exception:', e.stack, animation)
         }
     }
-    // console.log({patches})
     return applyPatches({}, patches)
 }
 

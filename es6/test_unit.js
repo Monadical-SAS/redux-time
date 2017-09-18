@@ -161,7 +161,10 @@ const restyle = Style({
 })
 
 assertEqual(
-    computeAnimatedState({animations: [original_style, restyle], warped_time: 500}),
+    computeAnimatedState({
+        animations: [original_style, restyle],
+        warped_time: 500
+    }),
     {a: {top: 50, left: -50, b: 0}}
 )
 
