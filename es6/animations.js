@@ -102,6 +102,30 @@ const isNumber = (val) => {
     return typeof(val) === 'number'
 }
 
+const applyDefaultsAndValidateTimes = (start_time, duration, end_time) => {
+    if (start_time === undefined) start_time = Date.now()
+
+    if (duration === undefined && end_time === undefined) {
+        duration = 1000
+        console.log('branch 1')
+        console.log({start_time, duration, end_time});
+        [duration, end_time] = computeTheOther(start_time, duration, end_time)
+        console.log('hrmph')
+    } else if (exactlyOneIsUndefined(duration, end_time)) {
+        [duration, end_time] = computeTheOther(start_time, duration, end_time)
+    } else {
+        throw 'only one of (duration, end_time) should be passed in, not both.'
+    }
+
+    if (start_time > end_time) {
+        throw `start_time (${start_time}) > end_time (${end_time})`
+    }
+    console.log('returning')
+    console.log([start_time, duration, end_time])
+    return [start_time, duration, end_time]
+}
+
+
 const validateAnimation = (animation) => {
     const end_time = animation.end_time
     const end_state = animation.end_state
@@ -122,27 +146,33 @@ export const Animate = ({
         type, path, start_time, end_time, duration, start_state, end_state,
         delta_state, merge=false, curve='linear', unit=null, tick=null}) => {
 
+    const throw_msg = (msg) => `Invalid call to Animate w/path ${path}: ${msg}`
+
     let _start_time, _end_time, _duration,
         _end_state, _delta_state, _tick, _split_path, _type
 
     _start_time = (start_time === undefined) ? Date.now() : start_time
-
-    if (exactlyOneIsUndefined(delta_state, end_state)) {
-        [_delta_state, _end_state] = computeTheOther(start_state, delta_state, end_state)
-    } else {
-        [_delta_state, _end_state] = [delta_state, end_state]
-    }
     if (exactlyOneIsUndefined(duration, end_time)) {
         [_duration, _end_time] = computeTheOther(_start_time, duration, end_time)
     } else {
         [_duration, _end_time] = [duration, end_time]
     }
 
+    if (exactlyOneIsUndefined(delta_state, end_state)) {
+        [_delta_state, _end_state] = computeTheOther(start_state, delta_state, end_state)
+    } else {
+        [_delta_state, _end_state] = [delta_state, end_state]
+    }
+
     if (_start_time > _end_time) {
-        throw `Invalid call to Animate w/path ${path}. start_time (${start_time}) > end_time (${end_time}).`
+        throw throw_msg(`start_time (${start_time}) > end_time (${end_time}).`)
     }
 
     _split_path = path.split('/').slice(1)
+
+    if (_split_path.slice(-1) == '') {
+        throw throw_msg('path has a trailing slash')
+    }
 
     let animation = {
         type: type || 'ANIMATE',
