@@ -139,7 +139,6 @@ class TimelineComponent extends React.Component {
             }
         }
         const frame_position = current_frame_position()
-        console.log({frame_position, container_width})
         if (frame_position > container_width){
             container_width = frame_position
         }
