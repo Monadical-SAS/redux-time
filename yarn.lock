@@ -3402,7 +3402,7 @@ warning@^3.0.0:
   dependencies:
     loose-envify "^1.0.0"
 
-warped-time@^0.0.14:
+warped-time@^0.0.13:
   version "0.0.13"
   resolved "https://registry.yarnpkg.com/warped-time/-/warped-time-0.0.13.tgz#9153619372a3fcaa928f52f93baf543412ad19df"
   dependencies:
