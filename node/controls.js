@@ -19,15 +19,18 @@ var mapStateToProps = function mapStateToProps(_ref) {
     var animations = _ref.animations;
     return {
         speed: animations.speed,
-        current_timestamp: animations.current_timestamp,
-        last_timestamp: animations.last_timestamp
+        warped_time: animations.warped_time,
+        former_time: animations.former_time
     };
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return {
+        setWarpedTime: function setWarpedTime(warped_time) {
+            dispatch({ type: 'SET_WARPED_TIME', warped_time: warped_time });
+        },
         setSpeed: function setSpeed(speed) {
-            dispatch({ type: 'SET_ANIMATION_SPEED', speed: speed });
+            dispatch({ type: 'SET_SPEED', speed: speed });
         }
     };
 };
