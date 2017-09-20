@@ -1,4 +1,4 @@
-import {Become, TranslateTo, Rotate,
+import {Become, Translate, Rotate,
         Scale, Opacity} from './animations.js'
 
 import {computeAnimatedState, assert, assertEqual, print,
@@ -22,7 +22,7 @@ const create_objects = (n, branching_factor, depth) => {
 //  move +100x, +100y
 const move_objects = (n, branching_factor, depth) => {
     return range(n).map(i =>
-        TranslateTo({
+        Translate({
             path: nested_key(i, branching_factor, depth),
             start_state: {
                 left: n - i,
@@ -54,7 +54,7 @@ const rotate_objects = (n, branching_factor, depth) => {
 //  opacity -> 0%
 const opacity_objects = (n, branching_factor, depth) => {
     return range(n).map(i =>
-        Rotate({
+        Opacity({
             path: nested_key(i, branching_factor, depth),
             start_state: 1,
             end_state: 0,
@@ -65,11 +65,12 @@ const opacity_objects = (n, branching_factor, depth) => {
 }
 
 const full_anim_queue = (n, branching_factor, depth) => {
+    const n_anims = Math.floor(n/4)
     return [
-        ...create_objects(n, branching_factor, depth),
-        // ...move_objects(n, branching_factor, depth),
-        ...rotate_objects(n, branching_factor, depth),
-        ...opacity_objects(n, branching_factor, depth),
+        ...create_objects(n_anims, branching_factor, depth),
+        ...move_objects(n_anims, branching_factor, depth),
+        ...rotate_objects(n_anims, branching_factor, depth),
+        ...opacity_objects(n_anims, branching_factor, depth),
     ]
 }
 

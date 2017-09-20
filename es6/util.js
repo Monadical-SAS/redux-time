@@ -85,7 +85,7 @@ export const checkIsValidAnimation = (animation) => {
     }
     if (!(animation.type && animation.path)) {
         console.log('%cINVALID ANIMATION:', 'color:red', animation)
-        console.log('Got unrecognized anidelta_stateion object missing a type or path.')
+        console.log('Got unrecognized animation object missing a type or path.')
         throw 'Animation must be passed in as a single Animation object!'
     }
 }
