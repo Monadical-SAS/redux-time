@@ -247,45 +247,89 @@ assertEqual(
     {a: {top: 50, left: -50, b: 0}}
 )
 
-// Test translate
-const bounce = RepeatSequence([
-    Translate({
-        path: '/ball',
-        start_state: {top: 0, left: 0},
-        end_state:  {top: -200, left: 0},
-        duration: 500,
+// it is possible to define a subset of keys in start_state for delta_state
+const restyle2 = Style({
+    path: '/a',
+    start_time: 100,
+    end_time: 200,
+    start_state: {top: 0, left: 0},
+    delta_state: {top:100},
+    unit: ''
+})
+assertEqual(
+    computeAnimatedState({
+        animations: [original_style, restyle2],
+        warped_time: 0,
     }),
-    Translate({
-        path: '/ball',
-        start_state: {top: -200, left: 0},
-        end_state: {top: 0, left: 0},
-        duration: 500,
-    }),
-], 10, 0)
-
-const translateObj = (left, top) => {
-    return {
-        style: {
-            transform: `translate(${left}px, ${top}px)`
-        }
-    }
-}
+    {a: {b: 0}}
+)
 
 assertEqual(
-    computeAnimatedState({animations: bounce, warped_time: 250}),
-    {ball: translateObj(0, -100)}
+    computeAnimatedState({
+        animations: [original_style, restyle2],
+        warped_time: 100,
+    }),
+    {a: {top: 0, left: 0, b: 0}}
+)
+
+assertEqual(
+    computeAnimatedState({
+        animations: [original_style, restyle2],
+        warped_time: 150,
+    }),
+    {a: {top: 50, left: 0, b: 0}}
 )
 assertEqual(
-    computeAnimatedState({animations: bounce, warped_time: 1250}),
-    {ball: translateObj(0, -100)}
+    computeAnimatedState({
+        animations: [original_style, restyle2],
+        warped_time: 200,
+        former_time: 199,
+    }),
+    {a: {top: 100, left: 0, b: 0}}
 )
+
+///////////////
+// Test AnimateCSS
+
+let css_animation = AnimateCSS({
+    path: '/a',
+    name: 'flipInX',
+})
+
+const default_start = Date.now()
+// defaults to starting now, with 1000 duration
+assert((default_start - css_animation.start_time) < 5)
+assert((default_start + 1000 - css_animation.end_time < 5))
+
+css_animation = AnimateCSS({
+    path: '/a',
+    name: 'flipInX',
+    start_time: default_start,
+    end_time: default_start + 1000,
+})
+
 assertEqual(
-    computeAnimatedState({animations: bounce, warped_time: 500}),
-    {ball: translateObj(0, -200)}
+    computeAnimatedState({
+        animations: [css_animation],
+        warped_time: default_start + 0
+    }),
+    {a: {style: {animation: `flipInX 1000ms linear -${0}ms paused`}}}
 )
+
 assertEqual(
-    computeAnimatedState({animations: bounce, warped_time: 1500}),
-    {ball: translateObj(0, -200)}
+    computeAnimatedState({
+        animations: [css_animation],
+        warped_time: default_start + 500
+    }),
+    {a: {style: {animation: `flipInX 1000ms linear -${500}ms paused`}}}
+)
+
+assertEqual(
+    computeAnimatedState({
+        animations: [css_animation],
+        warped_time: default_start + 1000
+    }),
+    {a: {style: {animation: `flipInX 1000ms linear -${1000}ms paused`}}}
 )
 
 process.exit(0)
