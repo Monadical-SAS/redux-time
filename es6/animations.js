@@ -71,8 +71,7 @@ export const computeTheOther = (start, delta, end) => {
     // assumes start and one of (delta, end) are defined.
     // error checking is done before this point is reached
 
-    console.log('computeTheOther')
-    console.log({start, delta, end})
+    // console.log({start, delta, end})
     if (typeof(start) === 'object') {
         let new_delta = delta ? {...delta} : {}
         let new_end = end ? {...end} : {}
@@ -101,16 +100,11 @@ export const computeTheOther = (start, delta, end) => {
         return [new_delta, new_end]
     }
     if (typeof(start) === 'number') {
-        console.log('number')
         if (end === undefined && delta !== undefined) {
-            console.log('b1')
             return [delta, start + delta]
         } else if (end !== undefined && delta === undefined) {
-            console.log('b2')
             return [end - start, end]
         } else {
-            console.log('b2')
-            console.log((new Error()).stack)
             throw `computeTheOther was expecting one of (delta, end) to be defined, but not both`
         }
     }
@@ -130,11 +124,8 @@ const applyDefaultsAndValidateTimes = (start_time, duration, end_time) => {
     if (start_time === undefined) start_time = Date.now()
 
     if (duration === undefined && end_time === undefined) {
-        duration = 1000
-        console.log('branch 1')
-        console.log({start_time, duration, end_time});
+        duration = 1000; // removing this semi-colon results in a gnarly parse error
         [duration, end_time] = computeTheOther(start_time, duration, end_time)
-        console.log('hrmph')
     } else if (exactlyOneIsUndefined(duration, end_time)) {
         [duration, end_time] = computeTheOther(start_time, duration, end_time)
     } else {
@@ -144,8 +135,6 @@ const applyDefaultsAndValidateTimes = (start_time, duration, end_time) => {
     if (start_time > end_time) {
         throw `start_time (${start_time}) > end_time (${end_time})`
     }
-    console.log('returning')
-    console.log([start_time, duration, end_time])
     return [start_time, duration, end_time]
 }
 
@@ -219,13 +208,99 @@ export const Animate = ({
     return immutify(animation)
 }
 
-export const AnimateCSS = ({
-        name, path, start_time, end_time, duration=1000, curve='linear'}) => {
-    if (start_time === undefined) start_time = Date.now()
+export const Style = ({
+        path, start_time, end_time, duration, start_state, end_state,
+        delta_state, curve='linear', unit='px'}) => {
 
-    if (exactlyOneIsUndefined(duration, end_time)) {
-        [duration, end_time] = computeTheOther(start_time, duration, end_time)
+    try {
+        [start_time,
+         duration,
+         end_time] = applyDefaultsAndValidateTimes(start_time, duration, end_time)
+
+        if (typeof(start_state) !== 'object') {
+            throw `expected an object for start_state but got ${start_state}`
+        }
+        if (exactlyOneIsUndefined(delta_state, end_state)) {
+            if (typeof(delta_state) === 'object'){
+                Object.keys(delta_state).forEach((key) => {
+                    if (!Object.keys(start_state).includes(key)) {
+                        throw `found key ${key} in delta_state but not start_state`
+                    }
+                })
+            } else if (typeof(end_state) === 'object') {
+                Object.keys(end_state).forEach((key) => {
+                    if (!Object.keys(start_state).includes(key)) {
+                        throw `found key ${key} in end_state but not start_state`
+                    }
+                })
+                Object.keys(start_state).forEach((key) => {
+                    if (!Object.keys(end_state).includes(key)) {
+                        throw `found key ${key} in start_state but not end_state`
+                    }
+                })
+            } else {
+                let msg = `expected one of (delta_state, end_state) as object, `
+                        + `but got (${delta_state}, ${end_state})`
+                throw msg
+            }
+            [delta_state, end_state] = computeTheOther(start_state, delta_state, end_state)
+        } else {
+            let msg = `expected one of (delta_state, end_state) as object, `
+                    + `but got (${delta_state}, ${end_state})`
+            throw msg
+        }
+
+    } catch (err) {
+        throw `Invalid call to Style w/path '${path}': ${err}`
     }
+
+
+    const tick_funcs = mapObj(delta_state, (key) => {
+        return tick_func({
+            duration,
+            start_state: start_state[key],
+            delta_state: delta_state[key],
+            end_state: end_state[key],
+            curve,
+            unit
+        })
+    })
+    const delta_keys = Object.keys(delta_state)
+    const tick = (time_elapsed) => {
+        return mapObj(start_state, (key) => {
+            if (delta_keys.includes(key)) {
+                return tick_funcs[key](time_elapsed)
+            }
+            return start_state[key]
+        })
+    }
+
+    return Animate({
+        path,
+        start_time,
+        duration,
+        end_time,
+        start_state,
+        delta_state,
+        end_state,
+        curve,
+        unit,
+        tick,
+        merge: true,
+    })
+}
+
+export const AnimateCSS = ({
+        name, path, start_time, end_time, duration, curve='linear'}) => {
+
+    try {
+        [start_time,
+         duration,
+         end_time] = applyDefaultsAndValidateTimes(start_time, duration, end_time)
+    } catch (err) {
+        throw `Invalid call to AnimateCSS w/path '${path}': ${err}`
+    }
+
     const start_state = {
         name,
         duration,
@@ -262,12 +337,18 @@ export const AnimateCSS = ({
 }
 
 export const Translate = ({
-        path, start_time, end_time, duration=1000, start_state, end_state,
+        path, start_time, end_time, duration, start_state, end_state,
         delta_state, curve='linear', unit='px'}) => {
 
-    // this is CSS Transform(translate(x, y))
+    try {
+        [start_time,
+         duration,
+         end_time] = applyDefaultsAndValidateTimes(start_time, duration, end_time)
+    } catch (err) {
+        throw `Invalid call to Translate w/path '${path}': ${err}`
+    }
 
-    if (start_time === undefined) start_time = Date.now()
+    // this is CSS Transform(translate(x, y))
     if (start_state === undefined) start_state = {top: 0, left: 0}
 
     if (exactlyOneIsUndefined(delta_state, end_state)) {
@@ -286,6 +367,7 @@ export const Translate = ({
         unit,
         start_state: start_state['left'],
         delta_state: delta_state['left'],
+        end_state: end_state['left']
     })
     const top_tick = tick_func({
         duration,
@@ -293,6 +375,7 @@ export const Translate = ({
         unit,
         start_state: start_state['top'],
         delta_state: delta_state['top'],
+        end_state: end_state['top']
     })
 
     animation.tick = (time_elapsed) => ({
@@ -302,54 +385,17 @@ export const Translate = ({
     return Animate(animation)
 }
 
-export const Style = ({
-        path, start_time, end_time, duration=1000, start_state, end_state,
-        delta_state, curve='linear', unit='px'}) => {
-    if (start_time === undefined) start_time = Date.now()
-
-    if (exactlyOneIsUndefined(duration, end_time)) {
-        [duration, end_time] = computeTheOther(start_time, duration, end_time)
-    }
-
-
-    if (exactlyOneIsUndefined(delta_state, end_state)) {
-        [delta_state, end_state] = computeTheOther(start_state, delta_state, end_state)
-    }
-
-    const tick_funcs = mapObj(start_state, (key) => {
-        return tick_func({
-            duration,
-            start_state: start_state[key],
-            delta_state: delta_state[key],
-            curve,
-            unit
-        })
-    })
-
-    const tick = (time_elapsed) => {
-        return mapObj(start_state, (key) => {
-            return tick_funcs[key](time_elapsed)
-        })
-    }
-
-    return Animate({
-        path,
-        start_time,
-        duration,
-        end_time,
-        start_state,
-        delta_state,
-        end_state,
-        curve,
-        unit,
-        tick,
-        merge: true,
-    })
-}
-
 export const Opacity = ({
         path, start_time, end_time, duration, start_state, end_state, delta_state,
-        curve='linear', unit=null}) =>
+        curve='linear', unit=null}) =>{
+    try {
+        [start_time,
+         duration,
+         end_time] = applyDefaultsAndValidateTimes(start_time, duration, end_time)
+    } catch (err) {
+        throw `Invalid call to AnimateCSS w/path '${path}': ${err}`
+    }
+
     Animate({
         type: 'OPACITY',
         path: `${path}/style/opacity`,
@@ -362,10 +408,19 @@ export const Opacity = ({
         curve,
         unit,
     })
+}
 
 export const Rotate = ({
         path, start_time, end_time, duration, start_state, end_state, delta_state,
-        curve='linear', unit='deg'}) =>
+        curve='linear', unit='deg'}) => {
+    try {
+        [start_time,
+         duration,
+         end_time] = applyDefaultsAndValidateTimes(start_time, duration, end_time)
+    } catch (err) {
+        throw `Invalid call to AnimateCSS w/path '${path}': ${err}`
+    }
+
     Animate({
         type: 'ROTATE',
         path: `${path}/style/transform/rotate`,
@@ -378,6 +433,7 @@ export const Rotate = ({
         curve,
         unit,
     })
+}
 
 // repeat a single animation (which may be composed of several objects)
 export const Repeat = (animation, repeat=Infinity) => {
