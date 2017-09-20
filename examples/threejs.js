@@ -5,9 +5,8 @@ import {
     BoxGeometry, MeshBasicMaterial, Mesh, Vector3
 } from 'three'
 
-
 import {
-    animations,
+    animationsReducer,
     startAnimation,
 } from '../node/main.js'
 import {Become, Animate, Sequence} from '../node/animations.js'
@@ -36,7 +35,7 @@ scene.add(cube)
 
 // init redux-time
 global.initial_state = {cube, camera}
-global.store = createStore(combineReducers({animations}))
+global.store = createStore(combineReducers({animations: animationsReducer}))
 global.time = startAnimation(global.store, global.initial_state)
 
 
@@ -105,16 +104,16 @@ window.onmousemove = (e) => {
 window.onkeydown = (e) => {
     const codes = {37: 'left', 38: 'up', 39: 'right', 40: 'down'}
     if (codes[e.keyCode] == 'left') {
-        window.cameraX += 1
-    }
-    if (codes[e.keyCode] == 'right') {
-        window.cameraX -= 1
-    }
-    if (codes[e.keyCode] == 'up') {
         window.cameraY += 1
     }
-    if (codes[e.keyCode] == 'down') {
+    if (codes[e.keyCode] == 'right') {
         window.cameraY -= 1
+    }
+    if (codes[e.keyCode] == 'up') {
+        window.cameraX += 1
+    }
+    if (codes[e.keyCode] == 'down') {
+        window.cameraX -= 1
     }
 }
 
@@ -122,4 +121,3 @@ window.onkeydown = (e) => {
 store.getState().animations.state.cube.rotation.x = 1
 
 store.dispatch({type: 'ANIMATE', animations: FOLLOW_ANIMATIONS()})
-

@@ -1,9 +1,11 @@
 import {WarpedTime} from 'warped-time'
 
-import {animations} from './reducers.js'
+import {animationsReducer} from './reducers.js'
 import {Become} from './animations.js'
 import {AnimationControls} from './controls.js'
-import {AnimationStateVisualizerComponent, AnimationStateVisualizer} from './state-visualizer.js'
+import {AnimationStateVisualizerComponent,
+        AnimationStateVisualizer} from './state-visualizer.js'
+import {AnimationTimeline} from "./timeline.js"
 
 
 const shouldAnimate = (anim_queue, timestamp, speed) => {
@@ -13,36 +15,32 @@ const shouldAnimate = (anim_queue, timestamp, speed) => {
 
     // // if going forward in time, and future animations exist
     // if (this.time.speed > 0) {
-    //     return (currentAnimations(animations.queue, timestamp, animations.last_timestamp).length
+    //     return (currentAnimations(animations.queue, timestamp, animations.former_time).length
     //             || futureAnimations(animations.queue, timestamp).length)
     // }
     // else if (this.time.speed < 0) {
-    //     return (currentAnimations(animations.queue, timestamp, animations.last_timestamp).length
+    //     return (currentAnimations(animations.queue, timestamp, animations.former_time).length
     //             || pastAnimations(animations.queue, timestamp).length)
     // }
     // return false
 }
 
 
-class AnimationHandler {
-    constructor(store, initial_state, autostart_animating=true) {
-        if (global.requestAnimationFrame) {
-            if (global.DEBUG)
-                console.log('Running animations in a Browser.', {autostart_animating})
-
-            this.rAF = (func) =>
+class AnimationsHandler {
+    constructor({store, initial_state, autostart_animating=true, requestFrame=null}) {
+        if (requestFrame === null) {
+            if (global.DEBUG) console.log('Running animations in browser')
+            this.requestFrame = (func) =>
                 window.requestAnimationFrame.call(window, func)
         } else {
-            if (global.DEBUG)
-                console.log('Running animations in Node.js.', {autostart_animating})
-
-            this.rAf = (func) =>
-                setTimeout(() => func(), 20)
+            if (global.DEBUG) console.log('Running animations with custom requestFrame')
+            this.requestFrame = requestFrame
         }
+
         const speed = store.getState().animations.speed
         this.animating = !autostart_animating
         this.store = store
-        this.time = new WarpedTime(null, speed)
+        this.time = new WarpedTime({speed})
         store.subscribe(::this.handleStateChange)
         if (initial_state) {
             this.initState(initial_state)
@@ -75,7 +73,7 @@ class AnimationHandler {
     tick(high_res_timestamp) {
         this.animating = true
         // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
-            this.rAF(::this.tick)
+            this.requestFrame(::this.tick)
         // } else {
             // this.animating = false
         // }
@@ -84,14 +82,14 @@ class AnimationHandler {
             this.start_time = this.start_time || this.time.getActualTime()
             high_res_timestamp = this.start_time + high_res_timestamp/1000
         }
-
         const {animations} = this.store.getState()
         const new_timestamp = this.time.getWarpedTime()
 
         this.store.dispatch({
             type: 'TICK',
-            last_timestamp: animations.current_timestamp || 0,
-            current_timestamp: new_timestamp,
+            //TODO: duplicating code from WarpedTime.getWarpedTime
+            former_time: animations.warped_time || 0,
+            warped_time: new_timestamp,
             speed: animations.speed,
         })
     }
@@ -99,9 +97,15 @@ class AnimationHandler {
 
 
 const startAnimation = (store, initial_state, autostart_animating=true) => {
-    const handler = new AnimationHandler(store, initial_state, autostart_animating)
+    const handler = new AnimationsHandler({
+        store,
+        initial_state,
+        autostart_animating
+    })
     return handler.time
 }
 
 
-export {animations, startAnimation, AnimationHandler, AnimationControls, AnimationStateVisualizer, AnimationStateVisualizerComponent}
+export {animationsReducer, startAnimation, AnimationsHandler, AnimationControls,
+        AnimationStateVisualizer, AnimationStateVisualizerComponent,
+        AnimationTimeline}

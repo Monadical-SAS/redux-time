@@ -33,13 +33,12 @@ At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum
 ## Key Features
 
 - all state is a function of the current point in time
+- define animations in Javascript or with [CSS @keyframes](https://developer.mozilla.org/en-US/docs/Web/CSS/%40keyframes)
 - time-travel debugging (e.g. slow down, reverse, jump to point in time)
 - compose animations with pure functions e.g.: `Repeat(Rotate(...), 10)`
-- define animations with a Javascript `tick` function or with CSS keyframes
 - seamlessly animate existing React + Redux codebase without major changes
 - animate any state tree value manually, or use provided Animation functions for common animations e.g.: `Translate`, `Rotate`, `Opacity`
-- works in all browsers with `requestAnimationFrame` and in node with `setTimeout`
-- it's fast! computing state takes about `0.5ms` per 100 active animations (the bottleneck is usually React & the DOM, check out [Inferno] + canvas if you really want speed!)
+- It's fast! Run `benchmarks.js`: on my laptop I can compute the animated state at over 100FPS with 5000 concurrent animations. The bottleneck is usually rendering--check out [Inferno] + canvas if you really want speed!
 - fully compatible with CSS animation libraries like [Animate.css](https://daneden.github.io/animate.css/), you already have access to 1000s of pre-written animations out there that plug right into `redux-time`!
 
 ## Intro
@@ -48,7 +47,7 @@ Redux-time makes complex, interactive, composable animations possible by using t
 
 Redux is already capable of time-travel currently, however you cant slow down the speed of time, reverse time, or jump to a specific point in time since redux only knows about the list of actions and has no first-class concept of time.  This library makes time a first-class concept, and gives you careful control over its progression.
 
-What that means specifically, is that every time a `TICK` action is dispatched with a `current_timestamp` parameter, the `animations` reducer looks through the active animations in `animations.queue`, calls their respective `tick` functions with a `delta` parameter, and uses their output to render a state tree at that point in time.
+What that means specifically, is that every time a `TICK` action is dispatched with a `warped_time` parameter, the `animations` reducer looks through the active animations in `animations.queue`, calls their respective `tick` functions with a `delta` parameter, and uses their output to render a state tree at that point in time.
 
 Every tick function is a pure function of the `start_state`, `end_state`, and delta from `start_time`.  This makes animations really easy to reason about compared to traditional solutions.  Debugging is also drastically simpler, since you can slow down and even **reverse** the flow of time to carefully inspect animation progress!
 
@@ -58,12 +57,12 @@ Every tick function is a pure function of the `start_state`, `end_state`, and de
 
 ```javascript
 import {createStore, combineReducers} from 'redux'
-import {animations, startAnimation} from 'redux-time'
+import {animationsReducer, startAnimation} from 'redux-time'
 
 const initial_state = {
     ball: {style: {top: 0, left: 0}},
 }
-window.store = createStore(combineReducers({animations}))
+window.store = createStore(combineReducers({animations: animationsReducer}))
 window.time = startAnimation(store, initial_state)
 ```
 
@@ -103,7 +102,7 @@ const move_ball = [
         start_state: {top: 0, left: 0},
         end_state: {top: 100, left: 0},
         duration: 1000,
-        // start_time: (new Date).getTime() + 500,   // optional, defaults to starting immediately
+        // start_time: Date.now() + 500,   // optional, defaults to starting immediately
         // curve: 'easeOutQuad',                     // optional, defaults to 'linear'
         // unit: '%',                                // optional, defaults to 'px'
     })
@@ -112,7 +111,7 @@ const move_ball = [
 window.store.dispatch({type: 'ANIMATE', animations: move_ball})
 ```
 
-**You're done!** The proper intermediate state is calculated from the animation and rendered on every tick, and the ball moves on the screen!
+**You're done!** The proper intermediate state is computed from the animation and rendered on every tick, and the ball moves on the screen!
 
 See the demo of this code in action here: [ball.html](https://monadical-sas.github.io/redux-time/examples/ball.html), and the full code for the example in [`examples/ball.js`](https://github.com/Monadical-SaS/redux-time/blob/master/examples/ball.js)
 
@@ -135,15 +134,15 @@ Finally, we settled on the state tree as a function of time approach, and wrote 
 ## How it works
 
 1. `redux-time` dispatches a `TICK` action on every `requestAnimationFrame`, which then hits the `animations` reducer.
-2. In the animations reducer, `redux-time` uses the TICK's `current_timestamp` and each animation's `start_state` to compute the intermediate state generated by every animation.  Each animation has a function like: `tick(delta) => {return (delta/duration)*amt}` which is passed the delta from its `start_time`.
+2. In the animations reducer, `redux-time` uses the TICK's `warped_time` and each animation's `start_state` to compute the intermediate state generated by every animation.  Each animation has a function like: `tick(delta) => {return (delta/duration)*amt}` which is passed the delta from its `start_time`.
 3. Finally, all the state produced from each active animation is merged into one object and some translation is done to convert `style`s from dictionaries of values to valid CSS strings (e.g. `{transform: {translate: {top: 0, left: 10}}}` -> `transform: translate(10, 0)`)
 The dictionary is returned as the new `animations.state`, and redux then rerenders any components that got new values.
 
 ```javascript
 // redux-time dispatches this for you on every requestAnimationFrame
-store.dispatch({type: 'TICK', current_timestamp: 1499000000})
+store.dispatch({type: 'TICK', warped_time: 1499000000})
 
-// then the redux-time animations reducer uses your Translate's animation.tick(delta) func to calculate the animated state:
+// then the redux-time animatons reducer uses your Translate's animation.tick(delta) func to compute the animated state:
 const new_state = {
     ball: {
         style: {top: 55, left: 0},
@@ -212,7 +211,7 @@ If possible, when submitting an issue report, try to copy one of the `examples/`
 
 Documentation is a work-in-progress, if you see anything unclear or incorrect, please submit a PR or issue!
 
-We encourage you to follow along with the demos in `examples/` to see how the library works.  The examples are short and fairly easy to read!
+We encourage you to follow along with the [demos](https://monadical-sas.github.io/redux-time/examples/) in `examples/` to see how the library works.  The examples are short and fairly easy to read!
 
 - [Basics](#basics)
     + [Installation](#installation)
@@ -248,10 +247,10 @@ npm install --add redux-time
 
 Then add this to your page's entry point, next to `createStore`:
 ```javascript
-import {animations, startAnimation} from 'redux-time'
+import {animationsReducer, startAnimation} from 'redux-time'
 
 // add animations to your reducers
-window.store = createStore(combineReducers({..., animations}))  
+window.store = createStore(combineReducers({..., animations: animationsReducer}))  
 
 // start the animation runloop off with your initial_state
 window.initial_state = {ball: {text: 'Hello world!'}}
@@ -265,7 +264,7 @@ window.time = startAnimation(window.store, window.initial_state)
 window.store.dispatch({type: 'ANIMATE', animation: Become({
     path: '/ball/text',
     state: 'An instant state change happened!',
-    // start_time: (new Date).getTime(),     // optional, default is now
+    // start_time: Date.now(),     // optional, default is now
     // duration: Infinity,                   // optional milliseconds duration
 })})
 
@@ -274,7 +273,7 @@ window.store.dispatch({type: 'ANIMATE', animation: Animate({
     path: '/ball/text',
     start_state: 0,
     end_state: 100,
-    start_time: (new Date).getTime() + 1000,  // begins after 1000ms
+    start_time: Date.now() + 1000,  // begins after 1000ms
     duration: 10000,
     curve: 'easeInOutQuad',
 })})
@@ -337,17 +336,17 @@ An "animation" in `redux-time` is defined as a normal JS object with the followi
 {
     type,        // human readable description, e.g. TRANSLATE or OPACITY
     path,        // an RFC-6902 style javascript patch path, e.g. /ball/style/top or /path/to/array/0
-    start_time,  // determines when animation is active, defaults to immediately (new Date).getTime()
+    start_time,  // determines when animation is active, defaults to immediately Date.now()
     duration,    // duration of the animation in ms (Infinity is allowed)
     end_time,    // optional instead of duration (Infinity is allowed)
     start_state, // initial state of the animation, e.g. {top: 0, left:0}
-    amt,         // total amount to add to the start_state, e.g. {top: 10, left: 0}
-    end_state,   // optional instead of amt
+    delta_state, // total amount to add to the start_state, e.g. {top: 10, left: 0}
+    end_state,   // optional instead of delta_state
     curve,       // timing interpolation curve, can be a custom function like bezier() or 'linear', 'easeInOutQuad', etc.
     unit,        // defaults to 'px', can also be 'vw', '%', 'em', null, etc.
     tick,        // function that takes delta from start_time and returns a computed state at that point in time, defaults to:
                  //  tick: (delta) => {
-                 //      const progress = start_state + curve_func(delta/duration)*amt        
+                 //      const progress = start_state + curve_func(delta/duration)*delta_state        
                  //      return `${progress}${unit}`
                  //  }      
 }
@@ -394,7 +393,7 @@ import {...} from 'redux-time/src/animations'
 
     // the building block of all others, just interpolates a raw value or object
     // over some time, at the specified path, with the specified tick function
-    Animate({type, path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null, tick=null})
+    Animate({type, path, start_time, end_time, duration, start_state, end_state, delta_state, curve='linear', unit=null, tick=null})
 
 // CSS Animations
 
@@ -407,17 +406,13 @@ import {...} from 'redux-time/src/animations'
 // JS Animations
 
     // move an element relative to its current position, using transform: translate(x, y)
-    Translate({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'})
+    Translate({path, start_time, end_time, duration=1000, start_state, end_state, delta_state, curve='linear', unit='px'})
 
-    // move an element's absolute or fixed position using {top, left}
-    TranslateTo({path, start_time, end_time, duration=1000, start_state, end_state, amt, curve='linear', unit='px'})
-    // Must be used with ... because it's actually two animations!
-
-    // aniamte an element changing opacity
-    Opacity({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit=null})
+    // animate an element changing opacity
+    Opacity({path, start_time, end_time, duration, start_state, end_state, delta_state, curve='linear', unit=null})
 
     // rotate an element using transform: rotate(deg)
-    Rotate({path, start_time, end_time, duration, start_state, end_state, amt, curve='linear', unit='deg'})
+    Rotate({path, start_time, end_time, duration, start_state, end_state, delta_state, curve='linear', unit='deg'})
 
     // have an idea? contribute an animation by submitting a PR to src/animation.js
     // .e.g Wobble({...}), Bounce({...})
@@ -458,10 +453,10 @@ To queue an animation that you don't want to have start immediately, set the `st
 ```javascript
 const delayed_rotate = Rotate({
     path: '/square',
-    start_time: (new Date).getTime() + 1000,   // to start 1sec from now
+    start_time: Date.now() + 1000,   // to start 1sec from now
     duration: 1000,
     start_state: 0,
-    amt: 360,
+    delta_state: 360,
 })
 store.dispatch({type: 'ANIMATE', animation: delayed_rotate})
 ```
@@ -509,7 +504,7 @@ store.dispatch({type: 'ANIMATE', animation: Animate({
     path: '/path/to/your/state/value',
     duration: 1000,
     start_state: 0,
-    amt: 100,
+    delta_state: 100,
     tick: (delta) => {
         // e.g. stepped value instead of smoothly changing continuous value
         if (delta <= 0) return 0
@@ -599,7 +594,7 @@ Animate({
     ... 
 })
 ```
-All patches are stored internally as a dictionary of `{transform_function_name: value}`, but they get converted to strings when the animated state is calculated on every `TICK`.
+All patches are stored internally as a dictionary of `{transform_function_name: value}`, but they get converted to strings when the animated state is computed on every `TICK`.
 
 Your component will receive `style={transform: 'translate3d(x, y, z)}` as a valid CSS string, so you can plug it right in with `style={style}` and it will work.
 
@@ -641,7 +636,7 @@ Become({
     }
 })
 ```
-All CSS animations are stored internally as a dictionary of `{css_animation_name: {name, duration, delay, playState}}`, but they get converted to strings when the animated state is calculated on every `TICK`.
+All CSS animations are stored internally as a dictionary of `{css_animation_name: {name, duration, delay, playState}}`, but they get converted to strings when the animated state is computed on every `TICK`.
 
 Your component will receive `style={animation: 'blink 1000ms linear -25ms paused'}` as a valid CSS string, so you can plug it right in with `style={style}` and it will work.
 

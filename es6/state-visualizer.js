@@ -6,9 +6,8 @@ import {
     pastAnimations,
     currentAnimations,
     futureAnimations,
-    sortedAnimations,
     activeAnimations,
-} from './reducers.js'
+} from './util.js'
 
 import {ExpandableSection} from 'monadical-react-components'
 
@@ -42,12 +41,12 @@ const AnimationList = ({animations, verbose=true, style}) =>
 
 
 export const AnimationStateVisualizerComponent = ({animations, path, expanded, debug=false}) => {
-    const {queue, current_timestamp, last_timestamp} = animations
-    const active_anims = activeAnimations(queue, current_timestamp, last_timestamp)
+    const {queue, warped_time, former_time} = animations
+    const active_anims = activeAnimations({anim_queue: queue, warped_time, former_time})
 
-    const past_anims = sortedAnimations(pastAnimations(queue, current_timestamp, last_timestamp))
-    const current_anims = sortedAnimations(currentAnimations(queue, current_timestamp, last_timestamp))
-    const future_anims = sortedAnimations(futureAnimations(queue, current_timestamp, last_timestamp))
+    const past_anims = pastAnimations({anim_queue: queue, warped_time})
+    const current_anims = currentAnimations({anim_queue: queue, warped_time, former_time})
+    const future_anims = futureAnimations({anim_queue: queue, warped_time})
 
     const col_style = {width: '32.5%', display: 'inline-block', verticalAlign: 'top'}
 

@@ -8,7 +8,7 @@ import {Provider, connect} from 'react-redux'
 import {ExpandableSection} from 'monadical-react-components'
 
 import {
-    animations,
+    animationsReducer,
     startAnimation,
     AnimationControls,
     AnimationStateVisualizer
@@ -24,7 +24,7 @@ const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/warped-t
 
 window.initial_state = {balls: {}}
 
-window.store = createStore(combineReducers({animations}))
+window.store = createStore(combineReducers({animationsReducer}))
 window.time = startAnimation(window.store, window.initial_state)
 
 
@@ -89,13 +89,13 @@ const ADD_BALLS_ANIMATIONS = (start_time, num) => {
     return new_anims
 }
 
-const FPS = (speed, current_timestamp, last_timestamp) =>
-    Math.round((speed * 1000)/(current_timestamp - last_timestamp)) || 0
+const FPS = (speed, warped_time, former_time) =>
+    Math.round((speed * 1000)/(warped_time - former_time)) || 0
 
 
 const mapStateToProps = ({animations}) => ({
     balls: animations.state.balls,
-    fps: FPS(animations.speed, animations.current_timestamp, animations.last_timestamp),
+    fps: FPS(animations.speed, animations.warped_time, animations.former_time),
     speed: animations.speed,
 })
 const mapDispatchToProps = (dispatch) => ({

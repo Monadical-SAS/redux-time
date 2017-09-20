@@ -5,9 +5,10 @@ import {createStore, combineReducers} from 'redux'
 import {Provider} from 'react-redux'
 
 import {
-    animations,
+    animationsReducer,
     startAnimation,
     AnimationControls,
+    AnimationTimeline,
     AnimationStateVisualizer
 } from '../node/main.js'
 
@@ -22,13 +23,14 @@ window.initial_state = {
     },
 }
 
-window.store = createStore(combineReducers({animations}))
+window.store = createStore(combineReducers({animations: animationsReducer}))
 window.time = startAnimation(window.store, window.initial_state)
 
 ReactDOM.render(
     <Provider store={window.store}>
         <div>
             <AnimationTester getTime={window.time.getWarpedTime.bind(window.time)} debug/>
+            <AnimationTimeline debug={true} expanded={true}/>
             <AnimationControls debug/>
             <AnimationStateVisualizer path="test_state" debug/>
         </div>

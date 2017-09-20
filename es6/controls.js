@@ -6,13 +6,16 @@ import {TimeControlsComponent} from 'warped-time'
 
 const mapStateToProps = ({animations}) => ({
     speed: animations.speed,
-    current_timestamp: animations.current_timestamp,
-    last_timestamp: animations.last_timestamp,
+    warped_time: animations.warped_time,
+    former_time: animations.former_time,
 })
 
 const mapDispatchToProps = (dispatch) => ({
+	setWarpedTime: (warped_time) => {
+		dispatch({type: 'SET_WARPED_TIME', warped_time})
+	},
     setSpeed: (speed) => {
-        dispatch({type: 'SET_ANIMATION_SPEED', speed})
+        dispatch({type: 'SET_SPEED', speed})
     },
 })
 

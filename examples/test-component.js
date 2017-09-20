@@ -4,35 +4,67 @@ import {connect} from 'react-redux'
 
 import {ExpandableSection} from 'monadical-react-components'
 
-import {Become, Repeat, Animate, Translate, AnimateCSS} from '../node/animations.js'
+import {Become, Repeat, Animate, Translate, AnimateCSS, Rotate} from '../node/animations.js'
 
 
 const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/examples/test-component.js"
 
 const base_style = {
     width: 200,
+    height: 'auto',
     margin: 'auto',
     overflow: 'hidden',
     border: '1px dashed red',
     backgroundColor: 'orange',
 }
 
-const AnimationTesterComponent = ({getTime, text, style, animateFirstState, animateSecondState, animateGreen, animateRed, animateMove, animateRotate, animatePulse, animateBlink, animateBlinkStop, clearAnimations, debug}) =>
+const AnimationTesterComponent = ({
+        getTime, text, style, animateFirstState,animateSecondState,
+        animateGreen, animateRed, animateMove, animateRotate, animatePulse,
+        animateBlink, animateBlinkStop, clearAnimations, debug}) =>
     <ExpandableSection name="Animation Test" source={debug && SOURCE} expanded>
         <pre style={{...base_style, ...style}}>
             <br/>
             {text}
-            <br/><br/>
+            <br/>
+            <br/>
         </pre><br/>
-        <Button title="Instant state change" onClick={animateFirstState.bind(this, getTime())}>1st state</Button>
-        <Button title="Instant state change" onClick={animateSecondState.bind(this, getTime())}>2nd state</Button>
-        <Button title="Instant state change" onClick={animateGreen.bind(this, getTime())}>Green</Button>
-        <Button title="Instant state change" onClick={animateRed.bind(this, getTime())}>Red</Button>
-        <Button title="Instant state change" onClick={animateMove.bind(this, getTime())}>Move</Button>
-        <Button title="Javascript animation" onClick={animateRotate.bind(this, getTime())}>Rotate 3x</Button>
-        <Button title="Javascript animation" onClick={animatePulse.bind(this, getTime())}>Pulse</Button>
-        <Button title="CSS keyframe animation" onClick={animateBlink.bind(this, getTime())}>Blink Forever</Button>
-        <Button title="CSS keyframe animation" onClick={animateBlinkStop.bind(this, getTime())}>Stop Blinking</Button>
+        <Button title="Instant state change"
+                onClick={animateFirstState.bind(this, getTime())}>
+                1st state
+        </Button>
+        <Button title="Instant state change"
+                onClick={animateSecondState.bind(this, getTime())}>
+                2nd state
+        </Button>
+        <Button title="Instant state change"
+                onClick={animateGreen.bind(this, getTime())}>
+                Green
+        </Button>
+        <Button title="Instant state change"
+                onClick={animateRed.bind(this, getTime())}>
+                Red
+        </Button>
+        <Button title="Instant state change"
+                onClick={animateMove.bind(this, getTime())}>
+                Move
+        </Button>
+        <Button title="Javascript animation"
+                onClick={animateRotate.bind(this, getTime())}>
+                Rotate 3x
+        </Button>
+        <Button title="Javascript animation"
+                onClick={animatePulse.bind(this, getTime())}>
+                Pulse
+        </Button>
+        <Button title="CSS keyframe animation"
+                onClick={animateBlink.bind(this, getTime())}>
+                Blink Forever
+        </Button>
+        <Button title="CSS keyframe animation"
+                onClick={animateBlinkStop.bind(this, getTime())}>
+                Stop Blinking
+        </Button>
         <Button onClick={clearAnimations}>Reset</Button>
     </ExpandableSection>
 
@@ -85,8 +117,8 @@ const mapDispatchToProps = (dispatch) => ({
         })})
     },
     animateRotate: (start_time) => {
-        const Spin = Animate({
-            path: '/test_state/style/transform/rotate',
+        const Spin = Rotate({
+            path: '/test_state',
             start_state: 0,
             end_state: 360,
             duration: 3000,
