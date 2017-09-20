@@ -5,7 +5,7 @@ import {createStore, combineReducers} from 'redux'
 import {Provider} from 'react-redux'
 
 import {
-    animations,
+    animationsReducer,
     startAnimation,
     AnimationControls,
     AnimationTimeline,
@@ -23,7 +23,7 @@ window.initial_state = {
     },
 }
 
-window.store = createStore(combineReducers({animations}))
+window.store = createStore(combineReducers({animations: animationsReducer}))
 window.time = startAnimation(window.store, window.initial_state)
 
 ReactDOM.render(

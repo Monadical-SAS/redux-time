@@ -23,7 +23,7 @@ var _react2 = _interopRequireDefault(_react);
 
 var _reactRedux = require('react-redux');
 
-var _reducers = require('./reducers.js');
+var _util = require('./util.js');
 
 var _monadicalReactComponents = require('monadical-react-components');
 
@@ -52,14 +52,14 @@ var AnimationStateVisualizerComponent = exports.AnimationStateVisualizerComponen
         _ref2$debug = _ref2.debug,
         debug = _ref2$debug === undefined ? false : _ref2$debug;
     var queue = animations.queue,
-        current_timestamp = animations.current_timestamp,
-        last_timestamp = animations.last_timestamp;
+        warped_time = animations.warped_time,
+        former_time = animations.former_time;
 
-    var active_anims = (0, _reducers.activeAnimations)(queue, current_timestamp, last_timestamp);
+    var active_anims = (0, _util.activeAnimations)({ anim_queue: queue, warped_time: warped_time, former_time: former_time });
 
-    var past_anims = (0, _reducers.sortedAnimations)((0, _reducers.pastAnimations)(queue, current_timestamp, last_timestamp));
-    var current_anims = (0, _reducers.sortedAnimations)((0, _reducers.currentAnimations)(queue, current_timestamp, last_timestamp));
-    var future_anims = (0, _reducers.sortedAnimations)((0, _reducers.futureAnimations)(queue, current_timestamp, last_timestamp));
+    var past_anims = (0, _util.pastAnimations)({ anim_queue: queue, warped_time: warped_time });
+    var current_anims = (0, _util.currentAnimations)({ anim_queue: queue, warped_time: warped_time, former_time: former_time });
+    var future_anims = (0, _util.futureAnimations)({ anim_queue: queue, warped_time: warped_time });
 
     var col_style = { width: '32.5%', display: 'inline-block', verticalAlign: 'top' };
 

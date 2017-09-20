@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.AnimationStateVisualizerComponent = exports.AnimationStateVisualizer = exports.AnimationControls = exports.AnimationHandler = exports.startAnimation = exports.animations = undefined;
+exports.AnimationTimeline = exports.AnimationStateVisualizerComponent = exports.AnimationStateVisualizer = exports.AnimationControls = exports.AnimationsHandler = exports.startAnimation = exports.animationsReducer = undefined;
 
 var _keys = require('babel-runtime/core-js/object/keys');
 
@@ -27,6 +27,8 @@ var _controls = require('./controls.js');
 
 var _stateVisualizer = require('./state-visualizer.js');
 
+var _timeline = require('./timeline.js');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var shouldAnimate = function shouldAnimate(anim_queue, timestamp, speed) {
@@ -36,47 +38,47 @@ var shouldAnimate = function shouldAnimate(anim_queue, timestamp, speed) {
 
     // // if going forward in time, and future animations exist
     // if (this.time.speed > 0) {
-    //     return (currentAnimations(animations.queue, timestamp, animations.last_timestamp).length
+    //     return (currentAnimations(animations.queue, timestamp, animations.former_time).length
     //             || futureAnimations(animations.queue, timestamp).length)
     // }
     // else if (this.time.speed < 0) {
-    //     return (currentAnimations(animations.queue, timestamp, animations.last_timestamp).length
+    //     return (currentAnimations(animations.queue, timestamp, animations.former_time).length
     //             || pastAnimations(animations.queue, timestamp).length)
     // }
     // return false
 };
 
-var AnimationHandler = function () {
-    function AnimationHandler(store, initial_state) {
-        var autostart_animating = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
-        (0, _classCallCheck3.default)(this, AnimationHandler);
+var AnimationsHandler = function () {
+    function AnimationsHandler(_ref) {
+        var store = _ref.store,
+            initial_state = _ref.initial_state,
+            _ref$autostart_animat = _ref.autostart_animating,
+            autostart_animating = _ref$autostart_animat === undefined ? true : _ref$autostart_animat,
+            _ref$requestFrame = _ref.requestFrame,
+            requestFrame = _ref$requestFrame === undefined ? null : _ref$requestFrame;
+        (0, _classCallCheck3.default)(this, AnimationsHandler);
 
-        if (global.requestAnimationFrame) {
-            if (global.DEBUG) console.log('Running animations in a Browser.', { autostart_animating: autostart_animating });
-
-            this.rAF = function (func) {
+        if (requestFrame === null) {
+            if (global.DEBUG) console.log('Running animations in browser');
+            this.requestFrame = function (func) {
                 return window.requestAnimationFrame.call(window, func);
             };
         } else {
-            if (global.DEBUG) console.log('Running animations in Node.js.', { autostart_animating: autostart_animating });
-
-            this.rAf = function (func) {
-                return setTimeout(function () {
-                    return func();
-                }, 20);
-            };
+            if (global.DEBUG) console.log('Running animations with custom requestFrame');
+            this.requestFrame = requestFrame;
         }
+
         var speed = store.getState().animations.speed;
         this.animating = !autostart_animating;
         this.store = store;
-        this.time = new _warpedTime.WarpedTime(null, speed);
+        this.time = new _warpedTime.WarpedTime({ speed: speed });
         store.subscribe(this.handleStateChange.bind(this));
         if (initial_state) {
             this.initState(initial_state);
         }
     }
 
-    (0, _createClass3.default)(AnimationHandler, [{
+    (0, _createClass3.default)(AnimationsHandler, [{
         key: 'initState',
         value: function initState(initial_state) {
             var animations = (0, _keys2.default)(initial_state).map(function (key) {
@@ -108,6 +110,12 @@ var AnimationHandler = function () {
         key: 'tick',
         value: function tick(high_res_timestamp) {
             this.animating = true;
+            // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
+            this.requestFrame(this.tick.bind(this));
+            // } else {
+            // this.animating = false
+            // }
+
             if (high_res_timestamp) {
                 this.start_time = this.start_time || this.time.getActualTime();
                 high_res_timestamp = this.start_time + high_res_timestamp / 1000;
@@ -120,30 +128,31 @@ var AnimationHandler = function () {
 
             this.store.dispatch({
                 type: 'TICK',
-                last_timestamp: animations.current_timestamp || 0,
-                current_timestamp: new_timestamp,
+                //TODO: duplicating code from WarpedTime.getWarpedTime
+                former_time: animations.warped_time || 0,
+                warped_time: new_timestamp,
                 speed: animations.speed
             });
-            // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
-            this.rAF(this.tick.bind(this));
-            // } else {
-            // this.animating = false
-            // }
         }
     }]);
-    return AnimationHandler;
+    return AnimationsHandler;
 }();
 
 var startAnimation = function startAnimation(store, initial_state) {
     var autostart_animating = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
-    var handler = new AnimationHandler(store, initial_state, autostart_animating);
+    var handler = new AnimationsHandler({
+        store: store,
+        initial_state: initial_state,
+        autostart_animating: autostart_animating
+    });
     return handler.time;
 };
 
-exports.animations = _reducers.animations;
+exports.animationsReducer = _reducers.animationsReducer;
 exports.startAnimation = startAnimation;
-exports.AnimationHandler = AnimationHandler;
+exports.AnimationsHandler = AnimationsHandler;
 exports.AnimationControls = _controls.AnimationControls;
 exports.AnimationStateVisualizer = _stateVisualizer.AnimationStateVisualizer;
 exports.AnimationStateVisualizerComponent = _stateVisualizer.AnimationStateVisualizerComponent;
+exports.AnimationTimeline = _timeline.AnimationTimeline;

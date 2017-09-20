@@ -1,6 +1,6 @@
 import {WarpedTime} from 'warped-time'
 
-import {animations} from './reducers.js'
+import {animationsReducer} from './reducers.js'
 import {Become} from './animations.js'
 import {AnimationControls} from './controls.js'
 import {AnimationStateVisualizerComponent,
@@ -26,13 +26,15 @@ const shouldAnimate = (anim_queue, timestamp, speed) => {
 }
 
 
-class AnimationHandler {
-    constructor({store, initial_state, autostart_animating=true, ticker=null}) {
-        if (ticker === null) {
-            this.ticker = (func) =>
+class AnimationsHandler {
+    constructor({store, initial_state, autostart_animating=true, requestFrame=null}) {
+        if (requestFrame === null) {
+            if (global.DEBUG) console.log('Running animations in browser')
+            this.requestFrame = (func) =>
                 window.requestAnimationFrame.call(window, func)
         } else {
-            this.ticker = ticker
+            if (global.DEBUG) console.log('Running animations with custom requestFrame')
+            this.requestFrame = requestFrame
         }
 
         const speed = store.getState().animations.speed
@@ -70,6 +72,12 @@ class AnimationHandler {
     }
     tick(high_res_timestamp) {
         this.animating = true
+        // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
+            this.requestFrame(::this.tick)
+        // } else {
+            // this.animating = false
+        // }
+
         if (high_res_timestamp) {
             this.start_time = this.start_time || this.time.getActualTime()
             high_res_timestamp = this.start_time + high_res_timestamp/1000
@@ -84,20 +92,20 @@ class AnimationHandler {
             warped_time: new_timestamp,
             speed: animations.speed,
         })
-        // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
-            this.ticker(::this.tick)
-        // } else {
-            // this.animating = false
-        // }
     }
 }
 
 
 const startAnimation = (store, initial_state, autostart_animating=true) => {
-    const handler = new AnimationHandler({store, initial_state, autostart_animating})
+    const handler = new AnimationsHandler({
+        store,
+        initial_state,
+        autostart_animating
+    })
     return handler.time
 }
 
 
-export {animations, startAnimation, AnimationHandler, AnimationControls,
-        AnimationStateVisualizer, AnimationStateVisualizerComponent, AnimationTimeline}
+export {animationsReducer, startAnimation, AnimationsHandler, AnimationControls,
+        AnimationStateVisualizer, AnimationStateVisualizerComponent,
+        AnimationTimeline}

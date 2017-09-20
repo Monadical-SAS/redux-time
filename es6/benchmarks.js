@@ -1,9 +1,8 @@
-import {Become, TranslateTo, Rotate,
+import {Become, Translate, Rotate,
         Scale, Opacity} from './animations.js'
 
-import {assert, assertEqual, print, range, nested_key} from './util.js'
-
-import {computeAnimatedState} from './reducers.js'
+import {computeAnimatedState, assert, assertEqual, print,
+        range, nested_key} from './util.js'
 
 
 //  create objects
@@ -23,7 +22,7 @@ const create_objects = (n, branching_factor, depth) => {
 //  move +100x, +100y
 const move_objects = (n, branching_factor, depth) => {
     return range(n).map(i =>
-        TranslateTo({
+        Translate({
             path: nested_key(i, branching_factor, depth),
             start_state: {
                 left: n - i,
@@ -55,7 +54,7 @@ const rotate_objects = (n, branching_factor, depth) => {
 //  opacity -> 0%
 const opacity_objects = (n, branching_factor, depth) => {
     return range(n).map(i =>
-        Rotate({
+        Opacity({
             path: nested_key(i, branching_factor, depth),
             start_state: 1,
             end_state: 0,
@@ -66,11 +65,12 @@ const opacity_objects = (n, branching_factor, depth) => {
 }
 
 const full_anim_queue = (n, branching_factor, depth) => {
+    const n_anims = Math.floor(n/4)
     return [
-        ...create_objects(n, branching_factor, depth),
-        // ...move_objects(n, branching_factor, depth),
-        ...rotate_objects(n, branching_factor, depth),
-        ...opacity_objects(n, branching_factor, depth),
+        ...create_objects(n_anims, branching_factor, depth),
+        ...move_objects(n_anims, branching_factor, depth),
+        ...rotate_objects(n_anims, branching_factor, depth),
+        ...opacity_objects(n_anims, branching_factor, depth),
     ]
 }
 
@@ -83,7 +83,10 @@ const do_benchmark = (n, branching_factor, depth, n_frames, print_state) => {
     console.log(`state has: branching_factor ${branching_factor}, depth ${depth}`)
     const start_time = Date.now()
     for (let i = 0; i < n_frames; i++){
-        animated_state = computeAnimatedState(full_queue, 500+i)
+        animated_state = computeAnimatedState({
+            animations: full_queue,
+            warped_time: 500+i
+        })
     }
     console.log(`\t${Date.now() - start_time} milliseconds`)
     console.log(`\t${1000/((Date.now() - start_time)/n_frames)} FPS`)

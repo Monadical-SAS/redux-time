@@ -1,24 +1,23 @@
 import {createStore, combineReducers} from 'redux'
 
-import {AnimationHandler, animations} from './main.js'
+import {AnimationsHandler, animationsReducer} from './main.js'
 
-import {assert, print, assertSortedObjsInOrder} from './util.js'
+import {assert, print, assertSortedObjsInOrder,
+        currentAnimations, uniqueAnimations} from './util.js'
 
 import {Animate, Become, Repeat, Translate, Opacity,
         Rotate} from './animations.js'
 
-import {computeAnimatedState, activeAnimations, futureAnimations,
-        currentAnimations, sortedAnimations, pastAnimations,
-        uniqueAnimations} from './reducers.js'
 
 export const run_integration_tests = () => {
+
 
 // Animation tests
 const initial_state = {
     test: {text: 'initial_state'}
 }
 
-const test = (state=initial_state.test, action) => {
+const testReducer = (state=initial_state.test, action) => {
     switch(action.type) {
         default:
             return state
@@ -26,7 +25,7 @@ const test = (state=initial_state.test, action) => {
 }
 
 const store = createStore(
-    combineReducers({test, animations}),
+    combineReducers({test: testReducer, animations: animationsReducer}),
     initial_state,
 )
 assert(store.getState().animations.warped_time == 0,
@@ -34,9 +33,9 @@ assert(store.getState().animations.warped_time == 0,
 
 
 // ANIMATION HANDLER SETUP
-const handler = new AnimationHandler({
+const handler = new AnimationsHandler({
     store,
-    ticker: (func) => setTimeout(() => func(), 20)
+    frameLoop: (func) => setTimeout(() => func(), 20)
 })
 
 assert(

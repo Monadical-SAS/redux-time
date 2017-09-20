@@ -30,10 +30,11 @@
   "main": "node/main.js",
   "dependencies": {
     "extend": "^3.0.1",
+    "lodash.isequal": "^4.5.0",
     "monadical-react-components": "^0.0.6",
     "react-redux": "^5.0.5",
     "redux": "^3.6.0",
-    "warped-time": "^0.0.11"
+    "warped-time": "^0.0.13"
   },
   "devDependencies": {
     "aliasify": "^2.1.0",
@@ -61,7 +62,7 @@
     "react-dom": "^15.6.1",
     "react-select": "^1.0.0-beta14",
     "redux-devtools-extension": "^2.13.2",
-    "redux-saga": "^0.11.0",
+    "three": "^0.87.1",
     "watchify": "^3.9.0"
   },
   "browserify": {

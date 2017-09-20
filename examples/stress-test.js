@@ -8,7 +8,7 @@ import {Provider, connect} from 'react-redux'
 import {ExpandableSection} from 'monadical-react-components'
 
 import {
-    animations,
+    animationsReducer,
     startAnimation,
     AnimationControls,
     AnimationStateVisualizer
@@ -24,7 +24,7 @@ const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/warped-t
 
 window.initial_state = {balls: {}}
 
-window.store = createStore(combineReducers({animations}))
+window.store = createStore(combineReducers({animationsReducer}))
 window.time = startAnimation(window.store, window.initial_state)
 
 

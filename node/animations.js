@@ -3,276 +3,429 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.RepeatSequence = exports.Sequential = exports.Reverse = exports.Repeat = exports.Rotate = exports.Opacity = exports.TranslateTo = exports.Translate = exports.AnimateCSS = exports.Animate = exports.Become = undefined;
-
-var _getIterator2 = require('babel-runtime/core-js/get-iterator');
-
-var _getIterator3 = _interopRequireDefault(_getIterator2);
+exports.RepeatSequence = exports.Sequential = exports.Reverse = exports.Repeat = exports.Rotate = exports.Opacity = exports.Translate = exports.AnimateCSS = exports.Style = exports.Animate = exports.computeTheOther = exports.Become = undefined;
 
 var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
 var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 
-var _extends2 = require('babel-runtime/helpers/extends');
+var _getIterator2 = require('babel-runtime/core-js/get-iterator');
 
-var _extends3 = _interopRequireDefault(_extends2);
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
 
 var _keys = require('babel-runtime/core-js/object/keys');
 
 var _keys2 = _interopRequireDefault(_keys);
 
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
 var _typeof2 = require('babel-runtime/helpers/typeof');
 
 var _typeof3 = _interopRequireDefault(_typeof2);
 
+var _slicedToArray2 = require('babel-runtime/helpers/slicedToArray');
+
+var _slicedToArray3 = _interopRequireDefault(_slicedToArray2);
+
 var _util = require('./util.js');
+
+var _lodash = require('lodash.isequal');
+
+var _lodash2 = _interopRequireDefault(_lodash);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var unit_tick = function unit_tick(_ref, key) {
-    var start_time = _ref.start_time,
-        end_time = _ref.end_time,
-        duration = _ref.duration,
+var fmtWithUnit = function fmtWithUnit(val, unit) {
+    return unit ? '' + val + unit : val;
+};
+
+var tick_func = function tick_func(_ref) {
+    var duration = _ref.duration,
         start_state = _ref.start_state,
+        delta_state = _ref.delta_state,
         end_state = _ref.end_state,
-        amt = _ref.amt,
         _ref$curve = _ref.curve,
         curve = _ref$curve === undefined ? 'linear' : _ref$curve,
         _ref$unit = _ref.unit,
         unit = _ref$unit === undefined ? null : _ref$unit;
 
-    var _checked_animation_am = checked_animation_amt({ start_state: start_state, end_state: end_state, amt: amt, key: key }),
-        start_state = _checked_animation_am.start_state,
-        amt = _checked_animation_am.amt,
-        end_state = _checked_animation_am.end_state;
-
-    var _checked_animation_du = checked_animation_duration({ start_time: start_time, end_time: end_time, duration: duration }),
-        start_time = _checked_animation_du.start_time,
-        end_time = _checked_animation_du.end_time,
-        duration = _checked_animation_du.duration;
 
     var curve_func = _util.EasingFunctions[curve];
 
-    return function (delta) {
-        var new_state = void 0;
-        // These over-boundary cases happen because we need to render
-        // an extra frame before/after start/end times to finish off
-        // animations who's (durations) % (frame rate) != 0.
-        if (delta < 0) {
-            new_state = start_state;
-        } else if (delta >= duration) {
-            new_state = end_state;
-        } else {
-            // tick progression function, the core math at the heart of animation
-            new_state = start_state + curve_func(delta / duration) * amt;
+    return function (time_elapsed) {
+        if (time_elapsed < 0) {
+            return start_state;
         }
-        return unit ? '' + new_state + unit : new_state;
+        if (time_elapsed > duration) {
+            return end_state;
+        }
+        var curve_value = curve_func(time_elapsed / duration);
+        var new_state = start_state + curve_value * delta_state;
+
+        return fmtWithUnit(new_state, unit);
     };
 };
 
-var checked_animation_duration = function checked_animation_duration(_ref2) {
-    var start_time = _ref2.start_time,
-        duration = _ref2.duration,
-        end_time = _ref2.end_time;
+var Become = exports.Become = function Become(_ref2) {
+    var path = _ref2.path,
+        state = _ref2.state,
+        start_time = _ref2.start_time,
+        end_time = _ref2.end_time,
+        duration = _ref2.duration;
 
-    if ([start_time, end_time, duration].filter(function (a) {
-        return typeof a == 'number';
-    }).length < 2) {
-        console.log({ start_time: start_time, end_time: end_time, duration: duration });
-        throw 'Need at least 2/3 to calculate animation: start_time, end_time, duration';
+    if (start_time === undefined) start_time = Date.now();
+
+    if (end_time === undefined && duration === undefined) {
+        duration = Infinity;
+        end_time = Infinity;
     }
 
-    if (start_time === undefined) start_time = end_time - duration;
-    if (end_time === undefined) end_time = start_time + duration;
-    if (duration === undefined) duration = end_time - start_time;
+    if (end_time !== Infinity || duration !== Infinity) {
+        if (exactlyOneIsUndefined(duration, end_time)) {
+            var _computeTheOther = computeTheOther(start_time, duration, end_time);
 
-    if (start_time + duration != end_time) {
-        console.log({ start_time: start_time, end_time: end_time, duration: duration });
-        throw 'Conflicting values, Animation end_time != start_time + duration';
+            var _computeTheOther2 = (0, _slicedToArray3.default)(_computeTheOther, 2);
+
+            duration = _computeTheOther2[0];
+            end_time = _computeTheOther2[1];
+        } else {
+            // console.log({path, state, start_time, end_time, duration})
+            throw 'Invalid call to Become: you may define end_time or duration, but not both.';
+        }
     }
-    return { start_time: start_time, duration: duration, end_time: end_time };
+
+    return Animate({
+        type: 'BECOME',
+        path: path,
+        start_state: state,
+        delta_state: null,
+        end_state: null,
+        start_time: start_time,
+        end_time: end_time,
+        duration: duration,
+        tick: function tick(_) {
+            return state;
+        }
+    });
 };
 
-var checked_animation_amt = function checked_animation_amt(_ref3) {
-    var key = _ref3.key,
+var computeTheOther = exports.computeTheOther = function computeTheOther(start, delta, end) {
+    // assumes start and one of (delta, end) are defined.
+    // error checking is done before this point is reached
+
+    // console.log({start, delta, end})
+    if ((typeof start === 'undefined' ? 'undefined' : (0, _typeof3.default)(start)) === 'object') {
+        var new_delta = delta ? (0, _extends3.default)({}, delta) : {};
+        var new_end = end ? (0, _extends3.default)({}, end) : {};
+        if (delta === undefined) {
+            (0, _keys2.default)(start).forEach(function (key) {
+                var _computeTheOther3 = computeTheOther(start[key], new_delta[key], new_end[key]),
+                    _computeTheOther4 = (0, _slicedToArray3.default)(_computeTheOther3, 2),
+                    _delta = _computeTheOther4[0],
+                    _end = _computeTheOther4[1];
+
+                new_delta[key] = _delta;
+                new_end[key] = _end;
+            });
+        } else {
+            var delta_keys = (0, _keys2.default)(delta);
+            (0, _keys2.default)(start).forEach(function (key) {
+                if (delta_keys.includes(key)) {
+                    var _computeTheOther5 = computeTheOther(start[key], new_delta[key], new_end[key]),
+                        _computeTheOther6 = (0, _slicedToArray3.default)(_computeTheOther5, 2),
+                        _delta = _computeTheOther6[0],
+                        _end = _computeTheOther6[1];
+
+                    new_delta[key] = _delta;
+                    new_end[key] = _end;
+                } else {
+                    new_end[key] = start[key];
+                }
+            });
+        }
+        return [new_delta, new_end];
+    }
+    if (typeof start === 'number') {
+        if (end === undefined && delta !== undefined) {
+            return [delta, start + delta];
+        } else if (end !== undefined && delta === undefined) {
+            return [end - start, end];
+        } else {
+            throw 'computeTheOther was expecting one of (delta, end) to be defined, but not both';
+        }
+    }
+    throw 'computeTheOther got (' + start + ', ' + delta + ', ' + end + ') as args and didn\'t know what to do';
+};
+
+var exactlyOneIsUndefined = function exactlyOneIsUndefined(val1, val2) {
+    return (val1 === undefined || val2 === undefined) && !(val1 === undefined && val2 === undefined);
+};
+
+var isNumber = function isNumber(val) {
+    return typeof val === 'number';
+};
+
+var applyDefaultsAndValidateTimes = function applyDefaultsAndValidateTimes(start_time, duration, end_time) {
+    if (start_time === undefined) start_time = Date.now();
+
+    if (duration === undefined && end_time === undefined) {
+        duration = 1000; // removing this semi-colon results in a gnarly parse error
+
+        var _computeTheOther7 = computeTheOther(start_time, duration, end_time);
+
+        var _computeTheOther8 = (0, _slicedToArray3.default)(_computeTheOther7, 2);
+
+        duration = _computeTheOther8[0];
+        end_time = _computeTheOther8[1];
+    } else if (exactlyOneIsUndefined(duration, end_time)) {
+        var _computeTheOther9 = computeTheOther(start_time, duration, end_time);
+
+        var _computeTheOther10 = (0, _slicedToArray3.default)(_computeTheOther9, 2);
+
+        duration = _computeTheOther10[0];
+        end_time = _computeTheOther10[1];
+    } else {
+        throw 'only one of (duration, end_time) should be passed in, not both.';
+    }
+
+    if (start_time > end_time) {
+        throw 'start_time (' + start_time + ') > end_time (' + end_time + ')';
+    }
+    return [start_time, duration, end_time];
+};
+
+var validateAnimation = function validateAnimation(animation) {
+    var end_time = animation.end_time;
+    var end_state = animation.end_state;
+
+    var computed_end_state = (0, _util.computeAnimatedState)({
+        animations: [animation],
+        warped_time: end_time
+    });
+    if (!(0, _lodash2.default)(computed_end_state, end_state)) {
+        throw 'Invalid Animate: end_state !== computed_end_state for animation:' + ('\n' + (0, _stringify2.default)(animation, null, '  ') + ':') + ((0, _stringify2.default)(computed_end_state, null, '  ') + ' !==') + ('' + (0, _stringify2.default)(end_state, null, '  '));
+    }
+};
+
+var Animate = exports.Animate = function Animate(_ref3) {
+    var type = _ref3.type,
+        path = _ref3.path,
+        start_time = _ref3.start_time,
+        end_time = _ref3.end_time,
+        duration = _ref3.duration,
         start_state = _ref3.start_state,
         end_state = _ref3.end_state,
-        amt = _ref3.amt;
+        delta_state = _ref3.delta_state,
+        _ref3$merge = _ref3.merge,
+        merge = _ref3$merge === undefined ? false : _ref3$merge,
+        _ref3$curve = _ref3.curve,
+        curve = _ref3$curve === undefined ? 'linear' : _ref3$curve,
+        _ref3$unit = _ref3.unit,
+        unit = _ref3$unit === undefined ? null : _ref3$unit,
+        _ref3$tick = _ref3.tick,
+        tick = _ref3$tick === undefined ? null : _ref3$tick;
 
-    if (typeof start_state === 'number') {
-        if ([start_state, end_state, amt].filter(function (a) {
-            return typeof a == 'number';
-        }).length < 2) {
-            console.log({ start_state: start_state, end_state: end_state, amt: amt });
-            throw 'Need at least 2/3 to calculate animation: start_state, end_state, amt';
-        }
 
-        if (start_state === undefined) start_state = end_state - amt;
-        if (end_state === undefined) end_state = start_state + amt;
-        if (amt === undefined) amt = end_state - start_state;
+    var throw_msg = function throw_msg(msg) {
+        return 'Invalid call to Animate w/path ' + path + ': ' + msg;
+    };
 
-        if (start_state + amt != end_state) {
-            console.log({ start_state: start_state, end_state: end_state, amt: amt });
-            throw 'Conflicting values, Animation end_state != start + amt';
-        }
+    var _start_time = void 0,
+        _end_time = void 0,
+        _duration = void 0,
+        _end_state = void 0,
+        _delta_state = void 0,
+        _tick = void 0,
+        _split_path = void 0,
+        _type = void 0;
 
-        return { start_state: start_state, end_state: end_state, amt: amt };
+    _start_time = start_time === undefined ? Date.now() : start_time;
+    if (exactlyOneIsUndefined(duration, end_time)) {
+        var _computeTheOther11 = computeTheOther(_start_time, duration, end_time);
+
+        var _computeTheOther12 = (0, _slicedToArray3.default)(_computeTheOther11, 2);
+
+        _duration = _computeTheOther12[0];
+        _end_time = _computeTheOther12[1];
     } else {
-        if (start_state === undefined) start_state = {};
-        if (end_state === undefined) end_state = {};
-        if (amt === undefined) amt = {};
-
-        if (key !== undefined) return checked_animation_amt({ start_state: start_state[key], end_state: end_state[key], amt: amt[key] });
-
-        if ((typeof start_state === 'undefined' ? 'undefined' : (0, _typeof3.default)(start_state)) !== 'object' || (typeof end_state === 'undefined' ? 'undefined' : (0, _typeof3.default)(end_state)) !== 'object' || (typeof amt === 'undefined' ? 'undefined' : (0, _typeof3.default)(amt)) !== 'object') {
-            throw 'Incompatible types passed as {start_state, end_state, amt}, must all be objects or numbers';
-        }
-
-        var keys = (0, _keys2.default)(start_state);
-        if (!keys.length) keys = (0, _keys2.default)(end_state);
-        if (!keys.length) keys = (0, _keys2.default)(amt);
-
-        return keys.reduce(function (acc, key) {
-            var amts = checked_animation_amt({ start_state: start_state[key], end_state: end_state[key], amt: amt[key] });
-            acc.start_state[key] = amts.start_state;
-            acc.end_state[key] = amts.end_state;
-            acc.amt[key] = amts.amt;
-            return acc;
-        }, { start_state: {}, end_state: {}, amt: {} });
+        _duration = duration;
+        _end_time = end_time;
     }
+
+    if (exactlyOneIsUndefined(delta_state, end_state)) {
+        var _computeTheOther13 = computeTheOther(start_state, delta_state, end_state);
+
+        var _computeTheOther14 = (0, _slicedToArray3.default)(_computeTheOther13, 2);
+
+        _delta_state = _computeTheOther14[0];
+        _end_state = _computeTheOther14[1];
+    } else {
+        _delta_state = delta_state;
+        _end_state = end_state;
+    }
+
+    if (_start_time > _end_time) {
+        throw throw_msg('start_time (' + start_time + ') > end_time (' + end_time + ').');
+    }
+
+    _split_path = path.split('/').slice(1);
+
+    if (_split_path.slice(-1) == '') {
+        throw throw_msg('path has a trailing slash');
+    }
+
+    var animation = {
+        type: type || 'ANIMATE',
+        split_path: _split_path,
+        start_time: _start_time,
+        end_time: _end_time,
+        duration: _duration,
+        end_state: _end_state,
+        delta_state: _delta_state,
+
+        start_state: start_state,
+        path: path,
+        curve: curve,
+        unit: unit,
+        merge: merge
+    };
+    _tick = tick || tick_func(animation);
+    animation.tick = _tick;
+
+    return (0, _util.immutify)(animation);
 };
 
-var KeyedAnimation = function KeyedAnimation(_ref4) {
-    var type = _ref4.type,
-        path = _ref4.path,
-        key = _ref4.key,
+var Style = exports.Style = function Style(_ref4) {
+    var path = _ref4.path,
         start_time = _ref4.start_time,
         end_time = _ref4.end_time,
         duration = _ref4.duration,
         start_state = _ref4.start_state,
         end_state = _ref4.end_state,
-        amt = _ref4.amt,
-        curve = _ref4.curve,
-        unit = _ref4.unit;
+        delta_state = _ref4.delta_state,
+        _ref4$curve = _ref4.curve,
+        curve = _ref4$curve === undefined ? 'linear' : _ref4$curve,
+        _ref4$unit = _ref4.unit,
+        unit = _ref4$unit === undefined ? 'px' : _ref4$unit;
+
+
+    // console.log({start_state, end_state, delta_state})
+    try {
+        var _applyDefaultsAndVali = applyDefaultsAndValidateTimes(start_time, duration, end_time);
+
+        var _applyDefaultsAndVali2 = (0, _slicedToArray3.default)(_applyDefaultsAndVali, 3);
+
+        start_time = _applyDefaultsAndVali2[0];
+        duration = _applyDefaultsAndVali2[1];
+        end_time = _applyDefaultsAndVali2[2];
+
+
+        if ((typeof start_state === 'undefined' ? 'undefined' : (0, _typeof3.default)(start_state)) !== 'object') {
+            throw 'expected an object for start_state but got ' + start_state;
+        }
+        if (exactlyOneIsUndefined(delta_state, end_state)) {
+            if ((typeof delta_state === 'undefined' ? 'undefined' : (0, _typeof3.default)(delta_state)) === 'object') {
+                var missing_key = (0, _util.findMissingKey)(delta_state, start_state, false);
+                if (missing_key !== null) {
+                    throw 'found key ' + missing_key + ' in delta_state but not start_state';
+                }
+            } else if ((typeof end_state === 'undefined' ? 'undefined' : (0, _typeof3.default)(end_state)) === 'object') {
+                var _missing_key = (0, _util.findMissingKey)(start_state, end_state, true);
+                if (_missing_key !== null) {
+                    throw 'found key ' + _missing_key + ' in one of ' + '(start_state, end_state) but not the other';
+                }
+            } else {
+                var msg = 'expected one of (delta_state, end_state) as object, ' + ('but got (' + delta_state + ', ' + end_state + ')');
+                throw msg;
+            }
+
+            var _computeTheOther15 = computeTheOther(start_state, delta_state, end_state);
+
+            var _computeTheOther16 = (0, _slicedToArray3.default)(_computeTheOther15, 2);
+
+            delta_state = _computeTheOther16[0];
+            end_state = _computeTheOther16[1];
+        } else {
+            var _msg = 'expected one of (delta_state, end_state) as object, ' + ('but got (' + delta_state + ', ' + end_state + ')');
+            throw _msg;
+        }
+    } catch (err) {
+        throw 'Invalid call to Style w/path \'' + path + '\': ' + err;
+    }
+
+    var tick_funcs = (0, _util.mapObj)(delta_state, function (key) {
+        return tick_func({
+            duration: duration,
+            start_state: start_state[key],
+            delta_state: delta_state[key],
+            end_state: end_state[key],
+            curve: curve,
+            unit: unit
+        });
+    });
+    var delta_keys = (0, _keys2.default)(delta_state);
+    var tick = function tick(time_elapsed) {
+        return (0, _util.mapObj)(start_state, function (key) {
+            if (delta_keys.includes(key)) {
+                return tick_funcs[key](time_elapsed);
+            }
+            return start_state[key];
+        });
+    };
+
     return Animate({
-        type: type,
-        path: path + '/' + key,
-        key: key,
+        path: path,
         start_time: start_time,
-        end_time: end_time,
         duration: duration,
-        start_state: start_state && start_state[key],
-        end_state: end_state && end_state[key],
-        amt: amt && amt[key],
-        curve: curve, unit: unit
+        end_time: end_time,
+        start_state: start_state,
+        delta_state: delta_state,
+        end_state: end_state,
+        curve: curve,
+        unit: unit,
+        tick: tick,
+        merge: true
     });
 };
 
-var Become = exports.Become = function Become(_ref5) {
-    var path = _ref5.path,
-        state = _ref5.state,
+var AnimateCSS = exports.AnimateCSS = function AnimateCSS(_ref5) {
+    var name = _ref5.name,
+        path = _ref5.path,
         start_time = _ref5.start_time,
-        _ref5$end_time = _ref5.end_time,
-        end_time = _ref5$end_time === undefined ? Infinity : _ref5$end_time,
-        _ref5$duration = _ref5.duration,
-        duration = _ref5$duration === undefined ? Infinity : _ref5$duration;
+        end_time = _ref5.end_time,
+        duration = _ref5.duration,
+        _ref5$curve = _ref5.curve,
+        curve = _ref5$curve === undefined ? 'linear' : _ref5$curve;
 
-    if (start_time === undefined) start_time = new Date().getTime();
-
-    var _checked_animation_du2 = checked_animation_duration({ start_time: start_time, end_time: end_time, duration: duration }),
-        start_time = _checked_animation_du2.start_time,
-        end_time = _checked_animation_du2.end_time,
-        duration = _checked_animation_du2.duration;
-
-    if (start_time === undefined || path === undefined) {
-        console.log({ path: path, state: state, start_time: start_time, end_time: end_time, duration: duration });
-        throw 'Become animation must have a start_time and path defined.';
-    }
-    return {
-        type: 'BECOME',
-        path: path,
-        state: state,
-        start_time: start_time,
-        end_time: end_time,
-        duration: duration,
-        tick: function tick(delta) {
-            return state;
-        }
-    };
-};
-
-var Animate = exports.Animate = function Animate(_ref6) {
-    var type = _ref6.type,
-        path = _ref6.path,
-        start_time = _ref6.start_time,
-        end_time = _ref6.end_time,
-        duration = _ref6.duration,
-        start_state = _ref6.start_state,
-        end_state = _ref6.end_state,
-        amt = _ref6.amt,
-        _ref6$curve = _ref6.curve,
-        curve = _ref6$curve === undefined ? 'linear' : _ref6$curve,
-        _ref6$unit = _ref6.unit,
-        unit = _ref6$unit === undefined ? null : _ref6$unit,
-        _ref6$tick = _ref6.tick,
-        tick = _ref6$tick === undefined ? null : _ref6$tick;
-
-    if (start_time === undefined) start_time = new Date().getTime();
-
-    var animation = {
-        type: type ? type : 'ANIMATE',
-        path: path,
-        start_time: start_time, end_time: end_time, duration: duration,
-        start_state: start_state, end_state: end_state, amt: amt,
-        curve: curve,
-        unit: unit,
-        tick: tick
-    };
-
-    if (path === undefined) {
-        console.log(animation);
-        throw 'Animate animation must have a path defined.';
-    }
 
     try {
-        if (typeof start_state === 'number' || typeof end_state === 'number' || typeof amt === 'number') {
-            animation = (0, _extends3.default)({}, animation, checked_animation_amt({ start_state: start_state, end_state: end_state, amt: amt }));
-        }
-        if (typeof start_time === 'number' || typeof end_time === 'number' || typeof duration === 'number') {
-            animation = (0, _extends3.default)({}, animation, checked_animation_duration({ start_time: start_time, end_time: end_time, duration: duration }));
-        }
-        if (!animation.tick) {
-            animation.tick = unit_tick(animation);
-        }
-    } catch (e) {
-        console.log('INVALID ANIMATION:', animation);
-        throw 'Exception while creating animation object ' + type + ':\n  ' + e + ' ' + (e.message ? e.message : '');
+        var _applyDefaultsAndVali3 = applyDefaultsAndValidateTimes(start_time, duration, end_time);
+
+        var _applyDefaultsAndVali4 = (0, _slicedToArray3.default)(_applyDefaultsAndVali3, 3);
+
+        start_time = _applyDefaultsAndVali4[0];
+        duration = _applyDefaultsAndVali4[1];
+        end_time = _applyDefaultsAndVali4[2];
+    } catch (err) {
+        throw 'Invalid call to AnimateCSS w/path \'' + path + '\': ' + err;
     }
 
-    // console.log(animation.type, animation)
-    return animation;
-};
-
-var AnimateCSS = exports.AnimateCSS = function AnimateCSS(_ref7) {
-    var name = _ref7.name,
-        path = _ref7.path,
-        start_time = _ref7.start_time,
-        end_time = _ref7.end_time,
-        _ref7$duration = _ref7.duration,
-        duration = _ref7$duration === undefined ? 1000 : _ref7$duration,
-        _ref7$curve = _ref7.curve,
-        curve = _ref7$curve === undefined ? 'linear' : _ref7$curve;
-
-    if (start_time === undefined) start_time = new Date().getTime();
-
-    var _checked_animation_du3 = checked_animation_duration({ start_time: start_time, end_time: end_time, duration: duration }),
-        start_time = _checked_animation_du3.start_time,
-        end_time = _checked_animation_du3.end_time,
-        duration = _checked_animation_du3.duration;
-
-    var start_state = { name: name, duration: duration, curve: curve, delay: 0, playState: 'paused' };
-    var end_state = { name: name, duration: duration, curve: curve, delay: duration, playState: 'paused' };
-
+    var start_state = {
+        name: name,
+        duration: duration,
+        curve: curve,
+        delay: 0,
+        playState: 'paused'
+    };
+    var end_state = (0, _extends3.default)({}, start_state, {
+        delay: duration
+    });
     return Animate({
         type: 'CSS_' + (name ? name.toUpperCase() : 'END'),
         path: path + '/style/animation/' + name,
@@ -282,105 +435,203 @@ var AnimateCSS = exports.AnimateCSS = function AnimateCSS(_ref7) {
         curve: curve,
         start_state: start_state,
         end_state: end_state,
-        amt: { delay: duration },
-        tick: function tick(delta) {
-            if (delta <= 0) {
+        delta_state: { delay: duration },
+        tick: function tick(time_elapsed) {
+            if (time_elapsed <= 0) {
                 return start_state;
-            } else if (delta >= duration) {
+            } else if (time_elapsed >= duration) {
                 return end_state;
             } else {
-                return { name: name, duration: duration, curve: curve, delay: delta, playState: 'paused' };
+                return (0, _extends3.default)({}, start_state, { delay: time_elapsed });
             }
         }
     });
 };
 
-var Translate = exports.Translate = function Translate(_ref8) {
-    var path = _ref8.path,
-        start_time = _ref8.start_time,
-        end_time = _ref8.end_time,
-        _ref8$duration = _ref8.duration,
-        duration = _ref8$duration === undefined ? 1000 : _ref8$duration,
-        start_state = _ref8.start_state,
-        end_state = _ref8.end_state,
-        amt = _ref8.amt,
-        _ref8$curve = _ref8.curve,
-        curve = _ref8$curve === undefined ? 'linear' : _ref8$curve,
-        _ref8$unit = _ref8.unit,
-        unit = _ref8$unit === undefined ? 'px' : _ref8$unit;
+var Translate = exports.Translate = function Translate(_ref6) {
+    var path = _ref6.path,
+        start_time = _ref6.start_time,
+        end_time = _ref6.end_time,
+        duration = _ref6.duration,
+        start_state = _ref6.start_state,
+        end_state = _ref6.end_state,
+        delta_state = _ref6.delta_state,
+        _ref6$curve = _ref6.curve,
+        curve = _ref6$curve === undefined ? 'linear' : _ref6$curve,
+        _ref6$unit = _ref6.unit,
+        unit = _ref6$unit === undefined ? 'px' : _ref6$unit;
 
-    if (start_time === undefined) start_time = new Date().getTime();
-    if (start_state === undefined) start_state = { top: 0, left: 0 };
+
+    var translate_throw = function translate_throw(msg) {
+        throw 'Invalid call to Translate w/path \'' + path + '\': ' + msg;
+    };
+
+    try {
+        var _applyDefaultsAndVali5 = applyDefaultsAndValidateTimes(start_time, duration, end_time);
+
+        var _applyDefaultsAndVali6 = (0, _slicedToArray3.default)(_applyDefaultsAndVali5, 3);
+
+        start_time = _applyDefaultsAndVali6[0];
+        duration = _applyDefaultsAndVali6[1];
+        end_time = _applyDefaultsAndVali6[2];
+    } catch (err) {
+        translate_throw(err);
+    }
+
+    if (!exactlyOneIsUndefined(delta_state, end_state)) {
+        translate_throw('expected exactly one of (delta_state, end_state) to be defined');
+    }
+    if ((typeof start_state === 'undefined' ? 'undefined' : (0, _typeof3.default)(start_state)) !== 'object') {
+        translate_throw('expected an object for start_state but got ' + start_state);
+    }
+    if ((0, _keys2.default)(start_state).length === 0) {
+        translate_throw('passed in an empty start_state!');
+    }
+    var expected_keys = ['top', 'left', 'bottom', 'right'];
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = (0, _getIterator3.default)((0, _keys2.default)(start_state)), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var key = _step.value;
+
+            if (!expected_keys.includes(key)) {
+                translate_throw('passed in key ' + key + ' to translate. Should be one of ' + '(\'top\', \'left\', \'bottom\', \'right\')');
+            }
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
+    if (delta_state === undefined) {
+        if ((typeof end_state === 'undefined' ? 'undefined' : (0, _typeof3.default)(end_state)) !== 'object') {
+            translate_throw('expected an object for end_state but got ' + end_state);
+        }
+        var missing_key = (0, _util.findMissingKey)(end_state, start_state, true);
+        if (missing_key !== null) {
+            translate_throw('found key ' + missing_key + ' in one of (start_state, end_state) but not both');
+        }
+    } else {
+        if ((typeof delta_state === 'undefined' ? 'undefined' : (0, _typeof3.default)(delta_state)) !== 'object') {
+            translate_throw('expected an object for delta_state but got ' + delta_state);
+        }
+        var _missing_key2 = (0, _util.findMissingKey)(delta_state, start_state, true);
+        if (_missing_key2 !== null) {
+            translate_throw('found key ' + _missing_key2 + ' in one of (start_state, delta_state) but not both');
+        }
+    }
+
+    var _computeTheOther17 = computeTheOther(start_state, delta_state, end_state);
+
+    var _computeTheOther18 = (0, _slicedToArray3.default)(_computeTheOther17, 2);
+
+    delta_state = _computeTheOther18[0];
+    end_state = _computeTheOther18[1];
+
+
     path = path + '/style/transform/translate';
     var type = 'TRANSLATE';
 
-    var animation = { type: type, path: path, start_time: start_time, end_time: end_time, duration: duration, start_state: start_state, end_state: end_state, amt: amt, curve: curve, unit: unit };
+    var animation = { type: type, path: path, start_time: start_time, end_time: end_time, duration: duration,
+        start_state: start_state, end_state: end_state, delta_state: delta_state, curve: curve, unit: unit };
 
-    var left_tick = unit_tick(animation, 'left', 0); //  TODO: change left => /left to keep state selectors consistent
-    var top_tick = unit_tick(animation, 'top', 0);
+    var left_tick = tick_func({
+        duration: duration,
+        curve: curve,
+        unit: unit,
+        start_state: start_state['left'],
+        delta_state: delta_state['left'],
+        end_state: end_state['left']
+    });
+    var top_tick = tick_func({
+        duration: duration,
+        curve: curve,
+        unit: unit,
+        start_state: start_state['top'],
+        delta_state: delta_state['top'],
+        end_state: end_state['top']
+    });
 
-    animation.tick = function (delta) {
+    animation.tick = function (time_elapsed) {
         return {
-            left: left_tick(delta),
-            top: top_tick(delta)
+            left: left_tick(time_elapsed),
+            top: top_tick(time_elapsed)
         };
     };
     return Animate(animation);
 };
 
-var TranslateTo = exports.TranslateTo = function TranslateTo(_ref9) {
-    var path = _ref9.path,
-        start_time = _ref9.start_time,
-        end_time = _ref9.end_time,
-        _ref9$duration = _ref9.duration,
-        duration = _ref9$duration === undefined ? 1000 : _ref9$duration,
-        start_state = _ref9.start_state,
-        end_state = _ref9.end_state,
-        amt = _ref9.amt,
-        _ref9$curve = _ref9.curve,
-        curve = _ref9$curve === undefined ? 'linear' : _ref9$curve,
-        _ref9$unit = _ref9.unit,
-        unit = _ref9$unit === undefined ? 'px' : _ref9$unit;
+var Opacity = exports.Opacity = function Opacity(_ref7) {
+    var path = _ref7.path,
+        start_time = _ref7.start_time,
+        end_time = _ref7.end_time,
+        duration = _ref7.duration,
+        start_state = _ref7.start_state,
+        end_state = _ref7.end_state,
+        delta_state = _ref7.delta_state,
+        _ref7$curve = _ref7.curve,
+        curve = _ref7$curve === undefined ? 'linear' : _ref7$curve,
+        _ref7$unit = _ref7.unit,
+        unit = _ref7$unit === undefined ? null : _ref7$unit;
 
-    var anims = [];
-    var has_left = (start_state || end_state || amt).left !== undefined;
-    var has_top = (start_state || end_state || amt).top !== undefined;
-    if (has_left) {
-        anims = [KeyedAnimation({
-            type: 'TRANSLATE_TO_LEFT',
-            path: path + '/style',
-            key: 'left',
-            start_time: start_time, end_time: end_time, duration: duration,
-            start_state: start_state, end_state: end_state, amt: amt,
-            curve: curve, unit: unit
-        })];
-    }
-    if (has_top) {
-        anims = [].concat((0, _toConsumableArray3.default)(anims), [KeyedAnimation({
-            type: 'TRANSLATE_TO_TOP',
-            path: path + '/style',
-            key: 'top',
-            start_time: start_time, end_time: end_time, duration: duration,
-            start_state: start_state, end_state: end_state, amt: amt,
-            curve: curve, unit: unit
-        })]);
-    }
-    if (!has_left && !has_top) throw 'TranslateTo start_state and end_state must have {left or top}';
-    return anims;
-};
+    var opacity_throw = function opacity_throw(msg) {
+        throw 'Invalid call to Opacity w/path \'' + path + '\': ' + msg;
+    };
+    try {
+        var _applyDefaultsAndVali7 = applyDefaultsAndValidateTimes(start_time, duration, end_time);
 
-var Opacity = exports.Opacity = function Opacity(_ref10) {
-    var path = _ref10.path,
-        start_time = _ref10.start_time,
-        end_time = _ref10.end_time,
-        duration = _ref10.duration,
-        start_state = _ref10.start_state,
-        end_state = _ref10.end_state,
-        amt = _ref10.amt,
-        _ref10$curve = _ref10.curve,
-        curve = _ref10$curve === undefined ? 'linear' : _ref10$curve,
-        _ref10$unit = _ref10.unit,
-        unit = _ref10$unit === undefined ? null : _ref10$unit;
+        var _applyDefaultsAndVali8 = (0, _slicedToArray3.default)(_applyDefaultsAndVali7, 3);
+
+        start_time = _applyDefaultsAndVali8[0];
+        duration = _applyDefaultsAndVali8[1];
+        end_time = _applyDefaultsAndVali8[2];
+    } catch (err) {
+        opacity_throw(err);
+    }
+
+    if (typeof start_state !== 'number') {
+        opacity_throw('expceted a number for start_state but got ' + start_state);
+    }
+    if (!exactlyOneIsUndefined(end_state, delta_state)) {
+        translate_throw('expected exactly one of (delta_state, end_state) to be defined');
+    }
+    if (end_state === undefined) {
+        if (typeof delta_state !== 'number') {
+            opacity_throw('expceted a number for delta_state but got ' + delta_state);
+        }
+    } else {
+        if (typeof end_state !== 'number') {
+            opacity_throw('expceted a number for end_state but got ' + end_state);
+        }
+    }
+
+    var _computeTheOther19 = computeTheOther(start_state, delta_state, end_state);
+
+    var _computeTheOther20 = (0, _slicedToArray3.default)(_computeTheOther19, 2);
+
+    delta_state = _computeTheOther20[0];
+    end_state = _computeTheOther20[1];
+
+
+    if (start_state < 0 || start_state > 1) {
+        opacity_throw('expected a start_state in the range of [0, 1], but got ' + start_state);
+    }
+    if (end_state < 0 || end_state > 1) {
+        opacity_throw('expected a end_state in the range of [0, 1], but got ' + end_state);
+    }
+
     return Animate({
         type: 'OPACITY',
         path: path + '/style/opacity',
@@ -389,24 +640,65 @@ var Opacity = exports.Opacity = function Opacity(_ref10) {
         duration: duration,
         start_state: start_state,
         end_state: end_state,
-        amt: amt,
+        delta_state: delta_state,
         curve: curve,
         unit: unit
     });
 };
 
-var Rotate = exports.Rotate = function Rotate(_ref11) {
-    var path = _ref11.path,
-        start_time = _ref11.start_time,
-        end_time = _ref11.end_time,
-        duration = _ref11.duration,
-        start_state = _ref11.start_state,
-        end_state = _ref11.end_state,
-        amt = _ref11.amt,
-        _ref11$curve = _ref11.curve,
-        curve = _ref11$curve === undefined ? 'linear' : _ref11$curve,
-        _ref11$unit = _ref11.unit,
-        unit = _ref11$unit === undefined ? 'deg' : _ref11$unit;
+var Rotate = exports.Rotate = function Rotate(_ref8) {
+    var path = _ref8.path,
+        start_time = _ref8.start_time,
+        end_time = _ref8.end_time,
+        duration = _ref8.duration,
+        start_state = _ref8.start_state,
+        end_state = _ref8.end_state,
+        delta_state = _ref8.delta_state,
+        _ref8$curve = _ref8.curve,
+        curve = _ref8$curve === undefined ? 'linear' : _ref8$curve,
+        _ref8$unit = _ref8.unit,
+        unit = _ref8$unit === undefined ? 'deg' : _ref8$unit;
+
+
+    var rotate_throw = function rotate_throw(msg) {
+        throw 'Invalid call to Rotate w/path \'' + path + '\': ' + msg;
+    };
+    try {
+        var _applyDefaultsAndVali9 = applyDefaultsAndValidateTimes(start_time, duration, end_time);
+
+        var _applyDefaultsAndVali10 = (0, _slicedToArray3.default)(_applyDefaultsAndVali9, 3);
+
+        start_time = _applyDefaultsAndVali10[0];
+        duration = _applyDefaultsAndVali10[1];
+        end_time = _applyDefaultsAndVali10[2];
+    } catch (err) {
+        rotate_throw(err);
+    }
+
+    if (typeof start_state !== 'number') {
+        rotate_throw('expceted a number for start_state but got ' + start_state);
+    }
+    if (!exactlyOneIsUndefined(end_state, delta_state)) {
+        translate_throw('expected exactly one of (delta_state, end_state) to be defined');
+    }
+    if (end_state === undefined) {
+        if (typeof delta_state !== 'number') {
+            rotate_throw('expceted a number for delta_state but got ' + delta_state);
+        }
+    } else {
+        if (typeof end_state !== 'number') {
+            rotate_throw('expceted a number for end_state but got ' + end_state);
+        }
+    }
+
+    var _computeTheOther21 = computeTheOther(start_state, delta_state, end_state);
+
+    var _computeTheOther22 = (0, _slicedToArray3.default)(_computeTheOther21, 2);
+
+    delta_state = _computeTheOther22[0];
+    end_state = _computeTheOther22[1];
+
+
     return Animate({
         type: 'ROTATE',
         path: path + '/style/transform/rotate',
@@ -415,7 +707,7 @@ var Rotate = exports.Rotate = function Rotate(_ref11) {
         duration: duration,
         start_state: start_state,
         end_state: end_state,
-        amt: amt,
+        delta_state: delta_state,
         curve: curve,
         unit: unit
     });
@@ -430,9 +722,9 @@ var Repeat = exports.Repeat = function Repeat(animation) {
         start_time = animation.start_time,
         duration = animation.duration;
 
-    if (start_time === undefined) start_time = new Date().getTime();
-    var repeated_tick = function repeated_tick(delta) {
-        return tick((0, _util.mod)(delta, duration));
+    if (start_time === undefined) start_time = Date.now();
+    var repeated_tick = function repeated_tick(time_elapsed) {
+        return tick((0, _util.mod)(time_elapsed, duration));
     };
     return (0, _extends3.default)({}, animation, {
         repeat: repeat,
@@ -445,16 +737,16 @@ var Repeat = exports.Repeat = function Repeat(animation) {
 // reverse a single animation (which may be composed of several objects)
 var Reverse = exports.Reverse = function Reverse(animation) {
     (0, _util.checkIsValidAnimation)(animation);
-    var _tick = animation.tick,
+    var _tick2 = animation.tick,
         start_time = animation.start_time,
         duration = animation.duration;
 
-    if (start_time === undefined) start_time = new Date().getTime();
+    if (start_time === undefined) start_time = Date.now();
     return (0, _extends3.default)({}, animation, {
         start_time: end_time,
         end_time: start_time,
-        tick: function tick(delta) {
-            return _tick(duration - delta);
+        tick: function tick(time_elapsed) {
+            return _tick2(duration - time_elapsed);
         }
     });
 };
@@ -467,16 +759,16 @@ var Reverse = exports.Reverse = function Reverse(animation) {
 // make each animation in a sequence start after the last one ends
 var Sequential = exports.Sequential = function Sequential(animations, start_time) {
     (0, _util.checkIsValidSequence)(animations);
-    if (start_time === undefined) start_time = new Date().getTime();
+    if (start_time === undefined) start_time = Date.now();
     var seq = [];
     var last_end = start_time;
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+    var _iteratorNormalCompletion2 = true;
+    var _didIteratorError2 = false;
+    var _iteratorError2 = undefined;
 
     try {
-        for (var _iterator = (0, _getIterator3.default)(animations), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var animation = _step.value;
+        for (var _iterator2 = (0, _getIterator3.default)(animations), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            var animation = _step2.value;
 
             seq.push((0, _extends3.default)({}, animation, {
                 start_time: last_end,
@@ -485,16 +777,16 @@ var Sequential = exports.Sequential = function Sequential(animations, start_time
             last_end = animation.duration == Infinity ? last_end + 1 : last_end + animation.duration;
         }
     } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
     } finally {
         try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
+            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
             }
         } finally {
-            if (_didIteratorError) {
-                throw _iteratorError;
+            if (_didIteratorError2) {
+                throw _iteratorError2;
             }
         }
     }
