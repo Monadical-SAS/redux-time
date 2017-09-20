@@ -28,7 +28,6 @@ const shouldAnimate = (anim_queue, timestamp, speed) => {
 
 class AnimationsHandler {
     constructor({store, initial_state, autostart_animating=true, requestFrame=null}) {
-
         if (requestFrame === null) {
             if (global.DEBUG) console.log('Running animations in browser')
             this.requestFrame = (func) =>

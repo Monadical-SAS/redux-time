@@ -22,7 +22,7 @@ const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/examples
 
 const initial_ball_state = {following: false}
 const ballReducer = (state=initial_ball_state, action) => {
-    console.log({state, action})
+    // console.log({state, action})
     switch (action.type) {
         case 'BALL_SET_FOLLOWING':{
             return {following: action.following}
@@ -161,7 +161,7 @@ const mapDispatchToProps = (dispatch, props) => ({
     animateBallFollow: (following, e) => {
         e.preventDefault()
         console.log(FOLLOW_ANIMATIONS())
-        console.log({e, following})
+        // console.log({e, following})
         if (following) {
             dispatch({type: 'ANIMATE', animations: STOP_FOLLOWING_ANIMATIONS()})
         } else {

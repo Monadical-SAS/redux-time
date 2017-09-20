@@ -8,7 +8,9 @@ import {assert, print, assertSortedObjsInOrder,
 import {Animate, Become, Repeat, Translate, Opacity,
         Rotate} from './animations.js'
 
+
 export const run_integration_tests = () => {
+
 
 // Animation tests
 const initial_state = {

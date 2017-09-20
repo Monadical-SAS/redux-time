@@ -564,4 +564,3 @@ export const computeAnimatedState = ({
     }
     return applyPatches({}, patches)
 }
-

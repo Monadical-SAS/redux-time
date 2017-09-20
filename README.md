@@ -408,10 +408,6 @@ import {...} from 'redux-time/src/animations'
     // move an element relative to its current position, using transform: translate(x, y)
     Translate({path, start_time, end_time, duration=1000, start_state, end_state, delta_state, curve='linear', unit='px'})
 
-    // move an element's absolute or fixed position using {top, left}
-    TranslateTo({path, start_time, end_time, duration=1000, start_state, end_state, delta_state, curve='linear', unit='px'})
-    // Must be used with ... because it's actually two animations!
-
     // animate an element changing opacity
     Opacity({path, start_time, end_time, duration, start_state, end_state, delta_state, curve='linear', unit=null})
 
