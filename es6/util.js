@@ -447,12 +447,14 @@ export const finalFrameAnimations = ({anim_queue, warped_time, former_time}) => 
 }
 
 
-export const pastAnimations = (anim_queue, timestamp) =>
-    anim_queue.filter(({start_time, duration}) =>
-        (start_time + duration < timestamp))
+export const pastAnimations = ({anim_queue, warped_time}) => {
+    return anim_queue.filter(({start_time, duration}) =>
+        (start_time + duration < warped_time))
+}
 
-export const futureAnimations = (anim_queue, timestamp) =>
-    anim_queue.filter(({start_time, duration}) => (start_time > timestamp))
+export const futureAnimations = (anim_queue, warped_time) => {
+    return anim_queue.filter(({start_time, duration}) => (start_time > warped_time))
+}
 
 
 // export const sortedAnimations = (anim_queue) => {

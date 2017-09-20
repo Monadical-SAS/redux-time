@@ -27,15 +27,15 @@ const shouldAnimate = (anim_queue, timestamp, speed) => {
 
 
 class AnimationsHandler {
-    constructor({store, initial_state, autostart_animating=true, frameLoop=null}) {
+    constructor({store, initial_state, autostart_animating=true, requestFrame=null}) {
 
-        if (frameLoop === null) {
+        if (requestFrame === null) {
             if (global.DEBUG) console.log('Running animations in browser')
-            this.frameLoop = (func) =>
+            this.requestFrame = (func) =>
                 window.requestAnimationFrame.call(window, func)
         } else {
-            if (global.DEBUG) console.log('Running animations with custom frameLoop')
-            this.frameLoop = frameLoop
+            if (global.DEBUG) console.log('Running animations with custom requestFrame')
+            this.requestFrame = requestFrame
         }
 
         const speed = store.getState().animations.speed
@@ -74,7 +74,7 @@ class AnimationsHandler {
     tick(high_res_timestamp) {
         this.animating = true
         // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
-            this.frameLoop(::this.tick)
+            this.requestFrame(::this.tick)
         // } else {
             // this.animating = false
         // }

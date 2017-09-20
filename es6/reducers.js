@@ -80,17 +80,9 @@ export const animationsReducer = (state=initial_state, action) => {
                 state.queue,
                 state.max_time_travel,
             )
-            // add any missing fields
-            const new_animation_objs = anim_objs.map(anim => ({
-                ...anim,
-                // set to now if start_time is not provided
-                start_time: anim.start_time === undefined ?
-                    Date.now()
-                  : anim.start_time
-            }))
             return {
                 ...state,
-                queue: [...trimmed_queue, ...new_animation_objs],
+                queue: [...trimmed_queue, ...anim_objs],
             }
 
         case 'SET_SPEED':
