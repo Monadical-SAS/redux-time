@@ -3,7 +3,7 @@ import {assert, assertEqual, print, assertSortedObjsInOrder,
         uniqueAnimations, currentAnimations, finalFrameAnimations,
         computeAnimatedState} from './util.js'
 
-import {Become, Animate, Style, Translate,
+import {Become, Animate, Style, Translate, AnimateCSS,
         computeTheOther, RepeatSequence} from './animations.js'
 
 export const run_unit_tests = () => {
@@ -23,6 +23,7 @@ assertEqual(nested_key(15, 2, 6), '/0/0/1/3/7/15')
 
 assertEqual(nested_key(15, 3, 3), '/1/5/15')
 
+///////////////
 // Util tests
 const sort = (x) => x
 
@@ -38,26 +39,26 @@ assertSortedObjsInOrder([{0:0}, {1:1}, {2:2}], sort2, [2,1,0])
 
 const animation_queue = [
     Become({
-        path: '/',
+        path: '/danny_devito',
         state: 0,
         start_time: 0,
     }),
     Animate({
-        path: '/',
+        path: '/danny_devito',
         start_state: 1,
         end_state: 1,
         start_time: 50,
         end_time:  60,
     }),
     Animate({
-        path: '/',
+        path: '/danny_devito',
         start_state: 2,
         end_state: 2,
         start_time: 60,
         end_time:  70,
     }),
     Animate({
-        path: '/',
+        path: '/danny_devito',
         start_state: 3,
         end_state: 3,
         start_time: 65,
@@ -98,6 +99,7 @@ active_q = activeAnimations({
 assert(active_q.pop().start_state == 3, 'Animation 3 should take precedence')
 
 
+///////////////
 // ANIMATION UNIQUIFICATION
 const anim_queue = [
     {path: '/a/b'},
@@ -120,10 +122,12 @@ assert(
  'uniqueAnimations removed wrong parent/child paths'
 )
 
+///////////////
 // test immutify
 const immutable_obj = immutify({a: 1, b: 2})
 assertThrows(() => {immutable_obj.a = 5})
 
+///////////////
 // test computeTheOther on objects
 const start_state = {
     a: 0,
@@ -145,7 +149,82 @@ let [calc_delta2, calc_end2] = computeTheOther(start_state, delta_state, undefin
 assertEqual(calc_delta2, delta_state)
 assertEqual(calc_end2, end_state)
 
-// Test Style merges instead of overwriting
+
+
+///////////////
+// Test Become
+const become1 = Become({
+    path: '/abc/def',
+    state: 'testme',
+})
+
+// end and delta states are always null
+assertEqual(become1.end_state, null)
+assertEqual(become1.delta_state, null)
+// start_time defaults to now()
+assert((Date.now() - become1.start_time) < 10)
+// duration & end_time default to Infinity
+assertEqual(become1.duration, Infinity)
+assertEqual(become1.end_time, Infinity)
+// state is calculated correctly
+assertEqual(
+    computeAnimatedState({animations: [become1], warped_time: Date.now() + 1}),
+    {abc: {def: 'testme'}}
+)
+
+// can define end_time or duration, not both
+assertThrows(() => Become({
+    path: '/a',
+    state: 1,
+    start_time: 10,
+    end_time: 11,
+    duration: 5,
+}))
+
+// note: these are invariants across all Animate-types
+// cannot go backwards in time
+assertThrows(() => Become({path: '/r', state: 1, start_time: 10, end_time: 9}))
+// trailing slashes not allowed
+assertThrows(() => Become({path: '/p/', state: 1}))
+
+
+///////////////
+// Test Style
+
+// exactly one of (delta_state, end_state) must be defined
+assertThrows(() => Style({
+    path: '/x',
+    start_state: {a: 1},
+    delta_state: {a: 1},
+    end_state: {a: 2},
+}))
+assertThrows(() => Style({
+    path: '/v',
+    start_state: {a: 1},
+}))
+
+// all provided states must be of type Object
+assertThrows(() => Style({
+    path: '/j',
+    start_state: {a: 0},
+    delta_state: 100,
+}))
+
+// start_state and end_state must have the same schema
+assertThrows(() => Style({
+    path: '/y',
+    start_state: {a: 1},
+    end_state: {a: 2, b: 3},
+}))
+
+// delta_state must not have any keys not present in start_state
+assertThrows(() => Style({
+    path: '/n',
+    start_state: {a: 1, b: 0, c: 5},
+    delta_state: {a: 2, b: 3, d: 10},
+}))
+
+// merges instead of overwriting
 const original_style = Become({
     path: '/a/b',
     start_time: 0,
