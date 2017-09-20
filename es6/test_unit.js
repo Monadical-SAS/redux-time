@@ -3,7 +3,7 @@ import {assert, assertEqual, print, assertSortedObjsInOrder,
         uniqueAnimations, currentAnimations, finalFrameAnimations,
         computeAnimatedState} from './util.js'
 
-import {Become, Animate, Style, Translate, AnimateCSS,
+import {Become, Animate, Style, Translate, AnimateCSS, Opacity, Rotate,
         computeTheOther, RepeatSequence} from './animations.js'
 
 export const run_unit_tests = () => {
@@ -418,6 +418,51 @@ assertEqual(
     {round_thing: translateObj(0, -200)}
 )
 
+///////////////
+// Test Opacity
+
+// all states must be numbers between 0 and 1 inclusive
+assertThrows(() => Opacity({
+    path: '/soulcalibur',
+    start_state: 0,
+    end_state:  'giraffe',
+    duration: 500,
+}))
+assertThrows(() => Opacity({
+    path: '/diablo',
+    start_state: 1.5,
+    end_state:  0.25,
+    start_time: 0,
+    duration: 500,
+}))
+assertThrows(() => Opacity({
+    path: '/halo',
+    start_state: 1,
+    end_state:  -1,
+    start_time: 0,
+    duration: 500,
+}))
+
+const fade = Opacity({
+    path: '/civ',
+    start_state: 0.5,
+    end_state: 0,
+    start_time: 0,
+    duration: 500,
+})
+assertEqual(
+    computeAnimatedState({animations: [fade], warped_time: 0}),
+    {civ: {style: {opacity: 0.5}}}
+)
+assertEqual(
+    computeAnimatedState({animations: [fade], warped_time: 250}),
+    {civ: {style: {opacity: 0.25}}}
+)
+assertEqual(
+    computeAnimatedState({animations: [fade], warped_time: 500, former_time: 499}),
+    {civ: {style: {opacity: 0}}}
+)
+
 
 // on all animations:
 //     - start_time must be < end_time
@@ -445,7 +490,7 @@ assertEqual(
 //     - computeAnimatedState assertions at 0, duration, and somewhere in middle
 // Opacity
 //     - start and exactly one of (delta_state, end_state) must be defined
-//     - all provided states must be Number
+//     - all provided states must be Number between 0 and 1 (inclusive)
 //     - computeAnimatedState assertions at 0, duration, and somewhere in middle
 // Rotate
 //     - start and exactly one of (delta_state, end_state) must be defined

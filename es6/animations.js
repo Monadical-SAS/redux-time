@@ -420,15 +420,43 @@ export const Translate = ({
 export const Opacity = ({
         path, start_time, end_time, duration, start_state, end_state, delta_state,
         curve='linear', unit=null}) =>{
+    const opacity_throw = (msg) => {
+        throw `Invalid call to Opacity w/path '${path}': ${msg}`
+    }
     try {
         [start_time,
          duration,
          end_time] = applyDefaultsAndValidateTimes(start_time, duration, end_time)
     } catch (err) {
-        throw `Invalid call to AnimateCSS w/path '${path}': ${err}`
+        opacity_throw(err)
     }
 
-    Animate({
+    if (typeof(start_state) !== 'number') {
+        opacity_throw(`expceted a number for start_state but got ${start_state}`)
+    }
+    if (!exactlyOneIsUndefined(end_state, delta_state)) {
+        translate_throw('expected exactly one of (delta_state, end_state) to be defined')
+    }
+    if (end_state === undefined) {
+        if (typeof(delta_state) !== 'number') {
+            opacity_throw(`expceted a number for delta_state but got ${delta_state}`)
+        }
+    } else {
+        if (typeof(end_state) !== 'number') {
+            opacity_throw(`expceted a number for end_state but got ${end_state}`)
+        }
+    }
+
+    [delta_state, end_state] = computeTheOther(start_state, delta_state, end_state)
+
+    if (start_state < 0 || start_state > 1) {
+        opacity_throw(`expected a start_state in the range of [0, 1], but got ${start_state}`)
+    }
+    if (end_state < 0 || end_state > 1) {
+        opacity_throw(`expected a end_state in the range of [0, 1], but got ${end_state}`)
+    }
+
+    return Animate({
         type: 'OPACITY',
         path: `${path}/style/opacity`,
         start_time,
@@ -453,7 +481,7 @@ export const Rotate = ({
         throw `Invalid call to AnimateCSS w/path '${path}': ${err}`
     }
 
-    Animate({
+    return Animate({
         type: 'ROTATE',
         path: `${path}/style/transform/rotate`,
         start_time,
