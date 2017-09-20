@@ -473,13 +473,35 @@ export const Opacity = ({
 export const Rotate = ({
         path, start_time, end_time, duration, start_state, end_state, delta_state,
         curve='linear', unit='deg'}) => {
+
+    const rotate_throw = (msg) => {
+        throw `Invalid call to Rotate w/path '${path}': ${msg}`
+    }
     try {
         [start_time,
          duration,
          end_time] = applyDefaultsAndValidateTimes(start_time, duration, end_time)
     } catch (err) {
-        throw `Invalid call to AnimateCSS w/path '${path}': ${err}`
+        rotate_throw(err)
     }
+
+    if (typeof(start_state) !== 'number') {
+        rotate_throw(`expceted a number for start_state but got ${start_state}`)
+    }
+    if (!exactlyOneIsUndefined(end_state, delta_state)) {
+        translate_throw('expected exactly one of (delta_state, end_state) to be defined')
+    }
+    if (end_state === undefined) {
+        if (typeof(delta_state) !== 'number') {
+            rotate_throw(`expceted a number for delta_state but got ${delta_state}`)
+        }
+    } else {
+        if (typeof(end_state) !== 'number') {
+            rotate_throw(`expceted a number for end_state but got ${end_state}`)
+        }
+    }
+
+    [delta_state, end_state] = computeTheOther(start_state, delta_state, end_state)
 
     return Animate({
         type: 'ROTATE',

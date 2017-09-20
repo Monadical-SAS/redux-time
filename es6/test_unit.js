@@ -463,6 +463,44 @@ assertEqual(
     {civ: {style: {opacity: 0}}}
 )
 
+///////////////
+// Test Rotate
+
+// all states must be numbers
+assertThrows(() => Rotate({
+    path: '/cow',
+    start_state: 0,
+    end_state:  'giraffe',
+    duration: 500,
+}))
+assertThrows(() => Rotate({
+    path: '/pig',
+    start_state: 1.5,
+    delta_state:  'banana',
+    start_time: 0,
+    duration: 500,
+}))
+
+const fidget_spinner = Rotate({
+    path: '/monkey',
+    start_state: 0,
+    end_state: 720,
+    start_time: 0,
+    duration: 100,
+})
+assertEqual(
+    computeAnimatedState({animations: [fidget_spinner], warped_time: 0}),
+    {monkey: {style: {transform: `rotate(${0}deg)`}}}
+)
+assertEqual(
+    computeAnimatedState({animations: [fidget_spinner], warped_time: 50}),
+    {monkey: {style: {transform: `rotate(${360}deg)`}}}
+)
+assertEqual(
+    computeAnimatedState({animations: [fidget_spinner], warped_time: 100, former_time: 99}),
+    {monkey: {style: {transform: `rotate(${720}deg)`}}}
+)
+
 
 // on all animations:
 //     - start_time must be < end_time
