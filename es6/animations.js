@@ -8,6 +8,7 @@ import {
     immutify,
     computeAnimatedState,
     mapObj,
+    findMissingKey,
 } from './util.js'
 
 import isEqual from 'lodash.isequal'
@@ -212,6 +213,7 @@ export const Style = ({
         path, start_time, end_time, duration, start_state, end_state,
         delta_state, curve='linear', unit='px'}) => {
 
+    // console.log({start_state, end_state, delta_state})
     try {
         [start_time,
          duration,
@@ -222,22 +224,16 @@ export const Style = ({
         }
         if (exactlyOneIsUndefined(delta_state, end_state)) {
             if (typeof(delta_state) === 'object'){
-                Object.keys(delta_state).forEach((key) => {
-                    if (!Object.keys(start_state).includes(key)) {
-                        throw `found key ${key} in delta_state but not start_state`
-                    }
-                })
+                const missing_key = findMissingKey(delta_state, start_state, false)
+                if (missing_key !== null) {
+                    throw `found key ${missing_key} in delta_state but not start_state`
+                }
             } else if (typeof(end_state) === 'object') {
-                Object.keys(end_state).forEach((key) => {
-                    if (!Object.keys(start_state).includes(key)) {
-                        throw `found key ${key} in end_state but not start_state`
-                    }
-                })
-                Object.keys(start_state).forEach((key) => {
-                    if (!Object.keys(end_state).includes(key)) {
-                        throw `found key ${key} in start_state but not end_state`
-                    }
-                })
+                const missing_key = findMissingKey(start_state, end_state, true)
+                if (missing_key !== null) {
+                    throw `found key ${missing_key} in one of `
+                        + `(start_state, end_state) but not the other`
+                }
             } else {
                 let msg = `expected one of (delta_state, end_state) as object, `
                         + `but got (${delta_state}, ${end_state})`
@@ -340,20 +336,56 @@ export const Translate = ({
         path, start_time, end_time, duration, start_state, end_state,
         delta_state, curve='linear', unit='px'}) => {
 
+    const translate_throw = (msg) => {
+        throw `Invalid call to Translate w/path '${path}': ${msg}`
+    }
+
     try {
         [start_time,
          duration,
          end_time] = applyDefaultsAndValidateTimes(start_time, duration, end_time)
     } catch (err) {
-        throw `Invalid call to Translate w/path '${path}': ${err}`
+        translate_throw(err)
     }
 
-    // this is CSS Transform(translate(x, y))
-    if (start_state === undefined) start_state = {top: 0, left: 0}
-
-    if (exactlyOneIsUndefined(delta_state, end_state)) {
-        [delta_state, end_state] = computeTheOther(start_state, delta_state, end_state)
+    if (!exactlyOneIsUndefined(delta_state, end_state)) {
+        translate_throw('expected exactly one of (delta_state, end_state) to be defined')
     }
+    if (typeof(start_state) !== 'object') {
+        translate_throw(`expected an object for start_state but got ${start_state}`)
+    }
+    if (Object.keys(start_state).length === 0) {
+        translate_throw('passed in an empty start_state!')
+    }
+    const expected_keys = ['top', 'left', 'bottom', 'right']
+    for (let key of Object.keys(start_state)) {
+        if (!expected_keys.includes(key)) {
+            translate_throw(
+                `passed in key ${key} to translate. Should be one of `
+              + `('top', 'left', 'bottom', 'right')`
+            )
+        }
+    }
+
+    if (delta_state === undefined) {
+        if (typeof(end_state) !== 'object') {
+            translate_throw(`expected an object for end_state but got ${end_state}`)
+        }
+        let missing_key = findMissingKey(end_state, start_state, true)
+        if (missing_key !== null) {
+            translate_throw(`found key ${missing_key} in one of (start_state, end_state) but not both`)
+        }
+    } else {
+        if (typeof(delta_state) !== 'object') {
+            translate_throw(`expected an object for delta_state but got ${delta_state}`)
+        }
+        let missing_key = findMissingKey(delta_state, start_state, true)
+        if (missing_key !== null) {
+            translate_throw(`found key ${missing_key} in one of (start_state, delta_state) but not both`)
+        }
+    }
+
+    [delta_state, end_state] = computeTheOther(start_state, delta_state, end_state)
 
     path = `${path}/style/transform/translate`
     const type = 'TRANSLATE'

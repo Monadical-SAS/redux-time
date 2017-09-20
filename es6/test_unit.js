@@ -209,7 +209,6 @@ assertThrows(() => Style({
     start_state: {a: 0},
     delta_state: 100,
 }))
-
 // start_state and end_state must have the same schema
 assertThrows(() => Style({
     path: '/y',
@@ -223,15 +222,14 @@ assertThrows(() => Style({
     start_state: {a: 1, b: 0, c: 5},
     delta_state: {a: 2, b: 3, d: 10},
 }))
-
 // merges instead of overwriting
 const original_style = Become({
-    path: '/a/b',
+    path: '/qw/b',
     start_time: 0,
     state: 0,
 })
 const restyle = Style({
-    path: '/a',
+    path: '/qw',
     start_time: 0,
     end_time: 1000,
     start_state: {top: 0, left: 0},
@@ -244,12 +242,11 @@ assertEqual(
         animations: [original_style, restyle],
         warped_time: 500
     }),
-    {a: {top: 50, left: -50, b: 0}}
+    {qw: {top: 50, left: -50, b: 0}}
 )
-
 // it is possible to define a subset of keys in start_state for delta_state
 const restyle2 = Style({
-    path: '/a',
+    path: '/qw',
     start_time: 100,
     end_time: 200,
     start_state: {top: 0, left: 0},
@@ -261,15 +258,14 @@ assertEqual(
         animations: [original_style, restyle2],
         warped_time: 0,
     }),
-    {a: {b: 0}}
+    {qw: {b: 0}}
 )
-
 assertEqual(
     computeAnimatedState({
         animations: [original_style, restyle2],
         warped_time: 100,
     }),
-    {a: {top: 0, left: 0, b: 0}}
+    {qw: {top: 0, left: 0, b: 0}}
 )
 
 assertEqual(
@@ -277,7 +273,7 @@ assertEqual(
         animations: [original_style, restyle2],
         warped_time: 150,
     }),
-    {a: {top: 50, left: 0, b: 0}}
+    {qw: {top: 50, left: 0, b: 0}}
 )
 assertEqual(
     computeAnimatedState({
@@ -285,14 +281,14 @@ assertEqual(
         warped_time: 200,
         former_time: 199,
     }),
-    {a: {top: 100, left: 0, b: 0}}
+    {qw: {top: 100, left: 0, b: 0}}
 )
 
 ///////////////
 // Test AnimateCSS
 
 let css_animation = AnimateCSS({
-    path: '/a',
+    path: '/q',
     name: 'flipInX',
 })
 
@@ -302,7 +298,7 @@ assert((default_start - css_animation.start_time) < 5)
 assert((default_start + 1000 - css_animation.end_time < 5))
 
 css_animation = AnimateCSS({
-    path: '/a',
+    path: '/jj',
     name: 'flipInX',
     start_time: default_start,
     end_time: default_start + 1000,
@@ -313,7 +309,7 @@ assertEqual(
         animations: [css_animation],
         warped_time: default_start + 0
     }),
-    {a: {style: {animation: `flipInX 1000ms linear -${0}ms paused`}}}
+    {jj: {style: {animation: `flipInX 1000ms linear -${0}ms paused`}}}
 )
 
 assertEqual(
@@ -321,7 +317,7 @@ assertEqual(
         animations: [css_animation],
         warped_time: default_start + 500
     }),
-    {a: {style: {animation: `flipInX 1000ms linear -${500}ms paused`}}}
+    {jj: {style: {animation: `flipInX 1000ms linear -${500}ms paused`}}}
 )
 
 assertEqual(
@@ -329,8 +325,133 @@ assertEqual(
         animations: [css_animation],
         warped_time: default_start + 1000
     }),
-    {a: {style: {animation: `flipInX 1000ms linear -${1000}ms paused`}}}
+    {jj: {style: {animation: `flipInX 1000ms linear -${1000}ms paused`}}}
 )
+
+
+///////////////
+// Test Translate
+
+// all states must be objects
+assertThrows(() => Translate({
+    path: '/mandela',
+    start_state: 10,
+    end_state:  20,
+    duration: 500,
+}))
+// all states must have one of (top, left, bottom, right) as keys
+assertThrows(() => Translate({
+    path: '/napoleon',
+    start_state: {},
+    end_state:  {},
+    duration: 500,
+}))
+// only (top, left, bottom, right) are allowed keys
+assertThrows(() => Translate({
+    path: '/cleopatra',
+    start_state: {top: 10, something_else: 20},
+    end_state:  {top: 10, something_else: 50},
+    duration: 500,
+}))
+// all states must have the same schema
+assertThrows(() => Translate({
+    path: '/ghandi',
+    start_state: {top: 10, left: 20},
+    delta_state:  {top: 10, right: 50},
+    duration: 500,
+}))
+assertThrows(() => Translate({
+    path: '/franklin',
+    start_state: {top: 10, left: 20},
+    end_state:  {top: 10, right: 50},
+    duration: 500,
+}))
+// exactly one of delta_state, end_state must be defined
+assertThrows(() => Translate({
+    path: '/charlemagne',
+    start_state: {top: 10, left: 20},
+    delta_state: {top: 10, left: 10},
+    end_state:  {top: 20, left: 30},
+    duration: 500,
+}))
+assertThrows(() => Translate({
+    path: '/catherine',
+    start_state: {top: 10, left: 20},
+    duration: 500,
+}))
+
+const bounce = RepeatSequence([
+    Translate({
+        path: '/round_thing',
+        start_state: {top: 0, left: 0},
+        end_state:  {top: -200, left: 0},
+        duration: 500,
+    }),
+    Translate({
+        path: '/round_thing',
+        start_state: {top: -200, left: 0},
+        end_state: {top: 0, left: 0},
+        duration: 500,
+    }),
+], 10, 0)
+const translateObj = (left, top) => {
+    return {
+        style: {
+            transform: `translate(${left}px, ${top}px)`
+        }
+    }
+}
+assertEqual(
+    computeAnimatedState({animations: bounce, warped_time: 250}),
+    {round_thing: translateObj(0, -100)}
+)
+assertEqual(
+    computeAnimatedState({animations: bounce, warped_time: 1250}),
+    {round_thing: translateObj(0, -100)}
+)
+assertEqual(
+    computeAnimatedState({animations: bounce, warped_time: 500}),
+    {round_thing: translateObj(0, -200)}
+)
+assertEqual(
+    computeAnimatedState({animations: bounce, warped_time: 1500}),
+    {round_thing: translateObj(0, -200)}
+)
+
+
+// on all animations:
+//     - start_time must be < end_time
+//     - paths should never have a trailing slash
+
+// Become
+//     - end_state and delta_state are null
+//     - start_time is Date.now() as default
+//     - duration & end_time are Infinity by default
+//     - computeAnimatedState at any time after start_time == start_state
+// Style
+//     - start and exactly one of (delta_state, end_state) must be defined
+//     - all provided states must be Object
+//     - end_state must have the same schema as start_state
+//     - delta_state must not have any keys not present in start_state
+//     - merging works correctly
+//     - computeAnimatedState assertions at 0, duration, and somewhere in middle
+// AnimateCSS
+//     - defaults to starting now, with 1000 duration
+//     - computeAnimatedState assertions at 0, duration, and somewhere in middle
+// Translate
+//     - start and exactly one of (delta_state, end_state) must be defined
+//     - all provided states must be Object
+//     - all provided states have one more of (top, left, bottom, right) and the same schema
+//     - computeAnimatedState assertions at 0, duration, and somewhere in middle
+// Opacity
+//     - start and exactly one of (delta_state, end_state) must be defined
+//     - all provided states must be Number
+//     - computeAnimatedState assertions at 0, duration, and somewhere in middle
+// Rotate
+//     - start and exactly one of (delta_state, end_state) must be defined
+//     - all provided states must be Number
+//     - computeAnimatedState assertions at 0, duration, and somewhere in middle
+
 
 process.exit(0)
 }

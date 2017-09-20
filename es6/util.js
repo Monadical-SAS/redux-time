@@ -47,6 +47,22 @@ export const assertEqual = (val1, val2) => {
     )
 }
 
+export const findMissingKey = (obj1, obj2, both_ways=true) => {
+    for (let key of Object.keys(obj1)) {
+        if (!Object.keys(obj2).includes(key)) {
+            return key
+        }
+    }
+    if (both_ways) {
+        for (let key of Object.keys(obj2)) {
+            if (!Object.keys(obj1).includes(key)) {
+                return key
+            }
+        }
+    }
+    return null
+}
+
 export const assertSortedObjsInOrder = (arr, sort_function, expected_order) => {
     const arr_with_keys = arr.map((obj, idx)=> {
         return {
@@ -419,10 +435,10 @@ export const finalFrameAnimations = ({anim_queue, warped_time, former_time}) => 
         if (warped_time >= former_time) {
         // traveling forward in time or standing still
             return (former_time <= anim.end_time)
-                && (anim.end_time < warped_time)
+                && (anim.end_time <= warped_time)
         } else {
         // traveling backward in time
-            return (warped_time < anim.start_time)
+            return (warped_time <= anim.start_time)
                 && (anim.start_time <= former_time)
         }
     }
