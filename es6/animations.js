@@ -68,29 +68,53 @@ export const Become = ({path, state, start_time, end_time, duration}) => {
 }
 
 export const computeTheOther = (start, delta, end) => {
+    // assumes start and one of (delta, end) are defined.
+    // error checking is done before this point is reached
+
+    console.log('computeTheOther')
+    console.log({start, delta, end})
     if (typeof(start) === 'object') {
         let new_delta = delta ? {...delta} : {}
         let new_end = end ? {...end} : {}
-        Object.keys(start).forEach((key) => {
-            let [_delta, _end] = computeTheOther(start[key],
-                                                 new_delta[key],
-                                                 new_end[key])
-            new_delta[key] = _delta
-            new_end[key] = _end
-        })
+        if (delta === undefined) {
+            Object.keys(start).forEach((key) => {
+                let [_delta, _end] = computeTheOther(start[key],
+                                                     new_delta[key],
+                                                     new_end[key])
+                new_delta[key] = _delta
+                new_end[key] = _end
+            })
+        } else {
+            const delta_keys = Object.keys(delta)
+            Object.keys(start).forEach((key) => {
+                if (delta_keys.includes(key)) {
+                    let [_delta, _end] = computeTheOther(start[key],
+                                                         new_delta[key],
+                                                         new_end[key])
+                    new_delta[key] = _delta
+                    new_end[key] = _end
+                } else {
+                    new_end[key] = start[key]
+                }
+            })
+        }
         return [new_delta, new_end]
     }
     if (typeof(start) === 'number') {
+        console.log('number')
         if (end === undefined && delta !== undefined) {
+            console.log('b1')
             return [delta, start + delta]
         } else if (end !== undefined && delta === undefined) {
+            console.log('b2')
             return [end - start, end]
-        } else if (start + delta !== end) {
+        } else {
+            console.log('b2')
             console.log((new Error()).stack)
-            throw `start (${start}) + delta (${delta}) !== end (${end})`
+            throw `computeTheOther was expecting one of (delta, end) to be defined, but not both`
         }
     }
-    return [delta, end]
+    throw `computeTheOther got (${start}, ${delta}, ${end}) as args and didn't know what to do`
 }
 
 const exactlyOneIsUndefined = (val1, val2) => {
