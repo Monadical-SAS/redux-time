@@ -10,8 +10,8 @@ const page_start_time = Date.now()
 const offset = (time) =>
     time - page_start_time
 
-function getCssProperty(elmId, property){
-   var elem = document.getElementById(elmId);
+const getCssProperty = (elmId, property) => {
+   const elem = document.getElementById(elmId)
    return elem ?
           window.getComputedStyle(elem,null).getPropertyValue(property)
           : 0
@@ -30,7 +30,7 @@ const current_frame_position = () => {
     return left
 }
 
-const AnimRow = (anim, idx, scale, warped_time) => {
+const AnimRow = ({anim, idx, scale, warped_time}) => {
     const {type, start_time, end_time} = anim
 
     const is_infinite = end_time === Infinity
@@ -124,12 +124,14 @@ class TimelineComponent extends React.Component {
         const anim_list = []
         let container_width = 0
         for (let idx in queue){
-            anim_list.push(AnimRow(
-                queue[idx],
-                idx,
-                this.state.scale,
-                warped_time,
-            ))
+            anim_list.push(
+                <AnimRow
+                    anim={queue[idx]}
+                    idx={idx}
+                    scale={this.state.scale}
+                    warped_time={warped_time}
+                />
+            )
             const end_time = queue[idx].end_time
             if (end_time !== Infinity){
                 const last_time = offset(end_time)/this.state.scale
