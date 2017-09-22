@@ -123,7 +123,7 @@ class TimelineComponent extends React.Component {
         const {queue, warped_time, debug} = this.props
         const anim_list = []
         let container_width = 0
-        for (let idx in queue){
+        for (let idx = 0; idx < queue.length; idx++){
             anim_list.push(
                 <AnimRow
                     anim={queue[idx]}
