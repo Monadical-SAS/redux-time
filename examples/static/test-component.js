@@ -565,7 +565,7 @@ var Style = exports.Style = function Style(_ref4) {
     };
 
     return Animate({
-        path: path,
+        path: path + '/style',
         start_time: start_time,
         duration: duration,
         end_time: end_time,
@@ -1421,7 +1421,8 @@ var nested_key = exports.nested_key = function nested_key(i, bf, d) {
 };
 
 function select(obj, selector) {
-    // ({a: {b: 2}}, '/a/b') => 2                   Get obj at specified addr (works with array indicies)
+    // ({a: {b: 2}}, '/a/b') => 2
+    //  Get obj at specified addr (works with array indicies)
     var keys = void 0;
     if (typeof selector === 'string') {
         if (selector === '/') return obj;
@@ -1440,6 +1441,9 @@ function select(obj, selector) {
         for (var _iterator4 = (0, _getIterator3.default)(keys), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
             var key = _step4.value;
 
+            if (obj === undefined) {
+                return undefined;
+            }
             obj = obj[key];
         }
     } catch (err) {
@@ -1465,7 +1469,8 @@ function patch(obj, selector, new_val) {
     var mkpath = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
     var deepcopy = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : true;
 
-    // ({a: {b: 2}}, '/a/b', 4) => {a: {b: 4}}      Set obj at specified addr (works with array indicies)
+    // ({a: {b: 2}}, '/a/b', 4) => {a: {b: 4}}
+    //  Set obj at specified addr (works with array indicies)
     var keys = void 0;
     if (typeof selector === 'string') {
         if (selector === '/') return new_val;
@@ -1655,7 +1660,7 @@ var flattenAnimation = function flattenAnimation(animation) {
 
 var flattenIfNotFlattened = function flattenIfNotFlattened(state, path, flatten_func) {
     var state_slice = select(state, path);
-    if (!state_slice) {
+    if (state_slice === undefined || state_slice === null) {
         // State no longer exists because it was overwritten by a later patch
         return;
     }
@@ -1665,6 +1670,8 @@ var flattenIfNotFlattened = function flattenIfNotFlattened(state, path, flatten_
 };
 
 var flattenStyles = exports.flattenStyles = function flattenStyles(state, paths_to_flatten) {
+    // TODO: profile and see if this is slow
+
     // WARNING: optimized code, profile before changing anything
     // this converts the styles stored as dicts in the state tree, to the strings
     // that react components expect as CSS style values
@@ -1708,6 +1715,8 @@ var flattenStyles = exports.flattenStyles = function flattenStyles(state, paths_
 };
 
 var shouldFlatten = function shouldFlatten(split_path) {
+    // TODO: profile and see if this is slow
+
     // WARNING: optimized code, profile before changing anything
     //  check to see if a given path introduces some CSS state that needs
     //  to be converted from an object to a css string, e.g.
@@ -1842,13 +1851,10 @@ var pastAnimations = exports.pastAnimations = function pastAnimations(_ref10) {
     });
 };
 
-var futureAnimations = exports.futureAnimations = function futureAnimations(_ref12) {
-    var anim_queue = _ref12.anim_queue,
-        warped_time = _ref12.warped_time;
-
-    return anim_queue.filter(function (_ref13) {
-        var start_time = _ref13.start_time,
-            duration = _ref13.duration;
+var futureAnimations = exports.futureAnimations = function futureAnimations(anim_queue, warped_time) {
+    return anim_queue.filter(function (_ref12) {
+        var start_time = _ref12.start_time,
+            duration = _ref12.duration;
         return start_time > warped_time;
     });
 };
@@ -1945,11 +1951,11 @@ var uniqueAnimations = exports.uniqueAnimations = function uniqueAnimations(anim
     return uniq_anims.reverse();
 };
 
-var activeAnimations = exports.activeAnimations = function activeAnimations(_ref14) {
-    var anim_queue = _ref14.anim_queue,
-        warped_time = _ref14.warped_time,
-        former_time = _ref14.former_time,
-        uniqueify = _ref14.uniqueify;
+var activeAnimations = exports.activeAnimations = function activeAnimations(_ref13) {
+    var anim_queue = _ref13.anim_queue,
+        warped_time = _ref13.warped_time,
+        former_time = _ref13.former_time,
+        uniqueify = _ref13.uniqueify;
 
     if (warped_time === undefined || former_time === undefined) {
         throw 'Both warped_time and former_time must be passed to get activeAnimations';
@@ -1984,11 +1990,11 @@ var patchesFromAnimation = function patchesFromAnimation(animation, warped_time)
     return patches;
 };
 
-var computeAnimatedState = exports.computeAnimatedState = function computeAnimatedState(_ref15) {
-    var animations = _ref15.animations,
-        warped_time = _ref15.warped_time,
-        _ref15$former_time = _ref15.former_time,
-        former_time = _ref15$former_time === undefined ? null : _ref15$former_time;
+var computeAnimatedState = exports.computeAnimatedState = function computeAnimatedState(_ref14) {
+    var animations = _ref14.animations,
+        warped_time = _ref14.warped_time,
+        _ref14$former_time = _ref14.former_time,
+        former_time = _ref14$former_time === undefined ? null : _ref14$former_time;
 
     former_time = former_time === null ? warped_time : former_time;
 

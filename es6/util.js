@@ -232,7 +232,8 @@ export const nested_key = (i, bf, d, l=null) => {
 }
 
 export function select(obj, selector) {
-    // ({a: {b: 2}}, '/a/b') => 2                   Get obj at specified addr (works with array indicies)
+    // ({a: {b: 2}}, '/a/b') => 2
+    //  Get obj at specified addr (works with array indicies)
     let keys
     if (typeof(selector) === 'string') {
         if (selector === '/') return obj
@@ -244,13 +245,17 @@ export function select(obj, selector) {
         throw `Invalid selector, must be string /path or array of keys! ${selector}`
     }
     for (let key of keys) {
+        if (obj === undefined) {
+            return undefined
+        }
         obj = obj[key]
     }
     return obj
 }
 
 export function patch(obj, selector, new_val, merge=false, mkpath=false, deepcopy=true) {
-    // ({a: {b: 2}}, '/a/b', 4) => {a: {b: 4}}      Set obj at specified addr (works with array indicies)
+    // ({a: {b: 2}}, '/a/b', 4) => {a: {b: 4}}
+    //  Set obj at specified addr (works with array indicies)
     let keys
     if (typeof(selector) === 'string') {
         if (selector === '/') return new_val
@@ -343,7 +348,7 @@ const flattenAnimation = (animation) => {
 
 const flattenIfNotFlattened = (state, path, flatten_func) => {
     const state_slice = select(state, path)
-    if (!state_slice) {
+    if (state_slice === undefined || state_slice === null) {
         // State no longer exists because it was overwritten by a later patch
         return
     }
@@ -353,6 +358,8 @@ const flattenIfNotFlattened = (state, path, flatten_func) => {
 }
 
 export const flattenStyles = (state, paths_to_flatten) => {
+    // TODO: profile and see if this is slow
+
     // WARNING: optimized code, profile before changing anything
     // this converts the styles stored as dicts in the state tree, to the strings
     // that react components expect as CSS style values
@@ -375,6 +382,8 @@ export const flattenStyles = (state, paths_to_flatten) => {
 }
 
 const shouldFlatten = (split_path) => {
+    // TODO: profile and see if this is slow
+
     // WARNING: optimized code, profile before changing anything
     //  check to see if a given path introduces some CSS state that needs
     //  to be converted from an object to a css string, e.g.
@@ -452,7 +461,7 @@ export const pastAnimations = ({anim_queue, warped_time}) => {
         (start_time + duration < warped_time))
 }
 
-export const futureAnimations = ({anim_queue, warped_time}) => {
+export const futureAnimations = (anim_queue, warped_time) => {
     return anim_queue.filter(({start_time, duration}) => (start_time > warped_time))
 }
 

@@ -1,3 +1,4 @@
 node_modules/
 *.sublime-project
 .idea/
+*.sublime-workspace

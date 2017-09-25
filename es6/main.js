@@ -106,6 +106,6 @@ const startAnimation = (store, initial_state, autostart_animating=true) => {
 }
 
 
-export {animationsReducer, startAnimation, AnimationsHandler, AnimationControls,
-        AnimationStateVisualizer, AnimationStateVisualizerComponent,
-        AnimationTimeline}
+export {animationsReducer, startAnimation, AnimationsHandler,
+        AnimationControls, AnimationStateVisualizer,
+        AnimationStateVisualizerComponent, AnimationTimeline}

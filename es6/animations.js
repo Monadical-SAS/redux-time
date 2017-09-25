@@ -272,7 +272,7 @@ export const Style = ({
     }
 
     return Animate({
-        path,
+        path: `${path}/style`,
         start_time,
         duration,
         end_time,

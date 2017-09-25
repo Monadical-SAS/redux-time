@@ -380,7 +380,7 @@ var Style = exports.Style = function Style(_ref4) {
     };
 
     return Animate({
-        path: path,
+        path: path + '/style',
         start_time: start_time,
         duration: duration,
         end_time: end_time,
