@@ -461,7 +461,7 @@ export const pastAnimations = ({anim_queue, warped_time}) => {
         (start_time + duration < warped_time))
 }
 
-export const futureAnimations = (anim_queue, warped_time) => {
+export const futureAnimations = ({anim_queue, warped_time}) => {
     return anim_queue.filter(({start_time, duration}) => (start_time > warped_time))
 }
 

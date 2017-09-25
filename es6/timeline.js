@@ -64,6 +64,7 @@ const AnimRow = ({anim, idx, scale, warped_time}) => {
             {type}
             <br/>
             <div className="anim_details">
+                Path: {`${anim.path}`}<br/>
                 Start time: {`${anim.start_time}`}<br/>
                 End time: {`${anim.end_time}`}<br/>
                 Start state: {JSON.stringify(anim.start_state, null, 1)}<br/>
