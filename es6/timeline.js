@@ -64,6 +64,7 @@ const AnimRow = ({anim, idx, scale, warped_time}) => {
             {type}
             <br/>
             <div className="anim_details">
+                Path: {`${anim.path}`}<br/>
                 Start time: {`${anim.start_time}`}<br/>
                 End time: {`${anim.end_time}`}<br/>
                 Start state: {JSON.stringify(anim.start_state, null, 1)}<br/>
@@ -120,7 +121,7 @@ class TimelineComponent extends React.Component {
     }
 
     render() {
-        const {queue, warped_time, debug} = this.props
+        const {queue, warped_time, debug, expanded} = this.props
         const anim_list = []
         let container_width = 0
         for (let idx = 0; idx < queue.length; idx++){
@@ -145,7 +146,7 @@ class TimelineComponent extends React.Component {
             container_width = frame_position
         }
 
-        return <ExpandableSection name="Animations Timeline" source={debug && SOURCE} expanded>
+        return <ExpandableSection name="Animations Timeline" source={debug && SOURCE} expanded={expanded}>
             <style>{`
                 .anim_details {
                     display: none;
