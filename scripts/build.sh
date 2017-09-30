@@ -27,9 +27,9 @@ function build_file() {
         echo
         echo "[2/3] Babelifying for Node..."
         babel "es6/$1" "node/$1" || exit 1
-        echo
-        echo "[3/3] Browserifying for Browsers..."
-        browserify "es6/$1" "browser/$1"
+        # echo
+        # echo "[3/3] Browserifying for Browsers..."
+        # browserify "es6/$1" "browser/$1"
     fi
 
     if [[ -e "examples/$1" ]]; then
@@ -62,7 +62,7 @@ function build_all() {
         [ -e "$file" ] || continue
         name="$(basename "$file")"
 
-        browserify "es6/$name" "browser/$name" &
+        # browserify "es6/$name" "browser/$name" &
     done
     for file in "$CODE"/examples/*.js; do
         [ -e "$file" ] || continue
