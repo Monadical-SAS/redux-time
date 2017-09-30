@@ -1,9 +1,9 @@
 import {createStore, combineReducers} from 'redux'
 
-import {
-    Scene, PerspectiveCamera, WebGLRenderer,
-    BoxGeometry, MeshBasicMaterial, Mesh, Vector3
-} from 'three'
+// import {
+//     Scene, PerspectiveCamera, WebGLRenderer,
+//     BoxGeometry, MeshBasicMaterial, Mesh, Vector3
+// } from 'three'
 
 import {
     animationsReducer,

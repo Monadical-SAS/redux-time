@@ -1851,10 +1851,13 @@ var pastAnimations = exports.pastAnimations = function pastAnimations(_ref10) {
     });
 };
 
-var futureAnimations = exports.futureAnimations = function futureAnimations(anim_queue, warped_time) {
-    return anim_queue.filter(function (_ref12) {
-        var start_time = _ref12.start_time,
-            duration = _ref12.duration;
+var futureAnimations = exports.futureAnimations = function futureAnimations(_ref12) {
+    var anim_queue = _ref12.anim_queue,
+        warped_time = _ref12.warped_time;
+
+    return anim_queue.filter(function (_ref13) {
+        var start_time = _ref13.start_time,
+            duration = _ref13.duration;
         return start_time > warped_time;
     });
 };
@@ -1951,11 +1954,11 @@ var uniqueAnimations = exports.uniqueAnimations = function uniqueAnimations(anim
     return uniq_anims.reverse();
 };
 
-var activeAnimations = exports.activeAnimations = function activeAnimations(_ref13) {
-    var anim_queue = _ref13.anim_queue,
-        warped_time = _ref13.warped_time,
-        former_time = _ref13.former_time,
-        uniqueify = _ref13.uniqueify;
+var activeAnimations = exports.activeAnimations = function activeAnimations(_ref14) {
+    var anim_queue = _ref14.anim_queue,
+        warped_time = _ref14.warped_time,
+        former_time = _ref14.former_time,
+        uniqueify = _ref14.uniqueify;
 
     if (warped_time === undefined || former_time === undefined) {
         throw 'Both warped_time and former_time must be passed to get activeAnimations';
@@ -1990,11 +1993,11 @@ var patchesFromAnimation = function patchesFromAnimation(animation, warped_time)
     return patches;
 };
 
-var computeAnimatedState = exports.computeAnimatedState = function computeAnimatedState(_ref14) {
-    var animations = _ref14.animations,
-        warped_time = _ref14.warped_time,
-        _ref14$former_time = _ref14.former_time,
-        former_time = _ref14$former_time === undefined ? null : _ref14$former_time;
+var computeAnimatedState = exports.computeAnimatedState = function computeAnimatedState(_ref15) {
+    var animations = _ref15.animations,
+        warped_time = _ref15.warped_time,
+        _ref15$former_time = _ref15.former_time,
+        former_time = _ref15$former_time === undefined ? null : _ref15$former_time;
 
     former_time = former_time === null ? warped_time : former_time;
 

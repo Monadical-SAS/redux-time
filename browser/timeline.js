@@ -105,7 +105,7 @@ var AnimRow = function AnimRow(_ref) {
         style: style
     }, void 0, type, (0, _jsx3.default)('br', {}), (0, _jsx3.default)('div', {
         className: 'anim_details'
-    }, void 0, 'Start time: ', '' + anim.start_time, (0, _jsx3.default)('br', {}), 'End time: ', '' + anim.end_time, (0, _jsx3.default)('br', {}), 'Start state: ', (0, _stringify2.default)(anim.start_state, null, 1), (0, _jsx3.default)('br', {}), 'End state: ', (0, _stringify2.default)(anim.end_state, null, 1), (0, _jsx3.default)('br', {}), 'Curve: ', '' + anim.curve, (0, _jsx3.default)('br', {})));
+    }, void 0, 'Path: ', '' + anim.path, (0, _jsx3.default)('br', {}), 'Start time: ', '' + anim.start_time, (0, _jsx3.default)('br', {}), 'End time: ', '' + anim.end_time, (0, _jsx3.default)('br', {}), 'Start state: ', (0, _stringify2.default)(anim.start_state, null, 1), (0, _jsx3.default)('br', {}), 'End state: ', (0, _stringify2.default)(anim.end_state, null, 1), (0, _jsx3.default)('br', {}), 'Curve: ', '' + anim.curve, (0, _jsx3.default)('br', {})));
 };
 
 var CurrentFrame = function CurrentFrame(_ref2) {
@@ -176,7 +176,8 @@ var TimelineComponent = function (_React$Component) {
             var _props = this.props,
                 queue = _props.queue,
                 warped_time = _props.warped_time,
-                debug = _props.debug;
+                debug = _props.debug,
+                expanded = _props.expanded;
 
             var anim_list = [];
             var container_width = 0;
@@ -201,7 +202,7 @@ var TimelineComponent = function (_React$Component) {
             return (0, _jsx3.default)(_monadicalReactComponents.ExpandableSection, {
                 name: 'Animations Timeline',
                 source: debug && SOURCE,
-                expanded: true
+                expanded: expanded
             }, void 0, (0, _jsx3.default)('style', {}, void 0, '\n                .anim_details {\n                    display: none;\n                }\n\n                .anim:hover .anim_details {\n                    display: inline-block;\n                }\n                .anim:hover {\n                    height: auto !important;\n                    z-index: 10 !important;\n                }\n                .anim:hover:not(.infinite){\n                    min-width: 200px !important;\n                }\n                .section-animations-timeline{\n                    z-index: 1;\n                }\n\n                '), (0, _jsx3.default)('div', {
                 style: { width: '100%', height: 'auto', postion: 'relative' }
             }, void 0, (0, _jsx3.default)('div', {

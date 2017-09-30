@@ -1584,7 +1584,7 @@ var AnimRow = function AnimRow(_ref) {
         style: style
     }, void 0, type, (0, _jsx3.default)('br', {}), (0, _jsx3.default)('div', {
         className: 'anim_details'
-    }, void 0, 'Start time: ', '' + anim.start_time, (0, _jsx3.default)('br', {}), 'End time: ', '' + anim.end_time, (0, _jsx3.default)('br', {}), 'Start state: ', (0, _stringify2.default)(anim.start_state, null, 1), (0, _jsx3.default)('br', {}), 'End state: ', (0, _stringify2.default)(anim.end_state, null, 1), (0, _jsx3.default)('br', {}), 'Curve: ', '' + anim.curve, (0, _jsx3.default)('br', {})));
+    }, void 0, 'Path: ', '' + anim.path, (0, _jsx3.default)('br', {}), 'Start time: ', '' + anim.start_time, (0, _jsx3.default)('br', {}), 'End time: ', '' + anim.end_time, (0, _jsx3.default)('br', {}), 'Start state: ', (0, _stringify2.default)(anim.start_state, null, 1), (0, _jsx3.default)('br', {}), 'End state: ', (0, _stringify2.default)(anim.end_state, null, 1), (0, _jsx3.default)('br', {}), 'Curve: ', '' + anim.curve, (0, _jsx3.default)('br', {})));
 };
 
 var CurrentFrame = function CurrentFrame(_ref2) {
@@ -1654,7 +1654,8 @@ var TimelineComponent = function (_React$Component) {
             var _props = this.props,
                 queue = _props.queue,
                 warped_time = _props.warped_time,
-                debug = _props.debug;
+                debug = _props.debug,
+                expanded = _props.expanded;
 
             var anim_list = [];
             var container_width = 0;
@@ -1679,7 +1680,7 @@ var TimelineComponent = function (_React$Component) {
             return (0, _jsx3.default)(_monadicalReactComponents.ExpandableSection, {
                 name: 'Animations Timeline',
                 source: debug && SOURCE,
-                expanded: true
+                expanded: expanded
             }, void 0, (0, _jsx3.default)('style', {}, void 0, '\n                .anim_details {\n                    display: none;\n                }\n\n                .anim:hover .anim_details {\n                    display: inline-block;\n                }\n                .anim:hover {\n                    height: auto !important;\n                    z-index: 10 !important;\n                }\n                .anim:hover:not(.infinite){\n                    min-width: 200px !important;\n                }\n                .section-animations-timeline{\n                    z-index: 1;\n                }\n\n                '), (0, _jsx3.default)('div', {
                 style: { width: '100%', height: 'auto', postion: 'relative' }
             }, void 0, (0, _jsx3.default)('div', {
@@ -2597,10 +2598,13 @@ var pastAnimations = exports.pastAnimations = function pastAnimations(_ref10) {
     });
 };
 
-var futureAnimations = exports.futureAnimations = function futureAnimations(anim_queue, warped_time) {
-    return anim_queue.filter(function (_ref12) {
-        var start_time = _ref12.start_time,
-            duration = _ref12.duration;
+var futureAnimations = exports.futureAnimations = function futureAnimations(_ref12) {
+    var anim_queue = _ref12.anim_queue,
+        warped_time = _ref12.warped_time;
+
+    return anim_queue.filter(function (_ref13) {
+        var start_time = _ref13.start_time,
+            duration = _ref13.duration;
         return start_time > warped_time;
     });
 };
@@ -2697,11 +2701,11 @@ var uniqueAnimations = exports.uniqueAnimations = function uniqueAnimations(anim
     return uniq_anims.reverse();
 };
 
-var activeAnimations = exports.activeAnimations = function activeAnimations(_ref13) {
-    var anim_queue = _ref13.anim_queue,
-        warped_time = _ref13.warped_time,
-        former_time = _ref13.former_time,
-        uniqueify = _ref13.uniqueify;
+var activeAnimations = exports.activeAnimations = function activeAnimations(_ref14) {
+    var anim_queue = _ref14.anim_queue,
+        warped_time = _ref14.warped_time,
+        former_time = _ref14.former_time,
+        uniqueify = _ref14.uniqueify;
 
     if (warped_time === undefined || former_time === undefined) {
         throw 'Both warped_time and former_time must be passed to get activeAnimations';
@@ -2736,11 +2740,11 @@ var patchesFromAnimation = function patchesFromAnimation(animation, warped_time)
     return patches;
 };
 
-var computeAnimatedState = exports.computeAnimatedState = function computeAnimatedState(_ref14) {
-    var animations = _ref14.animations,
-        warped_time = _ref14.warped_time,
-        _ref14$former_time = _ref14.former_time,
-        former_time = _ref14$former_time === undefined ? null : _ref14$former_time;
+var computeAnimatedState = exports.computeAnimatedState = function computeAnimatedState(_ref15) {
+    var animations = _ref15.animations,
+        warped_time = _ref15.warped_time,
+        _ref15$former_time = _ref15.former_time,
+        former_time = _ref15$former_time === undefined ? null : _ref15$former_time;
 
     former_time = former_time === null ? warped_time : former_time;
 
