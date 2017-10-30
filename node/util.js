@@ -58,7 +58,7 @@ var _lodash2 = _interopRequireDefault(_lodash);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var _marked = [reversed].map(_regenerator2.default.mark);
+var _marked = /*#__PURE__*/_regenerator2.default.mark(reversed);
 
 var immutify = exports.immutify = function immutify(obj) {
     return (0, _keys2.default)(obj).reduce(function (new_obj, key) {
@@ -114,10 +114,10 @@ var findMissingKey = exports.findMissingKey = function findMissingKey(obj1, obj2
 
     try {
         for (var _iterator = (0, _getIterator3.default)((0, _keys2.default)(obj1)), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var _key = _step.value;
+            var key = _step.value;
 
-            if (!(0, _keys2.default)(obj2).includes(_key)) {
-                return _key;
+            if (!(0, _keys2.default)(obj2).includes(key)) {
+                return key;
             }
         }
     } catch (err) {
@@ -142,10 +142,10 @@ var findMissingKey = exports.findMissingKey = function findMissingKey(obj1, obj2
 
         try {
             for (var _iterator2 = (0, _getIterator3.default)((0, _keys2.default)(obj2)), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                var key = _step2.value;
+                var _key = _step2.value;
 
-                if (!(0, _keys2.default)(obj1).includes(key)) {
-                    return key;
+                if (!(0, _keys2.default)(obj1).includes(_key)) {
+                    return _key;
                 }
             }
         } catch (err) {
@@ -343,7 +343,7 @@ function reversed(iterator) {
                     return _context.stop();
             }
         }
-    }, _marked[0], this);
+    }, _marked, this);
 }
 
 var flattened = exports.flattened = function flattened(array) {

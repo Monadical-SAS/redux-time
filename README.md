@@ -8,15 +8,18 @@
 
 `redux-time` is a library that allows you to deterministically compute your state tree as a function of time.  It's primarily used for animations, but it can also be used for generically changing any redux state as time progresses.
 
-Generally, there are two different categories of animations on websites:
+It's likely if you're looking for a web animations solution, you're probably trying to either do:
 
- - content transitions (e.g. effects when adding/deleting a list item, hover effects, photo gallery transitions, etc)
- - **full-blown interactive dynamic animations** (like in games)
+ - minor content transitions (e.g. photo gallery transitions, hover dropdowns)
+ or
+ - **full-blown interactive dynamic animations** (like for games)
 
 `redux-time` is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) (basic) or [react-move](https://github.com/tannerlinsley/react-move) (advanced) instead.
 
+Ok now that we've gotten that out of the way, we get to the fun part with the nice shiny progress bars:
+
 ```bash
-yarn add redux-time    # 🎂
+npm install redux-time    # 🎂
 ```
 Check it out in action on the [full demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.  
 At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum-backed browser-based poker ([come help us build it](https://monadical.com/apply)!).
@@ -38,7 +41,7 @@ At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum
 - compose animations with pure functions e.g.: `Repeat(Rotate(...), 10)`
 - seamlessly animate existing React + Redux codebase without major changes
 - animate any state tree value manually, or use provided Animation functions for common animations e.g.: `Translate`, `Rotate`, `Opacity`
-- It's fast! Run `benchmarks.js`: on my laptop I can compute the animated state at over 100FPS with 5000 concurrent animations. The bottleneck is usually rendering--check out [Inferno] + canvas if you really want speed!
+- it's knock-your-socks-off fast, just tun `benchmarks.js` to see for yourself.  On a test laptop we get animated state computed at over 100FPS with 5000 concurrent animations. The bottleneck is usually rendering--check out three.js for 3d rendering, or Canvas for 2d, or Inferno for react animating
 - fully compatible with CSS animation libraries like [Animate.css](https://daneden.github.io/animate.css/), you already have access to 1000s of pre-written animations out there that plug right into `redux-time`!
 
 ## Intro
@@ -53,62 +56,54 @@ Every tick function is a pure function of the `start_state`, `end_state`, and de
 
 ## Walkthrough Example
 
-1. First we create a redux store, and start the animation runloop with our initial state
-
 ```javascript
-import {createStore, combineReducers} from 'redux'
-import {animationsReducer, startAnimation} from 'redux-time'
+import {animationsReducer, startAnimation, Animate} from 'redux-time'
 
-const initial_state = {
-    ball: {style: {top: 0, left: 0}},
-}
-window.store = createStore(combineReducers({animations: animationsReducer}))
-window.time = startAnimation(store, initial_state)
+// 1. Create a redux store, and start the animation runloop with initial state
+const store = createStore(combineReducers({animations: animationsReducer}))
+
+const initial_state = {ball: {style: {}}}
+const time = startAnimation(store, initial_state)
 ```
 
-2. Then we create a component to render our state
+```javascript
+// 2. Set up our first animation
+const move_ball_animation = Animate({
+    // move the ball 20px down over 1s
+    path: '/ball/style/top',
+    start_state: 0,
+    end_state: 20,
+    duration: 1000,
+})
+
+document.onkeypress = (e) => {
+    // trigger it when the down arrow is pressed
+    if (e.keyCode == 40) {
+        store.dispatch({type: 'ANIMATE', animation: move_ball_animation})
+    }
+}
+```
 
 ```javascript
-import React from 'react'
-import ReactDOM from 'react-dom'
-import {connect, Provider} from 'react-redux'
-
+// 2. Create a component to display our state
 const BallComponent = ({ball}) =>
-    <div className="ball" style={ball.style}></div>
+    <div style={{position: 'absolute', ...ball.style}}></div>
 
 const mapStateToProps = ({animations}) => ({
     ball: animations.state.ball,
-    // You could also merge the animated state with state you manage elsewhere in the tree.
+    // optionally deepMerge(other_state, animations.state)
 })
-
 const Ball = connect(mapStateToProps)(BallComponent)
+```
 
+```javascript
+// 4. Then render it
 ReactDOM.render(
-    <Provider store={window.store}>
+    <Provider store={store}>
         <Ball/>
     </Provider>,
     document.getElementById('react')
 )
-```
-
-3. Then we dispatch an animation to move the ball
-
-```javascript
-import {Translate} from 'redux-time/src/animations'
-
-const move_ball = [
-    Translate({
-        path: '/ball',
-        start_state: {top: 0, left: 0},
-        end_state: {top: 100, left: 0},
-        duration: 1000,
-        // start_time: Date.now() + 500,   // optional, defaults to starting immediately
-        // curve: 'easeOutQuad',                     // optional, defaults to 'linear'
-        // unit: '%',                                // optional, defaults to 'px'
-    })
-]
-
-window.store.dispatch({type: 'ANIMATE', animations: move_ball})
 ```
 
 **You're done!** The proper intermediate state is computed from the animation and rendered on every tick, and the ball moves on the screen!
@@ -464,6 +459,16 @@ store.dispatch({type: 'ANIMATE', animation: delayed_rotate})
 You can use `start_time` to build up a sequence of animations that overlap or run in a particular order.  You can also use the [`Sequence`](#composing-existing-animations) function to create a list of sequential animations that run one by one.
 
 ## Advanced
+
+### State Tree
+
+I  you have some existing state elsewhere in your redux state-tree that you want to augment with redux-time:
+
+```javascript
+const mapStateToProps = ({ball, animations}) => ({
+    ball_style: deepMerge(ball.style, animations.state.ball.style),
+})
+```
 
 ### Custom Animations
 

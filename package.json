@@ -31,36 +31,26 @@
   "dependencies": {
     "extend": "^3.0.1",
     "lodash.isequal": "^4.5.0",
-    "monadical-react-components": "^0.0.6",
-    "react-redux": "^5.0.6",
-    "redux": "^3.7.2",
-    "warped-time": "^0.0.13"
+    "warped-time": "^0.0.14"
   },
   "devDependencies": {
     "aliasify": "^2.1.0",
     "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.0.0",
+    "babel-eslint": "^8.0.1",
     "babel-plugin-syntax-function-bind": "^6.13.0",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-plugin-transform-function-bind": "^6.22.0",
-    "babel-plugin-transform-react-constant-elements": "^6.23.0",
-    "babel-plugin-transform-react-inline-elements": "^6.22.0",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-react": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
     "babel-preset-stage-2": "^6.24.1",
     "babel-runtime": "^6.26.0",
     "babelify": "^7.3.0",
     "browserify": "^14.4.0",
-    "eslint": "^4.7.2",
+    "eslint": "^4.8.0",
     "eslint-plugin-babel": "^4.1.2",
-    "eslint-plugin-react": "^7.4.0",
-    "flow-bin": "^0.55.0",
+    "flow-bin": "^0.56.0",
     "minifyify": "^7.3.5",
-    "react": "^15.6.1",
-    "react-bootstrap": "^0.31.3",
-    "react-dom": "^15.6.1",
-    "react-select": "^1.0.0-rc.10",
+    "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "three": "^0.87.1",
     "watchify": "^3.9.0"
@@ -73,20 +63,18 @@
   },
   "babel": {
     "presets": [
-      "react",
-      "es2015",
+      "env",
       "stage-2"
     ],
     "plugins": [
       "syntax-function-bind",
       "transform-function-bind",
-      "transform-runtime",
-      "transform-react-inline-elements",
-      "transform-react-constant-elements"
+      "transform-runtime"
     ]
   },
   "scripts": {
     "watch": "./scripts/watch.sh",
-    "build": "./scripts/build.sh"
+    "build": "./scripts/build.sh",
+    "test": "node node/tests.js"
   }
 }

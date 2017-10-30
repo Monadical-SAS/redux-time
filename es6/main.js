@@ -2,10 +2,6 @@ import {WarpedTime} from 'warped-time'
 
 import {animationsReducer} from './reducers.js'
 import {Become} from './animations.js'
-import {AnimationControls} from './controls.js'
-import {AnimationStateVisualizerComponent,
-        AnimationStateVisualizer} from './state-visualizer.js'
-import {AnimationTimeline} from "./timeline.js"
 
 
 const shouldAnimate = (anim_queue, timestamp, speed) => {
@@ -105,7 +101,4 @@ const startAnimation = (store, initial_state, autostart_animating=true) => {
     return handler.time
 }
 
-
-export {animationsReducer, startAnimation, AnimationsHandler,
-        AnimationControls, AnimationStateVisualizer,
-        AnimationStateVisualizerComponent, AnimationTimeline}
+export {animationsReducer, startAnimation, AnimationsHandler}

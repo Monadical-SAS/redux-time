@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.AnimationTimeline = exports.AnimationStateVisualizerComponent = exports.AnimationStateVisualizer = exports.AnimationControls = exports.AnimationsHandler = exports.startAnimation = exports.animationsReducer = undefined;
+exports.AnimationsHandler = exports.startAnimation = exports.animationsReducer = undefined;
 
 var _keys = require('babel-runtime/core-js/object/keys');
 
@@ -22,12 +22,6 @@ var _warpedTime = require('warped-time');
 var _reducers = require('./reducers.js');
 
 var _animations = require('./animations.js');
-
-var _controls = require('./controls.js');
-
-var _stateVisualizer = require('./state-visualizer.js');
-
-var _timeline = require('./timeline.js');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -152,7 +146,3 @@ var startAnimation = function startAnimation(store, initial_state) {
 exports.animationsReducer = _reducers.animationsReducer;
 exports.startAnimation = startAnimation;
 exports.AnimationsHandler = AnimationsHandler;
-exports.AnimationControls = _controls.AnimationControls;
-exports.AnimationStateVisualizer = _stateVisualizer.AnimationStateVisualizer;
-exports.AnimationStateVisualizerComponent = _stateVisualizer.AnimationStateVisualizerComponent;
-exports.AnimationTimeline = _timeline.AnimationTimeline;

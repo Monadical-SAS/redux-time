@@ -45,7 +45,7 @@ var initial_state = exports.initial_state = {
     former_time: 0,
     warped_time: 0,
     // maximum length of the queue before items get trimmed
-    max_time_travel: 3000,
+    max_time_travel: 300,
     queue: [],
     state: {}
 };
