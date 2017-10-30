@@ -242,7 +242,7 @@ assertEqual(
         animations: [original_style, restyle],
         warped_time: 500
     }),
-    {qw: {top: 50, left: -50, b: 0}}
+    {qw: {style: {top: 50, left: -50}, b: 0}}
 )
 // it is possible to define a subset of keys in start_state for delta_state
 const restyle2 = Style({
@@ -250,7 +250,7 @@ const restyle2 = Style({
     start_time: 100,
     end_time: 200,
     start_state: {top: 0, left: 0},
-    delta_state: {top:100},
+    delta_state: {top: 100},
     unit: ''
 })
 assertEqual(
@@ -265,7 +265,7 @@ assertEqual(
         animations: [original_style, restyle2],
         warped_time: 100,
     }),
-    {qw: {top: 0, left: 0, b: 0}}
+    {qw: {style: {top: 0, left: 0}, b: 0}}
 )
 
 assertEqual(
@@ -273,7 +273,7 @@ assertEqual(
         animations: [original_style, restyle2],
         warped_time: 150,
     }),
-    {qw: {top: 50, left: 0, b: 0}}
+    {qw: {style: {top: 50, left: 0}, b: 0}}
 )
 assertEqual(
     computeAnimatedState({
@@ -281,7 +281,7 @@ assertEqual(
         warped_time: 200,
         former_time: 199,
     }),
-    {qw: {top: 100, left: 0, b: 0}}
+    {qw: {style: {top: 100, left: 0}, b: 0}}
 )
 
 ///////////////
