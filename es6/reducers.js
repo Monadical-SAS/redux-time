@@ -86,6 +86,14 @@ export const animationsReducer = (state=initial_state, action) => {
             }
 
         case 'SET_SPEED':
+            if (action.reset) {
+                return {
+                    ...state,
+                    speed: action.speed,
+                    warped_time: state.warped_time,
+                    former_time: state.warped_time - 10,
+                }
+            }
             return {
                 ...state,
                 speed: action.speed,
@@ -97,6 +105,7 @@ export const animationsReducer = (state=initial_state, action) => {
                     || action.former_time === undefined) {
                 throw 'TICK action must have a warped_time and former_time'
             }
+
             const animated_state = computeAnimatedState({
                 animations: state.queue,
                 warped_time: action.warped_time,

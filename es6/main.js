@@ -68,22 +68,22 @@ class AnimationsHandler {
     }
     tick(high_res_timestamp) {
         this.animating = true
-        // if (shouldAnimate(animations.queue, new_timestamp, this.time.speed)) {
-            this.requestFrame(::this.tick)
-        // } else {
-            // this.animating = false
-        // }
-
+        const {animations} = this.store.getState()
         if (high_res_timestamp) {
             this.start_time = this.start_time || this.time.getActualTime()
             high_res_timestamp = this.start_time + high_res_timestamp/1000
         }
-        const {animations} = this.store.getState()
         const new_timestamp = this.time.getWarpedTime()
+
+        if (shouldAnimate(animations.queue, new_timestamp, animations.speed)) {
+            global.nextFrameId = this.requestFrame(::this.tick)
+        } else {
+            this.animating = false
+        }
 
         this.store.dispatch({
             type: 'TICK',
-            //TODO: duplicating code from WarpedTime.getWarpedTime
+            // TODO: duplicating code from WarpedTime.getWarpedTime
             former_time: animations.warped_time || 0,
             warped_time: new_timestamp,
             speed: animations.speed,

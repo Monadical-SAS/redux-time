@@ -93,6 +93,13 @@ var animationsReducer = exports.animationsReducer = function animationsReducer()
             });
 
         case 'SET_SPEED':
+            if (action.reset) {
+                return (0, _extends3.default)({}, state, {
+                    speed: action.speed,
+                    warped_time: state.warped_time,
+                    former_time: state.warped_time - 10
+                });
+            }
             return (0, _extends3.default)({}, state, {
                 speed: action.speed,
                 former_time: state.warped_time
@@ -102,6 +109,7 @@ var animationsReducer = exports.animationsReducer = function animationsReducer()
             if (action.warped_time === undefined || action.former_time === undefined) {
                 throw 'TICK action must have a warped_time and former_time';
             }
+
             var animated_state = (0, _util.computeAnimatedState)({
                 animations: state.queue,
                 warped_time: action.warped_time,
