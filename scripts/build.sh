@@ -17,7 +17,7 @@ function babel() {
 
 function browserify() {
     echo "    - $1  >  $2"
-    "$BIN/browserify" "$CODE/$1" -o "$CODE/$2"
+    env NODE_ENV=production "$BIN/browserify" "$CODE/$1" -o "$CODE/$2"
 }
 
 function build_file() {
@@ -52,7 +52,7 @@ function build_all() {
         [ -e "$file" ] || continue
         name="$(basename "$file")"
 
-        babel "es6/$name" "node/$name" &
+        babel "es6/$name" "node/$name" &  # env NODE_ENV=production 
     done
     wait
 

@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.RepeatSequence = exports.Sequential = exports.Reverse = exports.Repeat = exports.Rotate = exports.Opacity = exports.Translate = exports.AnimateCSS = exports.Style = exports.Animate = exports.computeTheOther = exports.Become = undefined;
+exports.RepeatSequence = exports.Sequential = exports.Flatten = exports.Reverse = exports.Repeat = exports.Rotate = exports.Opacity = exports.Translate = exports.AnimateCSS = exports.Style = exports.Animate = exports.computeTheOther = exports.Become = undefined;
 
 var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
@@ -755,6 +755,11 @@ var Reverse = exports.Reverse = function Reverse(animation) {
 // export const ReverseSequence = (animations) => {
 // TODO
 // }
+
+var Flatten = exports.Flatten = function Flatten(nested_animations) {
+    // flattens arrays nested one level deep
+    return [].concat.apply([], nested_animations);
+};
 
 // make each animation in a sequence start after the last one ends
 var Sequential = exports.Sequential = function Sequential(animations, start_time) {

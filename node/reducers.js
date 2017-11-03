@@ -20,11 +20,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 // limit anim_queue to max_time_travel length
 var trimmedAnimationQueue = function trimmedAnimationQueue(anim_queue, max_time_travel) {
     if (anim_queue.length > max_time_travel) {
-        // console.log(
-        //     '%c[i] Trimmed old animations from animations.queue',
-        //     'color:orange',
-        //     `(queue was longer than ${max_time_travel} items)`
-        // )
+        if (global.DEBUG) {
+            console.log('%c[i] Trimmed old animations from animations.queue', 'color:orange', '(queue was longer than ' + max_time_travel + ' items)');
+        }
         var keep_from = anim_queue.length - max_time_travel;
         var keep_to = -1;
 
@@ -45,7 +43,7 @@ var initial_state = exports.initial_state = {
     former_time: 0,
     warped_time: 0,
     // maximum length of the queue before items get trimmed
-    max_time_travel: 300,
+    max_time_travel: 2000,
     queue: [],
     state: {}
 };

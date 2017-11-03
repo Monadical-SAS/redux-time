@@ -230,7 +230,7 @@ window.onmousemove = function (e) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.RepeatSequence = exports.Sequential = exports.Reverse = exports.Repeat = exports.Rotate = exports.Opacity = exports.Translate = exports.AnimateCSS = exports.Style = exports.Animate = exports.computeTheOther = exports.Become = undefined;
+exports.RepeatSequence = exports.Sequential = exports.Flatten = exports.Reverse = exports.Repeat = exports.Rotate = exports.Opacity = exports.Translate = exports.AnimateCSS = exports.Style = exports.Animate = exports.computeTheOther = exports.Become = undefined;
 
 var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
@@ -975,6 +975,11 @@ var Reverse = exports.Reverse = function Reverse(animation) {
 // TODO
 // }
 
+var Flatten = exports.Flatten = function Flatten(nested_animations) {
+    // flattens arrays nested one level deep
+    return [].concat.apply([], nested_animations);
+};
+
 // make each animation in a sequence start after the last one ends
 var Sequential = exports.Sequential = function Sequential(animations, start_time) {
     (0, _util.checkIsValidSequence)(animations);
@@ -1179,6 +1184,7 @@ exports.AnimationsHandler = AnimationsHandler;
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./animations.js":2,"./reducers.js":4,"babel-runtime/core-js/object/keys":15,"babel-runtime/helpers/classCallCheck":22,"babel-runtime/helpers/createClass":23,"warped-time":236}],4:[function(require,module,exports){
+(function (global){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1203,11 +1209,9 @@ function _interopRequireDefault(obj) {
 // limit anim_queue to max_time_travel length
 var trimmedAnimationQueue = function trimmedAnimationQueue(anim_queue, max_time_travel) {
     if (anim_queue.length > max_time_travel) {
-        // console.log(
-        //     '%c[i] Trimmed old animations from animations.queue',
-        //     'color:orange',
-        //     `(queue was longer than ${max_time_travel} items)`
-        // )
+        if (global.DEBUG) {
+            console.log('%c[i] Trimmed old animations from animations.queue', 'color:orange', '(queue was longer than ' + max_time_travel + ' items)');
+        }
         var keep_from = anim_queue.length - max_time_travel;
         var keep_to = -1;
 
@@ -1228,7 +1232,7 @@ var initial_state = exports.initial_state = {
     former_time: 0,
     warped_time: 0,
     // maximum length of the queue before items get trimmed
-    max_time_travel: 300,
+    max_time_travel: 2000,
     queue: [],
     state: {}
 };
@@ -1311,8 +1315,9 @@ var animationsReducer = exports.animationsReducer = function animationsReducer()
     }
 };
 
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./util.js":5,"babel-runtime/helpers/extends":24,"babel-runtime/helpers/toConsumableArray":30}],5:[function(require,module,exports){
-(function (process){
+(function (process,global){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2042,14 +2047,11 @@ var flattenStyles = exports.flattenStyles = function flattenStyles(state, paths_
 };
 
 var shouldFlatten = function shouldFlatten(split_path) {
-    // TODO: profile and see if this is slow
-
-    // WARNING: optimized code, profile before changing anything
-    //  check to see if a given path introduces some CSS state that needs
-    //  to be converted from an object to a css string, e.g.
-    //  {style: transform: translate: {top: 0, left: 0}}
-    var style_key = split_path.lastIndexOf('style');
-    return style_key != -1 && (split_path[style_key + 1] == 'transform' || split_path[style_key + 1] == 'animation');
+    // check to see if a given path introduces some CSS state that needs
+    // to be converted from an object to a css string, e.g.
+    // {style: transform: translate: {top: 0, left: 0}}
+    var style_key_pos = split_path.lastIndexOf('style');
+    return style_key_pos != -1 && (split_path[style_key_pos + 1] == 'transform' || split_path[style_key_pos + 1] == 'animation');
 };
 
 function applyPatches(obj, patches) {
@@ -2079,10 +2081,11 @@ function applyPatches(obj, patches) {
             }
             var keys = [].concat((0, _toConsumableArray3.default)(_patch.split_path));
 
+            // record this path for later post-processing if it's a css transform or animation path
             if (flatten_styles && shouldFlatten(keys)) paths_to_flatten.push(keys);
 
             var final_key = keys.pop();
-            // get to the end of the list of paths
+            // iterate down the path to the last object
             var parent = output;
             var _iteratorNormalCompletion10 = true;
             var _didIteratorError10 = false;
@@ -2092,11 +2095,13 @@ function applyPatches(obj, patches) {
                 for (var _iterator10 = (0, _getIterator3.default)(keys), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
                     var key = _step10.value;
 
+                    // create any level as an empty object if it doesn't exist yet
                     if (parent[key] === undefined || parent[key] === null || isBaseType(parent[key], false)) {
                         parent[key] = {};
                     }
                     parent = parent[key];
                 }
+                // update the parent of the last item to reference our new value
             } catch (err) {
                 _didIteratorError10 = true;
                 _iteratorError10 = err;
@@ -2114,6 +2119,9 @@ function applyPatches(obj, patches) {
 
             parent[final_key] = patch_val;
         }
+
+        // final post-processing to transform the special object values into
+        // strings that css expects
     } catch (err) {
         _didIteratorError9 = true;
         _iteratorError9 = err;
@@ -2130,13 +2138,13 @@ function applyPatches(obj, patches) {
     }
 
     if (flatten_styles) return flattenStyles(output, paths_to_flatten);
+
     return output;
 }
 
 var currentAnimations = exports.currentAnimations = function currentAnimations(_ref7) {
     var anim_queue = _ref7.anim_queue,
         warped_time = _ref7.warped_time;
-
     return anim_queue.filter(function (_ref8) {
         var start_time = _ref8.start_time,
             end_time = _ref8.end_time;
@@ -2170,7 +2178,6 @@ var finalFrameAnimations = exports.finalFrameAnimations = function finalFrameAni
 var pastAnimations = exports.pastAnimations = function pastAnimations(_ref10) {
     var anim_queue = _ref10.anim_queue,
         warped_time = _ref10.warped_time;
-
     return anim_queue.filter(function (_ref11) {
         var start_time = _ref11.start_time,
             duration = _ref11.duration;
@@ -2181,33 +2188,12 @@ var pastAnimations = exports.pastAnimations = function pastAnimations(_ref10) {
 var futureAnimations = exports.futureAnimations = function futureAnimations(_ref12) {
     var anim_queue = _ref12.anim_queue,
         warped_time = _ref12.warped_time;
-
     return anim_queue.filter(function (_ref13) {
         var start_time = _ref13.start_time,
             duration = _ref13.duration;
         return start_time > warped_time;
     });
 };
-
-// export const sortedAnimations = (anim_queue) => {
-//     return [...anim_queue].sort((a, b) => {
-//         // sort by end time, if both are the same, sort by start time,
-//         //  and properly handle infinity
-//         if (a.end_time == b.end_time) {
-//             return b.start_time - a.start_time
-//         } else {
-//             if (a.end_time == Infinity) {
-//                 return 1
-//             }
-//             else if (b.end_time == Infinity) {
-//                 return -1
-//             }
-//             else {
-//                 return b.end_time - a.end_time
-//             }
-//         }
-//     })
-// }
 
 // 0 /a /b /c       3
 // 1 /a /b          2
@@ -2293,7 +2279,7 @@ var activeAnimations = exports.activeAnimations = function activeAnimations(_ref
 
     var anims = [].concat((0, _toConsumableArray3.default)(finalFrameAnimations({ anim_queue: anim_queue, former_time: former_time, warped_time: warped_time })), (0, _toConsumableArray3.default)(currentAnimations({ anim_queue: anim_queue, warped_time: warped_time })));
 
-    if (uniqueify) anims = uniqueAnimations(anims);
+    if (uniqueify) return uniqueAnimations(anims);
 
     return anims;
 };
@@ -2304,11 +2290,11 @@ var patchesFromAnimation = function patchesFromAnimation(animation, warped_time)
     var patches = [];
     var delta = warped_time - animation.start_time;
     if (animation.merge) {
-        var values = animation.tick(delta);
+        var _patch2 = animation.tick(delta);
         (0, _keys2.default)(animation.start_state).forEach(function (key) {
             patches.push({
                 split_path: [].concat((0, _toConsumableArray3.default)(animation.split_path), [key]),
-                value: values[key]
+                value: _patch2[key]
             });
         });
     } else {
@@ -2342,10 +2328,12 @@ var computeAnimatedState = exports.computeAnimatedState = function computeAnimat
         for (var _iterator13 = (0, _getIterator3.default)(active_animations), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
             var animation = _step13.value;
 
-            try {
+            if (global.DEBUG) try {
                 patches = [].concat((0, _toConsumableArray3.default)(patches), (0, _toConsumableArray3.default)(patchesFromAnimation(animation, warped_time)));
             } catch (e) {
                 console.log(animation.type, 'Animation tick function threw an exception:', e.stack, animation);
+            } else {
+                patches = [].concat((0, _toConsumableArray3.default)(patches), (0, _toConsumableArray3.default)(patchesFromAnimation(animation, warped_time)));
             }
         }
     } catch (err) {
@@ -2366,7 +2354,7 @@ var computeAnimatedState = exports.computeAnimatedState = function computeAnimat
     return applyPatches({}, patches);
 };
 
-}).call(this,require('_process'))
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"_process":189,"babel-runtime/core-js/get-iterator":7,"babel-runtime/core-js/json/stringify":9,"babel-runtime/core-js/object/define-property":12,"babel-runtime/core-js/object/keys":15,"babel-runtime/core-js/set":18,"babel-runtime/helpers/extends":24,"babel-runtime/helpers/toConsumableArray":30,"babel-runtime/helpers/typeof":31,"babel-runtime/regenerator":32,"extend":151,"lodash.isequal":172}],6:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/array/from"), __esModule: true };
 },{"core-js/library/fn/array/from":34}],7:[function(require,module,exports){
@@ -4694,7 +4682,6 @@ module.exports = function extend() {
 };
 
 },{}],152:[function(require,module,exports){
-(function (process){
 'use strict';
 
 /**
@@ -4756,7 +4743,7 @@ var EventListener = {
         }
       };
     } else {
-      if (process.env.NODE_ENV !== 'production') {
+      if ("production" !== 'production') {
         console.error('Attempted to listen to events during the capture phase on a ' + 'browser that does not support the capture phase. Your application ' + 'will not receive some events.');
       }
       return {
@@ -4769,8 +4756,7 @@ var EventListener = {
 };
 
 module.exports = EventListener;
-}).call(this,require('_process'))
-},{"./emptyFunction":157,"_process":189}],153:[function(require,module,exports){
+},{"./emptyFunction":157}],153:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -4948,7 +4934,6 @@ emptyFunction.thatReturnsArgument = function (arg) {
 
 module.exports = emptyFunction;
 },{}],158:[function(require,module,exports){
-(function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -4961,13 +4946,12 @@ module.exports = emptyFunction;
 
 var emptyObject = {};
 
-if (process.env.NODE_ENV !== 'production') {
+if ("production" !== 'production') {
   Object.freeze(emptyObject);
 }
 
 module.exports = emptyObject;
-}).call(this,require('_process'))
-},{"_process":189}],159:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -5098,7 +5082,6 @@ function hyphenateStyleName(string) {
 
 module.exports = hyphenateStyleName;
 },{"./hyphenate":161}],163:[function(require,module,exports){
-(function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -5122,7 +5105,7 @@ module.exports = hyphenateStyleName;
 
 var validateFormat = function validateFormat(format) {};
 
-if (process.env.NODE_ENV !== 'production') {
+if ("production" !== 'production') {
   validateFormat = function validateFormat(format) {
     if (format === undefined) {
       throw new Error('invariant requires an error message argument');
@@ -5152,8 +5135,7 @@ function invariant(condition, format, a, b, c, d, e, f) {
 }
 
 module.exports = invariant;
-}).call(this,require('_process'))
-},{"_process":189}],164:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 'use strict';
 
 /**
@@ -5319,7 +5301,6 @@ function shallowEqual(objA, objB) {
 
 module.exports = shallowEqual;
 },{}],169:[function(require,module,exports){
-(function (process){
 /**
  * Copyright (c) 2014-present, Facebook, Inc.
  *
@@ -5341,7 +5322,7 @@ var emptyFunction = require('./emptyFunction');
 
 var warning = emptyFunction;
 
-if (process.env.NODE_ENV !== 'production') {
+if ("production" !== 'production') {
   var printWarning = function printWarning(format) {
     for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       args[_key - 1] = arguments[_key];
@@ -5382,8 +5363,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 module.exports = warning;
-}).call(this,require('_process'))
-},{"./emptyFunction":157,"_process":189}],170:[function(require,module,exports){
+},{"./emptyFunction":157}],170:[function(require,module,exports){
 /**
  * Copyright 2015, Yahoo! Inc.
  * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
@@ -5451,7 +5431,6 @@ module.exports = function hoistNonReactStatics(targetComponent, sourceComponent,
 };
 
 },{}],171:[function(require,module,exports){
-(function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
  * All rights reserved.
@@ -5475,7 +5454,7 @@ module.exports = function hoistNonReactStatics(targetComponent, sourceComponent,
  */
 
 var invariant = function(condition, format, a, b, c, d, e, f) {
-  if (process.env.NODE_ENV !== 'production') {
+  if ("production" !== 'production') {
     if (format === undefined) {
       throw new Error('invariant requires an error message argument');
     }
@@ -5504,8 +5483,7 @@ var invariant = function(condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 
-}).call(this,require('_process'))
-},{"_process":189}],172:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 (function (global){
 /**
  * Lodash (Custom Build) <https://lodash.com/>
@@ -7701,6 +7679,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.AnimationControls = undefined;
 
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -7713,29 +7695,36 @@ function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : { default: obj };
 }
 
-var mapStateToProps = function mapStateToProps(_ref) {
+var genesis_time = Date.now();
+
+var mapStateToProps = function mapStateToProps(_ref, props) {
     var animations = _ref.animations;
-    return {
+    return (0, _extends3.default)({}, props.time, {
         speed: animations.speed,
         warped_time: animations.warped_time,
         former_time: animations.former_time
-    };
+    });
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
     return {
         setWarpedTime: function setWarpedTime(warped_time) {
-            dispatch({ type: 'SET_WARPED_TIME', warped_time: warped_time });
+            dispatch({
+                type: 'TICK',
+                warped_time: warped_time,
+                former_time: warped_time - 10,
+                speed: 0
+            });
         },
         setSpeed: function setSpeed(speed) {
-            dispatch({ type: 'SET_SPEED', speed: speed });
+            dispatch({ type: 'SET_SPEED', speed: speed, reset: true });
         }
     };
 };
 
 var AnimationControls = exports.AnimationControls = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_warpedTimeControls.TimeControlsComponent);
 
-},{"./warped-time-controls.js":187,"react":222,"react-redux":214}],185:[function(require,module,exports){
+},{"./warped-time-controls.js":187,"babel-runtime/helpers/extends":24,"react":222,"react-redux":214}],185:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8709,7 +8698,6 @@ function createChainableTypeChecker(validate) {
 }
 module.exports = exports['default'];
 },{}],192:[function(require,module,exports){
-(function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -8719,7 +8707,7 @@ module.exports = exports['default'];
 
 'use strict';
 
-if (process.env.NODE_ENV !== 'production') {
+if ("production" !== 'production') {
   var invariant = require('fbjs/lib/invariant');
   var warning = require('fbjs/lib/warning');
   var ReactPropTypesSecret = require('./lib/ReactPropTypesSecret');
@@ -8738,7 +8726,7 @@ if (process.env.NODE_ENV !== 'production') {
  * @private
  */
 function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
-  if (process.env.NODE_ENV !== 'production') {
+  if ("production" !== 'production') {
     for (var typeSpecName in typeSpecs) {
       if (typeSpecs.hasOwnProperty(typeSpecName)) {
         var error;
@@ -8770,8 +8758,7 @@ function checkPropTypes(typeSpecs, values, location, componentName, getStack) {
 
 module.exports = checkPropTypes;
 
-}).call(this,require('_process'))
-},{"./lib/ReactPropTypesSecret":196,"_process":189,"fbjs/lib/invariant":163,"fbjs/lib/warning":169}],193:[function(require,module,exports){
+},{"./lib/ReactPropTypesSecret":196,"fbjs/lib/invariant":163,"fbjs/lib/warning":169}],193:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -8832,7 +8819,6 @@ module.exports = function() {
 };
 
 },{"./lib/ReactPropTypesSecret":196,"fbjs/lib/emptyFunction":157,"fbjs/lib/invariant":163}],194:[function(require,module,exports){
-(function (process){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -8981,7 +8967,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
   PropTypeError.prototype = Error.prototype;
 
   function createChainableTypeChecker(validate) {
-    if (process.env.NODE_ENV !== 'production') {
+    if ("production" !== 'production') {
       var manualPropTypeCallCache = {};
       var manualPropTypeWarningCount = 0;
     }
@@ -8998,7 +8984,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
             'Use `PropTypes.checkPropTypes()` to call them. ' +
             'Read more at http://fb.me/use-check-prop-types'
           );
-        } else if (process.env.NODE_ENV !== 'production' && typeof console !== 'undefined') {
+        } else if ("production" !== 'production' && typeof console !== 'undefined') {
           // Old behavior for people using React.PropTypes
           var cacheKey = componentName + ':' + propName;
           if (
@@ -9108,7 +9094,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 
   function createEnumTypeChecker(expectedValues) {
     if (!Array.isArray(expectedValues)) {
-      process.env.NODE_ENV !== 'production' ? warning(false, 'Invalid argument supplied to oneOf, expected an instance of array.') : void 0;
+      "production" !== 'production' ? warning(false, 'Invalid argument supplied to oneOf, expected an instance of array.') : void 0;
       return emptyFunction.thatReturnsNull;
     }
 
@@ -9151,7 +9137,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
 
   function createUnionTypeChecker(arrayOfTypeCheckers) {
     if (!Array.isArray(arrayOfTypeCheckers)) {
-      process.env.NODE_ENV !== 'production' ? warning(false, 'Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
+      "production" !== 'production' ? warning(false, 'Invalid argument supplied to oneOfType, expected an instance of array.') : void 0;
       return emptyFunction.thatReturnsNull;
     }
 
@@ -9376,9 +9362,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
   return ReactPropTypes;
 };
 
-}).call(this,require('_process'))
-},{"./checkPropTypes":192,"./lib/ReactPropTypesSecret":196,"_process":189,"fbjs/lib/emptyFunction":157,"fbjs/lib/invariant":163,"fbjs/lib/warning":169,"object-assign":188}],195:[function(require,module,exports){
-(function (process){
+},{"./checkPropTypes":192,"./lib/ReactPropTypesSecret":196,"fbjs/lib/emptyFunction":157,"fbjs/lib/invariant":163,"fbjs/lib/warning":169,"object-assign":188}],195:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -9386,7 +9370,7 @@ module.exports = function(isValidElement, throwOnDirectAccess) {
  * LICENSE file in the root directory of this source tree.
  */
 
-if (process.env.NODE_ENV !== 'production') {
+if ("production" !== 'production') {
   var REACT_ELEMENT_TYPE = (typeof Symbol === 'function' &&
     Symbol.for &&
     Symbol.for('react.element')) ||
@@ -9408,8 +9392,7 @@ if (process.env.NODE_ENV !== 'production') {
   module.exports = require('./factoryWithThrowingShims')();
 }
 
-}).call(this,require('_process'))
-},{"./factoryWithThrowingShims":193,"./factoryWithTypeCheckers":194,"_process":189}],196:[function(require,module,exports){
+},{"./factoryWithThrowingShims":193,"./factoryWithTypeCheckers":194}],196:[function(require,module,exports){
 /**
  * Copyright (c) 2013-present, Facebook, Inc.
  *
@@ -10002,7 +9985,6 @@ function createChainedFunction() {
 exports.default = createChainedFunction;
 module.exports = exports['default'];
 },{}],202:[function(require,module,exports){
-(function (process){
 /** @license React v16.0.0
  * react-dom.development.js
  *
@@ -10014,7 +9996,7 @@ module.exports = exports['default'];
 'use strict';
 
 
-if (process.env.NODE_ENV !== "production") {
+if ("production" !== "production") {
 (function() {
 
 'use strict';
@@ -27225,8 +27207,7 @@ module.exports = ReactDOMFiberEntry;
 })();
 }
 
-}).call(this,require('_process'))
-},{"_process":189,"fbjs/lib/EventListener":152,"fbjs/lib/ExecutionEnvironment":153,"fbjs/lib/camelizeStyleName":155,"fbjs/lib/containsNode":156,"fbjs/lib/emptyFunction":157,"fbjs/lib/emptyObject":158,"fbjs/lib/focusNode":159,"fbjs/lib/getActiveElement":160,"fbjs/lib/hyphenateStyleName":162,"fbjs/lib/invariant":163,"fbjs/lib/performanceNow":167,"fbjs/lib/shallowEqual":168,"fbjs/lib/warning":169,"object-assign":188,"prop-types":195,"prop-types/checkPropTypes":192,"react":222}],203:[function(require,module,exports){
+},{"fbjs/lib/EventListener":152,"fbjs/lib/ExecutionEnvironment":153,"fbjs/lib/camelizeStyleName":155,"fbjs/lib/containsNode":156,"fbjs/lib/emptyFunction":157,"fbjs/lib/emptyObject":158,"fbjs/lib/focusNode":159,"fbjs/lib/getActiveElement":160,"fbjs/lib/hyphenateStyleName":162,"fbjs/lib/invariant":163,"fbjs/lib/performanceNow":167,"fbjs/lib/shallowEqual":168,"fbjs/lib/warning":169,"object-assign":188,"prop-types":195,"prop-types/checkPropTypes":192,"react":222}],203:[function(require,module,exports){
 /*
  React v16.0.0
  react-dom.production.min.js
@@ -27485,7 +27466,6 @@ var ek={createPortal:dk,hydrate:function(a,b,c){return ck(null,a,b,!0,c)},render
 unstable_deferredUpdates:Xj.deferredUpdates,flushSync:Xj.flushSync,__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{EventPluginHub:Jb,EventPluginRegistry:sa,EventPropagators:Th,ReactControlledComponent:nb,ReactDOMComponentTree:G,ReactDOMEventListener:L}};Cj({findFiberByHostInstance:G.getClosestInstanceFromNode,findHostInstanceByFiber:Xj.findHostInstance,bundleType:0,version:"16.0.0",rendererPackageName:"react-dom"});module.exports=ek;
 
 },{"fbjs/lib/EventListener":152,"fbjs/lib/ExecutionEnvironment":153,"fbjs/lib/containsNode":156,"fbjs/lib/emptyFunction":157,"fbjs/lib/emptyObject":158,"fbjs/lib/focusNode":159,"fbjs/lib/getActiveElement":160,"fbjs/lib/invariant":163,"fbjs/lib/shallowEqual":168,"object-assign":188,"react":222}],204:[function(require,module,exports){
-(function (process){
 'use strict';
 
 function checkDCE() {
@@ -27496,7 +27476,7 @@ function checkDCE() {
   ) {
     return;
   }
-  if (process.env.NODE_ENV !== 'production') {
+  if ("production" !== 'production') {
     // This branch is unreachable because this function is only called
     // in production, but the condition is true only in development.
     // Therefore if the branch is still here, dead code elimination wasn't
@@ -27516,7 +27496,7 @@ function checkDCE() {
   }
 }
 
-if (process.env.NODE_ENV === 'production') {
+if ("production" === 'production') {
   // DCE check should happen before ReactDOM bundle executes so that
   // DevTools can report bad minification during injection.
   checkDCE();
@@ -27525,9 +27505,7 @@ if (process.env.NODE_ENV === 'production') {
   module.exports = require('./cjs/react-dom.development.js');
 }
 
-}).call(this,require('_process'))
-},{"./cjs/react-dom.development.js":202,"./cjs/react-dom.production.min.js":203,"_process":189}],205:[function(require,module,exports){
-(function (process){
+},{"./cjs/react-dom.development.js":202,"./cjs/react-dom.production.min.js":203}],205:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -27596,7 +27574,7 @@ function createProvider() {
     return Provider;
   }(_react.Component);
 
-  if (process.env.NODE_ENV !== 'production') {
+  if ("production" !== 'production') {
     Provider.prototype.componentWillReceiveProps = function (nextProps) {
       if (this[storeKey] !== nextProps.store) {
         warnAboutReceivingStore();
@@ -27614,9 +27592,7 @@ function createProvider() {
 }
 
 exports.default = createProvider();
-}).call(this,require('_process'))
-},{"../utils/PropTypes":215,"../utils/warning":219,"_process":189,"prop-types":195,"react":222}],206:[function(require,module,exports){
-(function (process){
+},{"../utils/PropTypes":215,"../utils/warning":219,"prop-types":195,"react":222}],206:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -27889,7 +27865,7 @@ selectorFactory) {
     Connect.contextTypes = contextTypes;
     Connect.propTypes = contextTypes;
 
-    if (process.env.NODE_ENV !== 'production') {
+    if ("production" !== 'production') {
       Connect.prototype.componentWillUpdate = function componentWillUpdate() {
         var _this2 = this;
 
@@ -27923,8 +27899,7 @@ selectorFactory) {
     return (0, _hoistNonReactStatics2.default)(Connect, WrappedComponent);
   };
 }
-}).call(this,require('_process'))
-},{"../utils/PropTypes":215,"../utils/Subscription":216,"_process":189,"hoist-non-react-statics":170,"invariant":171,"react":222}],207:[function(require,module,exports){
+},{"../utils/PropTypes":215,"../utils/Subscription":216,"hoist-non-react-statics":170,"invariant":171,"react":222}],207:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -28103,7 +28078,6 @@ function whenMapStateToPropsIsMissing(mapStateToProps) {
 
 exports.default = [whenMapStateToPropsIsFunction, whenMapStateToPropsIsMissing];
 },{"./wrapMapToProps":213}],210:[function(require,module,exports){
-(function (process){
 'use strict';
 
 exports.__esModule = true;
@@ -28143,7 +28117,7 @@ function wrapMergePropsFunc(mergeProps) {
         hasRunOnce = true;
         mergedProps = nextMergedProps;
 
-        if (process.env.NODE_ENV !== 'production') (0, _verifyPlainObject2.default)(mergedProps, displayName, 'mergeProps');
+        if ("production" !== 'production') (0, _verifyPlainObject2.default)(mergedProps, displayName, 'mergeProps');
       }
 
       return mergedProps;
@@ -28162,9 +28136,7 @@ function whenMergePropsIsOmitted(mergeProps) {
 }
 
 exports.default = [whenMergePropsIsFunction, whenMergePropsIsOmitted];
-}).call(this,require('_process'))
-},{"../utils/verifyPlainObject":218,"_process":189}],211:[function(require,module,exports){
-(function (process){
+},{"../utils/verifyPlainObject":218}],211:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -28270,7 +28242,7 @@ function finalPropsSelectorFactory(dispatch, _ref2) {
   var mapDispatchToProps = initMapDispatchToProps(dispatch, options);
   var mergeProps = initMergeProps(dispatch, options);
 
-  if (process.env.NODE_ENV !== 'production') {
+  if ("production" !== 'production') {
     (0, _verifySubselectors2.default)(mapStateToProps, mapDispatchToProps, mergeProps, options.displayName);
   }
 
@@ -28278,8 +28250,7 @@ function finalPropsSelectorFactory(dispatch, _ref2) {
 
   return selectorFactory(mapStateToProps, mapDispatchToProps, mergeProps, dispatch, options);
 }
-}).call(this,require('_process'))
-},{"./verifySubselectors":212,"_process":189}],212:[function(require,module,exports){
+},{"./verifySubselectors":212}],212:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -28307,7 +28278,6 @@ function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps, dis
   verify(mergeProps, 'mergeProps', displayName);
 }
 },{"../utils/warning":219}],213:[function(require,module,exports){
-(function (process){
 'use strict';
 
 exports.__esModule = true;
@@ -28378,7 +28348,7 @@ function wrapMapToPropsFunc(mapToProps, methodName) {
         props = proxy(stateOrDispatch, ownProps);
       }
 
-      if (process.env.NODE_ENV !== 'production') (0, _verifyPlainObject2.default)(props, displayName, methodName);
+      if ("production" !== 'production') (0, _verifyPlainObject2.default)(props, displayName, methodName);
 
       return props;
     };
@@ -28386,8 +28356,7 @@ function wrapMapToPropsFunc(mapToProps, methodName) {
     return proxy;
   };
 }
-}).call(this,require('_process'))
-},{"../utils/verifyPlainObject":218,"_process":189}],214:[function(require,module,exports){
+},{"../utils/verifyPlainObject":218}],214:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -28615,7 +28584,6 @@ function warning(message) {
   /* eslint-enable no-empty */
 }
 },{}],220:[function(require,module,exports){
-(function (process){
 /** @license React v16.0.0
  * react.development.js
  *
@@ -28627,7 +28595,7 @@ function warning(message) {
 'use strict';
 
 
-if (process.env.NODE_ENV !== "production") {
+if ("production" !== "production") {
 (function() {
 
 'use strict';
@@ -30315,8 +30283,7 @@ module.exports = ReactEntry;
 })();
 }
 
-}).call(this,require('_process'))
-},{"_process":189,"fbjs/lib/emptyFunction":157,"fbjs/lib/emptyObject":158,"fbjs/lib/invariant":163,"fbjs/lib/warning":169,"object-assign":188,"prop-types/checkPropTypes":192}],221:[function(require,module,exports){
+},{"fbjs/lib/emptyFunction":157,"fbjs/lib/emptyObject":158,"fbjs/lib/invariant":163,"fbjs/lib/warning":169,"object-assign":188,"prop-types/checkPropTypes":192}],221:[function(require,module,exports){
 /*
  React v16.0.0
  react.production.min.js
@@ -30342,19 +30309,1071 @@ function R(a,b,d,e,c){var g="";null!=d&&(g=(""+d).replace(J,"$\x26/")+"/");b=L(b
 module.exports={Children:{map:S.map,forEach:S.forEach,count:S.count,toArray:S.toArray,only:function(a){G.isValidElement(a)?void 0:t("143");return a}},Component:B.Component,PureComponent:B.PureComponent,unstable_AsyncComponent:B.AsyncComponent,createElement:G.createElement,cloneElement:G.cloneElement,isValidElement:G.isValidElement,createFactory:G.createFactory,version:"16.0.0",__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED:{ReactCurrentOwner:C,assign:f}};
 
 },{"fbjs/lib/emptyFunction":157,"fbjs/lib/emptyObject":158,"fbjs/lib/invariant":163,"object-assign":188}],222:[function(require,module,exports){
-(function (process){
 'use strict';
 
-if (process.env.NODE_ENV === 'production') {
+if ("production" === 'production') {
   module.exports = require('./cjs/react.production.min.js');
 } else {
   module.exports = require('./cjs/react.development.js');
 }
 
+},{"./cjs/react.development.js":220,"./cjs/react.production.min.js":221}],223:[function(require,module,exports){
+(function (process){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.computeAnimatedState = exports.activeAnimations = exports.uniqueAnimations = exports.futureAnimations = exports.pastAnimations = exports.finalFrameAnimations = exports.currentAnimations = exports.flattenStyles = exports.nested_key = exports.setDifference = exports.setIntersection = exports.flattened = exports.mapObj = exports.flipObj = exports.deepCopy = exports.range = exports.mod = exports.EasingFunctions = exports.checkIsValidSequence = exports.checkIsValidAnimation = exports.assertSortedObjsInOrder = exports.findMissingKey = exports.assertEqual = exports.assertThrows = exports.assert = exports.print = exports.immutify = undefined;
+
+var _set = require('babel-runtime/core-js/set');
+
+var _set2 = _interopRequireDefault(_set);
+
+var _typeof2 = require('babel-runtime/helpers/typeof');
+
+var _typeof3 = _interopRequireDefault(_typeof2);
+
+var _regenerator = require('babel-runtime/regenerator');
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
+
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
+var _getIterator2 = require('babel-runtime/core-js/get-iterator');
+
+var _getIterator3 = _interopRequireDefault(_getIterator2);
+
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
+var _defineProperty = require('babel-runtime/core-js/object/define-property');
+
+var _defineProperty2 = _interopRequireDefault(_defineProperty);
+
+var _keys = require('babel-runtime/core-js/object/keys');
+
+var _keys2 = _interopRequireDefault(_keys);
+
+exports.reversed = reversed;
+exports.isBaseType = isBaseType;
+exports.deepMerge = deepMerge;
+exports.select = select;
+exports.patch = patch;
+exports.applyPatches = applyPatches;
+
+var _extend = require('extend');
+
+var _extend2 = _interopRequireDefault(_extend);
+
+var _lodash = require('lodash.isequal');
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
+function _interopRequireDefault(obj) {
+    return obj && obj.__esModule ? obj : { default: obj };
+}
+
+var _marked = /*#__PURE__*/_regenerator2.default.mark(reversed);
+
+var immutify = exports.immutify = function immutify(obj) {
+    return (0, _keys2.default)(obj).reduce(function (new_obj, key) {
+        var val = obj[key];
+        if (typeof val === 'function') {
+            val.inspect = val.toString;
+        }
+        (0, _defineProperty2.default)(new_obj, key, {
+            enumerable: true,
+            configurable: false,
+            writable: false,
+            value: val
+        });
+        return new_obj;
+    }, {});
+};
+
+var print = exports.print = function print(msg) {
+    process ? process.stdout.write(msg) : console.log(msg);
+};
+
+var assert = exports.assert = function assert(val) {
+    var error_msg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
+    if (!val) {
+        var call_stack = new Error().stack;
+        print('[X] AssertionError: ' + error_msg + ' (' + val + ')');
+        print(call_stack);
+        process.exit(1);
+    } else {
+        process ? process.stdout.write('.') : console.log('.');
+    }
+};
+
+var assertThrows = exports.assertThrows = function assertThrows(func) {
+    try {
+        func();
+        assert(false, func.toString() + ' should have thrown an error');
+    } catch (err) {
+        assert(true);
+    }
+};
+
+var assertEqual = exports.assertEqual = function assertEqual(val1, val2) {
+    assert((0, _lodash2.default)(val1, val2), (0, _stringify2.default)(val1) + ' !== ' + (0, _stringify2.default)(val2));
+};
+
+var findMissingKey = exports.findMissingKey = function findMissingKey(obj1, obj2) {
+    var both_ways = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+    var _iteratorNormalCompletion = true;
+    var _didIteratorError = false;
+    var _iteratorError = undefined;
+
+    try {
+        for (var _iterator = (0, _getIterator3.default)((0, _keys2.default)(obj1)), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var key = _step.value;
+
+            if (!(0, _keys2.default)(obj2).includes(key)) {
+                return key;
+            }
+        }
+    } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+                _iterator.return();
+            }
+        } finally {
+            if (_didIteratorError) {
+                throw _iteratorError;
+            }
+        }
+    }
+
+    if (both_ways) {
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
+
+        try {
+            for (var _iterator2 = (0, _getIterator3.default)((0, _keys2.default)(obj2)), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                var _key = _step2.value;
+
+                if (!(0, _keys2.default)(obj1).includes(_key)) {
+                    return _key;
+                }
+            }
+        } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                    _iterator2.return();
+                }
+            } finally {
+                if (_didIteratorError2) {
+                    throw _iteratorError2;
+                }
+            }
+        }
+    }
+    return null;
+};
+
+var assertSortedObjsInOrder = exports.assertSortedObjsInOrder = function assertSortedObjsInOrder(arr, sort_function, expected_order) {
+    var arr_with_keys = arr.map(function (obj, idx) {
+        return (0, _extends3.default)({}, obj, {
+            idx: idx
+        });
+    });
+    var sorted_objs = sort_function(arr_with_keys);
+    var sorted_order = sorted_objs.map(function (obj) {
+        return obj.idx;
+    });
+    expected_order.forEach(function (expected_idx, idx) {
+        assertEqual(expected_idx, sorted_order[idx]);
+    });
+};
+
+var checkIsValidAnimation = exports.checkIsValidAnimation = function checkIsValidAnimation(animation) {
+    if (Array.isArray(animation)) {
+        console.log('%cINVALID ANIMATION:', 'color:red', animation);
+        console.log('Got an array instead of a single animation object, did you double-nest somthing by forgetting to use ...?');
+        throw 'Animation must be passed in as a single Animation object!';
+    }
+    if (!(animation.type && animation.path)) {
+        console.log('%cINVALID ANIMATION:', 'color:red', animation);
+        console.log('Got unrecognized animation object missing a type or path.');
+        throw 'Animation must be passed in as a single Animation object!';
+    }
+};
+
+var checkIsValidSequence = exports.checkIsValidSequence = function checkIsValidSequence(animations) {
+    if (!Array.isArray(animations)) {
+        console.log('%cINVALID ANIMATION:', 'color:red', animations);
+        console.log('Got something other than an array.');
+        throw 'Sequence must be passed in as an array of Animation objects!';
+    }
+    if (animations.length && Array.isArray(animations[0])) {
+        console.log('%cINVALID ANIMATION:', 'color:red', animations);
+        console.log('Got double-nested animation array instead of just an array of objects.');
+        throw 'Sequence must be passed in as an array of Animation objects!';
+    }
+    var _iteratorNormalCompletion3 = true;
+    var _didIteratorError3 = false;
+    var _iteratorError3 = undefined;
+
+    try {
+        for (var _iterator3 = (0, _getIterator3.default)(animations), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var animation = _step3.value;
+
+            checkIsValidAnimation(animation);
+        }
+    } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+                _iterator3.return();
+            }
+        } finally {
+            if (_didIteratorError3) {
+                throw _iteratorError3;
+            }
+        }
+    }
+
+    return true;
+};
+
+var EasingFunctions = exports.EasingFunctions = {
+    // no easing, no acceleration
+    linear: function linear(t) {
+        return t;
+    },
+    // accelerating from zero velocity
+    easeInQuad: function easeInQuad(t) {
+        return t * t;
+    },
+    // decelerating to zero velocity
+    easeOutQuad: function easeOutQuad(t) {
+        return t * (2 - t);
+    },
+    // acceleration until halfway, then deceleration
+    easeInOutQuad: function easeInOutQuad(t) {
+        return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    },
+    // accelerating from zero velocity
+    easeInCubic: function easeInCubic(t) {
+        return t * t * t;
+    },
+    // decelerating to zero velocity
+    easeOutCubic: function easeOutCubic(t) {
+        return --t * t * t + 1;
+    },
+    // acceleration until halfway, then deceleration
+    easeInOutCubic: function easeInOutCubic(t) {
+        return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    },
+    // accelerating from zero velocity
+    easeInQuart: function easeInQuart(t) {
+        return t * t * t * t;
+    },
+    // decelerating to zero velocity
+    easeOutQuart: function easeOutQuart(t) {
+        return 1 - --t * t * t * t;
+    },
+    // acceleration until halfway, then deceleration
+    easeInOutQuart: function easeInOutQuart(t) {
+        return t < .5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t;
+    },
+    // accelerating from zero velocity
+    easeInQuint: function easeInQuint(t) {
+        return t * t * t * t * t;
+    },
+    // decelerating to zero velocity
+    easeOutQuint: function easeOutQuint(t) {
+        return 1 + --t * t * t * t * t;
+    },
+    // acceleration until halfway, then deceleration
+    easeInOutQuint: function easeInOutQuint(t) {
+        return t < .5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+    }
+};
+
+var mod = exports.mod = function mod(num, delta_state) {
+    return (num % delta_state + delta_state) % delta_state;
+};
+
+var range = exports.range = function range(num) {
+    return [].concat((0, _toConsumableArray3.default)(Array(num).keys()));
+};
+
+var deepCopy = exports.deepCopy = function deepCopy(obj) {
+    return (0, _extend2.default)(true, {}, obj);
+}; // TODO: remove jquery
+
+var flipObj = exports.flipObj = function flipObj(obj) {
+    return (0, _keys2.default)(obj).reduce(function (acc, key) {
+        var val = obj[key];
+        acc[val] = key;
+        return acc;
+    }, {});
+};
+
+// equivalent to {key: func(key, val) for key, val in obj.items()}
+var mapObj = exports.mapObj = function mapObj(obj, func) {
+    return (0, _keys2.default)(obj).reduce(function (acc, key) {
+        acc[key] = func(key, obj[key]);
+        return acc;
+    }, {});
+};
+
+function reversed(iterator) {
+    var idx;
+    return _regenerator2.default.wrap(function reversed$(_context) {
+        while (1) {
+            switch (_context.prev = _context.next) {
+                case 0:
+                    idx = iterator.length - 1;
+
+                case 1:
+                    if (!(idx >= 0)) {
+                        _context.next = 7;
+                        break;
+                    }
+
+                    _context.next = 4;
+                    return iterator[idx];
+
+                case 4:
+                    idx--;
+                    _context.next = 1;
+                    break;
+
+                case 7:
+                case 'end':
+                    return _context.stop();
+            }
+        }
+    }, _marked, this);
+}
+
+var flattened = exports.flattened = function flattened(array) {
+    return [].concat.apply([], array);
+};
+
+var setIntersection = exports.setIntersection = function setIntersection(set1, set2) {
+    return [].concat((0, _toConsumableArray3.default)(set1)).filter(function (x) {
+        return set2.has(x);
+    });
+};
+var setDifference = exports.setDifference = function setDifference(set1, set2) {
+    return [].concat((0, _toConsumableArray3.default)(set1)).filter(function (x) {
+        return !set2.has(x);
+    });
+};
+
+var base_types = ['string', 'number', 'boolean', 'symbol', 'function'];
+function isBaseType(item) {
+    var array_is_basetype = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+    // false if item is a dict, true for everything else
+    if (item === null || item === undefined) {
+        return true;
+    } else if (base_types.indexOf(typeof item === 'undefined' ? 'undefined' : (0, _typeof3.default)(item)) != -1) {
+        return true;
+    } else if (array_is_basetype && Array.isArray(item)) {
+        return true;
+    }
+    return false;
+}
+
+function deepMerge(obj1, obj2) {
+    var merge_vals = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+    if (isBaseType(obj1) || isBaseType(obj2)) {
+        return obj2;
+    } else {
+        var obj1_keys = new _set2.default((0, _keys2.default)(obj1));
+        var obj2_keys = new _set2.default((0, _keys2.default)(obj2));
+        var both_keys = setIntersection(obj1_keys, obj2_keys);
+        var only_obj1 = setDifference(obj1_keys, obj2_keys);
+        var only_obj2 = setDifference(obj2_keys, obj1_keys);
+
+        var new_obj = {};
+
+        // merge any values that are in both dicts
+        if (merge_vals) {
+            both_keys.reduce(function (new_obj, key) {
+                new_obj[key] = deepMerge(obj1[key], obj2[key]);
+                return new_obj;
+            }, new_obj);
+        }
+
+        // add values only in obj1
+        only_obj1.reduce(function (new_obj, key) {
+            new_obj[key] = obj1[key];
+            return new_obj;
+        }, new_obj);
+
+        // add values only in obj2
+        only_obj2.reduce(function (new_obj, key) {
+            new_obj[key] = obj2[key];
+            return new_obj;
+        }, new_obj);
+
+        return new_obj;
+    }
+}
+
+// uniformly populates a tree of size (branching_factor, depth)
+//  used in benchmarks. see unit tests for examples
+var nested_key = exports.nested_key = function nested_key(i, bf, d) {
+    var l = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : null;
+
+    // populates a tree uniformly. see tests below for examples
+    if (l === 0) {
+        return '';
+    } else if (!l) {
+        var cropped_i = i % Math.pow(bf, d);
+        return nested_key(cropped_i, bf, d, d);
+    } else {
+        return nested_key(Math.floor(i / bf), bf, d, l - 1) + '/' + i;
+    }
+};
+
+function select(obj, selector) {
+    // ({a: {b: 2}}, '/a/b') => 2
+    //  Get obj at specified addr (works with array indicies)
+    var keys = void 0;
+    if (typeof selector === 'string') {
+        if (selector === '/') return obj;
+        if (selector[0] !== '/') throw 'Invalid selector! ' + selector;
+        keys = selector.split('/').slice(1);
+    } else if (Array.isArray(selector)) {
+        keys = selector;
+    } else {
+        throw 'Invalid selector, must be string /path or array of keys! ' + selector;
+    }
+    var _iteratorNormalCompletion4 = true;
+    var _didIteratorError4 = false;
+    var _iteratorError4 = undefined;
+
+    try {
+        for (var _iterator4 = (0, _getIterator3.default)(keys), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var key = _step4.value;
+
+            if (obj === undefined) {
+                return undefined;
+            }
+            obj = obj[key];
+        }
+    } catch (err) {
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                _iterator4.return();
+            }
+        } finally {
+            if (_didIteratorError4) {
+                throw _iteratorError4;
+            }
+        }
+    }
+
+    return obj;
+}
+
+function patch(obj, selector, new_val) {
+    var merge = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+    var mkpath = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : false;
+    var deepcopy = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : true;
+
+    // ({a: {b: 2}}, '/a/b', 4) => {a: {b: 4}}
+    //  Set obj at specified addr (works with array indicies)
+    var keys = void 0;
+    if (typeof selector === 'string') {
+        if (selector === '/') return new_val;
+        if (!selector || selector[0] !== '/') throw 'Invalid selector! ' + selector;
+        keys = selector.split('/').slice(1);
+    } else if (Array.isArray(selector)) {
+        keys = [].concat((0, _toConsumableArray3.default)(selector));
+    } else {
+        throw 'Invalid selector, must be string /path or array of keys! ' + selector;
+    }
+    var last_key = keys.pop();
+    if (last_key == '') {
+        console.log({ obj: obj, selector: selector, new_val: new_val, merge: merge, mkpath: mkpath });
+        throw 'Patch paths must not have trailing slashes or empty keys!';
+    }
+    var parent = obj;
+    var _iteratorNormalCompletion5 = true;
+    var _didIteratorError5 = false;
+    var _iteratorError5 = undefined;
+
+    try {
+        for (var _iterator5 = (0, _getIterator3.default)(keys), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var key = _step5.value;
+
+            // create path if any point is missing
+            if (mkpath && (parent[key] === undefined || parent[key] === null) || isBaseType(parent[key], false)) {
+                parent[key] = {};
+            }
+            parent = parent[key];
+        }
+    } catch (err) {
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion5 && _iterator5.return) {
+                _iterator5.return();
+            }
+        } finally {
+            if (_didIteratorError5) {
+                throw _iteratorError5;
+            }
+        }
+    }
+
+    if (merge) {
+        parent[last_key] = deepMerge(parent[last_key], new_val);
+    } else {
+        parent[last_key] = new_val;
+    }
+    return deepcopy ? (0, _extend2.default)(true, {}, obj) : obj;
+}
+
+var css_transform_str = {
+    scale: function scale(_scale) {
+        return 'scale(' + _scale + ')';
+    },
+    perspective: function perspective(px) {
+        return 'perspective(' + px + ')';
+    },
+    translate: function translate(_ref) {
+        var left = _ref.left,
+            top = _ref.top;
+        return 'translate(' + left + ', ' + top + ')';
+    },
+    translate3d: function translate3d(_ref2) {
+        var x = _ref2.x,
+            y = _ref2.y,
+            z = _ref2.z;
+        return 'translate3d(' + x + ', ' + y + ', ' + z + ')';
+    },
+    rotate: function rotate(rotation) {
+        return 'rotate(' + rotation + ')';
+    },
+    rotate3d: function rotate3d(_ref3) {
+        var x = _ref3.x,
+            y = _ref3.y,
+            z = _ref3.z;
+        return 'rotate3d(' + x + ', ' + y + ', ' + z + ')';
+    },
+    skew: function skew(_ref4) {
+        var x = _ref4.x,
+            y = _ref4.y;
+        return 'skew(' + x + ', ' + y + ')';
+    },
+    scale3d: function scale3d(_ref5) {
+        var x = _ref5.x,
+            y = _ref5.y,
+            z = _ref5.z;
+        return 'scale3d(' + x + ', ' + y + ', ' + z + ')';
+    }
+    // TODO: add more css transform types?
+};
+
+var css_animation_str = function css_animation_str(_ref6) {
+    var name = _ref6.name,
+        duration = _ref6.duration,
+        curve = _ref6.curve,
+        delay = _ref6.delay,
+        playState = _ref6.playState;
+    return name + ' ' + duration + 'ms ' + curve + ' -' + delay + 'ms ' + playState;
+};
+
+var flattenTransform = function flattenTransform(transform) {
+    // WARNING: optimized code, do not convert to map() without profiling
+    // flatten transforms from a dict to a string
+    // converts {style: {transform: {translate: {left: '0px', top: '10px'}, rotate: '10deg'}}}
+    //      =>  {style: {transform: 'translate(0px, 10px) rotate(10deg)'}}
+
+    var css_transform_funcs = [];
+    var _iteratorNormalCompletion6 = true;
+    var _didIteratorError6 = false;
+    var _iteratorError6 = undefined;
+
+    try {
+        for (var _iterator6 = (0, _getIterator3.default)((0, _keys2.default)(transform)), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+            var key = _step6.value;
+
+            if (transform[key] === null) continue;
+            var order = transform[key].order;
+            if (typeof order === 'number') {
+                // deterministic ordering via order: key
+                css_transform_funcs[order] = css_transform_str[key](transform[key]);
+            } else {
+                css_transform_funcs.push(css_transform_str[key](transform[key]));
+            }
+        }
+    } catch (err) {
+        _didIteratorError6 = true;
+        _iteratorError6 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                _iterator6.return();
+            }
+        } finally {
+            if (_didIteratorError6) {
+                throw _iteratorError6;
+            }
+        }
+    }
+
+    return css_transform_funcs.filter(Boolean).join(' ');
+};
+
+var flattenAnimation = function flattenAnimation(animation) {
+    // WARNING: optimized code, do not convert to map() without profiling
+    // flatten animations from a dict to a string
+    // converts {style: {animations: {blinker: {name: blinker, duration: 1000, curve: 'linear', delay: 767}, ...}}}
+    //      =>  {style: {animation: blinker 1000ms linear -767ms paused, ...}}
+
+    var css_animation_funcs = [];
+    var _iteratorNormalCompletion7 = true;
+    var _didIteratorError7 = false;
+    var _iteratorError7 = undefined;
+
+    try {
+        for (var _iterator7 = (0, _getIterator3.default)((0, _keys2.default)(animation)), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+            var key = _step7.value;
+
+            if (animation[key] === null) continue;
+            var order = animation[key].order;
+            if (typeof order === 'number') {
+                // deterministic ordering via order: key
+                css_animation_funcs[order] = css_animation_str(animation[key]);
+            } else {
+                css_animation_funcs.push(css_animation_str(animation[key]));
+            }
+        }
+    } catch (err) {
+        _didIteratorError7 = true;
+        _iteratorError7 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                _iterator7.return();
+            }
+        } finally {
+            if (_didIteratorError7) {
+                throw _iteratorError7;
+            }
+        }
+    }
+
+    return css_animation_funcs.filter(Boolean).join(', ');
+};
+
+var flattenIfNotFlattened = function flattenIfNotFlattened(state, path, flatten_func) {
+    var state_slice = select(state, path);
+    if (state_slice === undefined || state_slice === null) {
+        // State no longer exists because it was overwritten by a later patch
+        return;
+    }
+    if (typeof state_slice !== 'string') {
+        patch(state, path, flatten_func(state_slice), false, false, false);
+    }
+};
+
+var flattenStyles = exports.flattenStyles = function flattenStyles(state, paths_to_flatten) {
+    // TODO: profile and see if this is slow
+
+    // WARNING: optimized code, profile before changing anything
+    // this converts the styles stored as dicts in the state tree, to the strings
+    // that react components expect as CSS style values
+    var _iteratorNormalCompletion8 = true;
+    var _didIteratorError8 = false;
+    var _iteratorError8 = undefined;
+
+    try {
+        for (var _iterator8 = (0, _getIterator3.default)(paths_to_flatten), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+            var path = _step8.value;
+
+            var transform_idx = path.lastIndexOf('transform');
+            if (transform_idx != -1) {
+                var path_to_transform = path.slice(0, transform_idx + 1);
+                flattenIfNotFlattened(state, path_to_transform, flattenTransform);
+                continue;
+            }
+            var animation_idx = path.lastIndexOf('animation');
+            if (animation_idx != -1) {
+                var path_to_animation = path.slice(0, animation_idx + 1);
+                flattenIfNotFlattened(state, path_to_animation, flattenAnimation);
+                continue;
+            }
+        }
+    } catch (err) {
+        _didIteratorError8 = true;
+        _iteratorError8 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion8 && _iterator8.return) {
+                _iterator8.return();
+            }
+        } finally {
+            if (_didIteratorError8) {
+                throw _iteratorError8;
+            }
+        }
+    }
+
+    return state;
+};
+
+var shouldFlatten = function shouldFlatten(split_path) {
+    // TODO: profile and see if this is slow
+
+    // WARNING: optimized code, profile before changing anything
+    //  check to see if a given path introduces some CSS state that needs
+    //  to be converted from an object to a css string, e.g.
+    //  {style: transform: translate: {top: 0, left: 0}}
+    var style_key = split_path.lastIndexOf('style');
+    return style_key != -1 && (split_path[style_key + 1] == 'transform' || split_path[style_key + 1] == 'animation');
+};
+
+function applyPatches(obj, patches) {
+    var flatten_styles = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+    // WARNING: optimized code, profile before changing anything
+    var output = {};
+    var paths_to_flatten = [];
+
+    // O(n) application of patches onto a single object
+    var _iteratorNormalCompletion9 = true;
+    var _didIteratorError9 = false;
+    var _iteratorError9 = undefined;
+
+    try {
+        for (var _iterator9 = (0, _getIterator3.default)(patches), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+            var _patch = _step9.value;
+
+            // deepcopy to prevent later patches from mutating previous object values
+            var patch_val = _patch.value;
+            if (patch_val !== null && (typeof patch_val === 'undefined' ? 'undefined' : (0, _typeof3.default)(patch_val)) === 'object') {
+                // unfortunately this is not very optimizable since dont know
+                // the structure beforehand. Do not use JSON.stringify+parse because
+                // Date, function, and Infinity objects dont get safely converted.
+                // jQuery is significantly faster than lodash cloneDeep
+                patch_val = (0, _extend2.default)(true, {}, patch_val);
+            }
+            var keys = [].concat((0, _toConsumableArray3.default)(_patch.split_path));
+
+            if (flatten_styles && shouldFlatten(keys)) paths_to_flatten.push(keys);
+
+            var final_key = keys.pop();
+            // get to the end of the list of paths
+            var parent = output;
+            var _iteratorNormalCompletion10 = true;
+            var _didIteratorError10 = false;
+            var _iteratorError10 = undefined;
+
+            try {
+                for (var _iterator10 = (0, _getIterator3.default)(keys), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+                    var key = _step10.value;
+
+                    if (parent[key] === undefined || parent[key] === null || isBaseType(parent[key], false)) {
+                        parent[key] = {};
+                    }
+                    parent = parent[key];
+                }
+            } catch (err) {
+                _didIteratorError10 = true;
+                _iteratorError10 = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion10 && _iterator10.return) {
+                        _iterator10.return();
+                    }
+                } finally {
+                    if (_didIteratorError10) {
+                        throw _iteratorError10;
+                    }
+                }
+            }
+
+            parent[final_key] = patch_val;
+        }
+    } catch (err) {
+        _didIteratorError9 = true;
+        _iteratorError9 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion9 && _iterator9.return) {
+                _iterator9.return();
+            }
+        } finally {
+            if (_didIteratorError9) {
+                throw _iteratorError9;
+            }
+        }
+    }
+
+    if (flatten_styles) return flattenStyles(output, paths_to_flatten);
+    return output;
+}
+
+var currentAnimations = exports.currentAnimations = function currentAnimations(_ref7) {
+    var anim_queue = _ref7.anim_queue,
+        warped_time = _ref7.warped_time;
+
+    return anim_queue.filter(function (_ref8) {
+        var start_time = _ref8.start_time,
+            end_time = _ref8.end_time;
+
+        var started_already = start_time <= warped_time;
+        var has_not_ended = end_time > warped_time;
+        return started_already && has_not_ended;
+    });
+};
+
+var finalFrameAnimations = exports.finalFrameAnimations = function finalFrameAnimations(_ref9) {
+    var anim_queue = _ref9.anim_queue,
+        warped_time = _ref9.warped_time,
+        former_time = _ref9.former_time;
+
+    var is_between = function is_between(anim) {
+        if (warped_time >= former_time) {
+            // traveling forward in time or standing still
+            return former_time <= anim.end_time && anim.end_time <= warped_time;
+        } else {
+            // traveling backward in time
+            return warped_time <= anim.start_time && anim.start_time <= former_time;
+        }
+    };
+
+    return anim_queue.filter(function (anim) {
+        return is_between(anim);
+    });
+};
+
+var pastAnimations = exports.pastAnimations = function pastAnimations(_ref10) {
+    var anim_queue = _ref10.anim_queue,
+        warped_time = _ref10.warped_time;
+
+    return anim_queue.filter(function (_ref11) {
+        var start_time = _ref11.start_time,
+            duration = _ref11.duration;
+        return start_time + duration < warped_time;
+    });
+};
+
+var futureAnimations = exports.futureAnimations = function futureAnimations(_ref12) {
+    var anim_queue = _ref12.anim_queue,
+        warped_time = _ref12.warped_time;
+
+    return anim_queue.filter(function (_ref13) {
+        var start_time = _ref13.start_time,
+            duration = _ref13.duration;
+        return start_time > warped_time;
+    });
+};
+
+// export const sortedAnimations = (anim_queue) => {
+//     return [...anim_queue].sort((a, b) => {
+//         // sort by end time, if both are the same, sort by start time,
+//         //  and properly handle infinity
+//         if (a.end_time == b.end_time) {
+//             return b.start_time - a.start_time
+//         } else {
+//             if (a.end_time == Infinity) {
+//                 return 1
+//             }
+//             else if (b.end_time == Infinity) {
+//                 return -1
+//             }
+//             else {
+//                 return b.end_time - a.end_time
+//             }
+//         }
+//     })
+// }
+
+// 0 /a /b /c       3
+// 1 /a /b          2
+// 2 /a /b /e /d    4
+
+var parentExists = function parentExists(paths, path) {
+    var parent = '';
+    var _iteratorNormalCompletion11 = true;
+    var _didIteratorError11 = false;
+    var _iteratorError11 = undefined;
+
+    try {
+        for (var _iterator11 = (0, _getIterator3.default)(path.split('/').slice(1)), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+            var key = _step11.value;
+            // O(path.length)
+            parent = parent + '/' + key;
+            if (paths.has(parent)) {
+                return true;
+            }
+        }
+    } catch (err) {
+        _didIteratorError11 = true;
+        _iteratorError11 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion11 && _iterator11.return) {
+                _iterator11.return();
+            }
+        } finally {
+            if (_didIteratorError11) {
+                throw _iteratorError11;
+            }
+        }
+    }
+
+    return false;
+};
+
+var uniqueAnimations = exports.uniqueAnimations = function uniqueAnimations(anim_queue) {
+    var paths = new _set2.default();
+    var uniq_anims = [];
+
+    var _iteratorNormalCompletion12 = true;
+    var _didIteratorError12 = false;
+    var _iteratorError12 = undefined;
+
+    try {
+        for (var _iterator12 = (0, _getIterator3.default)(reversed(anim_queue)), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+            var anim = _step12.value;
+            // O(anim_que.length)
+            if (!parentExists(paths, anim.path)) {
+                uniq_anims.push(anim);
+                paths.add(anim.path);
+            }
+        }
+    } catch (err) {
+        _didIteratorError12 = true;
+        _iteratorError12 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion12 && _iterator12.return) {
+                _iterator12.return();
+            }
+        } finally {
+            if (_didIteratorError12) {
+                throw _iteratorError12;
+            }
+        }
+    }
+
+    return uniq_anims.reverse();
+};
+
+var activeAnimations = exports.activeAnimations = function activeAnimations(_ref14) {
+    var anim_queue = _ref14.anim_queue,
+        warped_time = _ref14.warped_time,
+        former_time = _ref14.former_time,
+        uniqueify = _ref14.uniqueify;
+
+    if (warped_time === undefined || former_time === undefined) {
+        throw 'Both warped_time and former_time must be passed to get activeAnimations';
+    }
+
+    var anims = [].concat((0, _toConsumableArray3.default)(finalFrameAnimations({ anim_queue: anim_queue, former_time: former_time, warped_time: warped_time })), (0, _toConsumableArray3.default)(currentAnimations({ anim_queue: anim_queue, warped_time: warped_time })));
+
+    if (uniqueify) anims = uniqueAnimations(anims);
+
+    return anims;
+};
+
+var patchesFromAnimation = function patchesFromAnimation(animation, warped_time) {
+    // console.log('patchesFromAnimation')
+    // console.log({animation, warped_time})
+    var patches = [];
+    var delta = warped_time - animation.start_time;
+    if (animation.merge) {
+        var values = animation.tick(delta);
+        (0, _keys2.default)(animation.start_state).forEach(function (key) {
+            patches.push({
+                split_path: [].concat((0, _toConsumableArray3.default)(animation.split_path), [key]),
+                value: values[key]
+            });
+        });
+    } else {
+        patches.push({
+            split_path: animation.split_path,
+            value: animation.tick(delta)
+        });
+    }
+    return patches;
+};
+
+var computeAnimatedState = exports.computeAnimatedState = function computeAnimatedState(_ref15) {
+    var animations = _ref15.animations,
+        warped_time = _ref15.warped_time,
+        _ref15$former_time = _ref15.former_time,
+        former_time = _ref15$former_time === undefined ? null : _ref15$former_time;
+
+    former_time = former_time === null ? warped_time : former_time;
+
+    var active_animations = activeAnimations({ anim_queue: animations,
+        warped_time: warped_time,
+        former_time: former_time,
+        uniqueify: false });
+    var patches = [];
+    // console.log({active_animations})
+    var _iteratorNormalCompletion13 = true;
+    var _didIteratorError13 = false;
+    var _iteratorError13 = undefined;
+
+    try {
+        for (var _iterator13 = (0, _getIterator3.default)(active_animations), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+            var animation = _step13.value;
+
+            try {
+                patches = [].concat((0, _toConsumableArray3.default)(patches), (0, _toConsumableArray3.default)(patchesFromAnimation(animation, warped_time)));
+            } catch (e) {
+                console.log(animation.type, 'Animation tick function threw an exception:', e.stack, animation);
+            }
+        }
+    } catch (err) {
+        _didIteratorError13 = true;
+        _iteratorError13 = err;
+    } finally {
+        try {
+            if (!_iteratorNormalCompletion13 && _iterator13.return) {
+                _iterator13.return();
+            }
+        } finally {
+            if (_didIteratorError13) {
+                throw _iteratorError13;
+            }
+        }
+    }
+
+    return applyPatches({}, patches);
+};
+
 }).call(this,require('_process'))
-},{"./cjs/react.development.js":220,"./cjs/react.production.min.js":221,"_process":189}],223:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"_process":189,"babel-runtime/core-js/get-iterator":7,"babel-runtime/core-js/json/stringify":9,"babel-runtime/core-js/object/define-property":12,"babel-runtime/core-js/object/keys":15,"babel-runtime/core-js/set":18,"babel-runtime/helpers/extends":24,"babel-runtime/helpers/toConsumableArray":30,"babel-runtime/helpers/typeof":31,"babel-runtime/regenerator":32,"dup":5,"extend":151,"lodash.isequal":172}],224:[function(require,module,exports){
+},{"_process":189,"babel-runtime/core-js/get-iterator":7,"babel-runtime/core-js/json/stringify":9,"babel-runtime/core-js/object/define-property":12,"babel-runtime/core-js/object/keys":15,"babel-runtime/core-js/set":18,"babel-runtime/helpers/extends":24,"babel-runtime/helpers/toConsumableArray":30,"babel-runtime/helpers/typeof":31,"babel-runtime/regenerator":32,"extend":151,"lodash.isequal":172}],224:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -30466,7 +31485,6 @@ function bindActionCreators(actionCreators, dispatch) {
   return boundActionCreators;
 }
 },{}],226:[function(require,module,exports){
-(function (process){
 'use strict';
 
 exports.__esModule = true;
@@ -30554,7 +31572,7 @@ function combineReducers(reducers) {
   for (var i = 0; i < reducerKeys.length; i++) {
     var key = reducerKeys[i];
 
-    if (process.env.NODE_ENV !== 'production') {
+    if ("production" !== 'production') {
       if (typeof reducers[key] === 'undefined') {
         (0, _warning2['default'])('No reducer provided for key "' + key + '"');
       }
@@ -30567,7 +31585,7 @@ function combineReducers(reducers) {
   var finalReducerKeys = Object.keys(finalReducers);
 
   var unexpectedKeyCache = void 0;
-  if (process.env.NODE_ENV !== 'production') {
+  if ("production" !== 'production') {
     unexpectedKeyCache = {};
   }
 
@@ -30586,7 +31604,7 @@ function combineReducers(reducers) {
       throw shapeAssertionError;
     }
 
-    if (process.env.NODE_ENV !== 'production') {
+    if ("production" !== 'production') {
       var warningMessage = getUnexpectedStateShapeWarningMessage(state, finalReducers, action, unexpectedKeyCache);
       if (warningMessage) {
         (0, _warning2['default'])(warningMessage);
@@ -30610,8 +31628,7 @@ function combineReducers(reducers) {
     return hasChanged ? nextState : state;
   };
 }
-}).call(this,require('_process'))
-},{"./createStore":228,"./utils/warning":230,"_process":189,"lodash/isPlainObject":182}],227:[function(require,module,exports){
+},{"./createStore":228,"./utils/warning":230,"lodash/isPlainObject":182}],227:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -30911,7 +31928,6 @@ var ActionTypes = exports.ActionTypes = {
   }, _ref2[_symbolObservable2['default']] = observable, _ref2;
 }
 },{"lodash/isPlainObject":182,"symbol-observable":233}],229:[function(require,module,exports){
-(function (process){
 'use strict';
 
 exports.__esModule = true;
@@ -30949,7 +31965,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'd
 */
 function isCrushed() {}
 
-if (process.env.NODE_ENV !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
+if ("production" !== 'production' && typeof isCrushed.name === 'string' && isCrushed.name !== 'isCrushed') {
   (0, _warning2['default'])('You are currently using minified code outside of NODE_ENV === \'production\'. ' + 'This means that you are running a slower development build of Redux. ' + 'You can use loose-envify (https://github.com/zertosh/loose-envify) for browserify ' + 'or DefinePlugin for webpack (http://stackoverflow.com/questions/30030031) ' + 'to ensure you have the correct code for your production build.');
 }
 
@@ -30958,8 +31974,7 @@ exports.combineReducers = _combineReducers2['default'];
 exports.bindActionCreators = _bindActionCreators2['default'];
 exports.applyMiddleware = _applyMiddleware2['default'];
 exports.compose = _compose2['default'];
-}).call(this,require('_process'))
-},{"./applyMiddleware":224,"./bindActionCreators":225,"./combineReducers":226,"./compose":227,"./createStore":228,"./utils/warning":230,"_process":189}],230:[function(require,module,exports){
+},{"./applyMiddleware":224,"./bindActionCreators":225,"./combineReducers":226,"./compose":227,"./createStore":228,"./utils/warning":230}],230:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;

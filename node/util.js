@@ -725,14 +725,11 @@ var flattenStyles = exports.flattenStyles = function flattenStyles(state, paths_
 };
 
 var shouldFlatten = function shouldFlatten(split_path) {
-    // TODO: profile and see if this is slow
-
-    // WARNING: optimized code, profile before changing anything
-    //  check to see if a given path introduces some CSS state that needs
-    //  to be converted from an object to a css string, e.g.
-    //  {style: transform: translate: {top: 0, left: 0}}
-    var style_key = split_path.lastIndexOf('style');
-    return style_key != -1 && (split_path[style_key + 1] == 'transform' || split_path[style_key + 1] == 'animation');
+    // check to see if a given path introduces some CSS state that needs
+    // to be converted from an object to a css string, e.g.
+    // {style: transform: translate: {top: 0, left: 0}}
+    var style_key_pos = split_path.lastIndexOf('style');
+    return style_key_pos != -1 && (split_path[style_key_pos + 1] == 'transform' || split_path[style_key_pos + 1] == 'animation');
 };
 
 function applyPatches(obj, patches) {
@@ -762,10 +759,11 @@ function applyPatches(obj, patches) {
             }
             var keys = [].concat((0, _toConsumableArray3.default)(_patch.split_path));
 
+            // record this path for later post-processing if it's a css transform or animation path
             if (flatten_styles && shouldFlatten(keys)) paths_to_flatten.push(keys);
 
             var final_key = keys.pop();
-            // get to the end of the list of paths
+            // iterate down the path to the last object
             var parent = output;
             var _iteratorNormalCompletion10 = true;
             var _didIteratorError10 = false;
@@ -775,11 +773,13 @@ function applyPatches(obj, patches) {
                 for (var _iterator10 = (0, _getIterator3.default)(keys), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
                     var key = _step10.value;
 
+                    // create any level as an empty object if it doesn't exist yet
                     if (parent[key] === undefined || parent[key] === null || isBaseType(parent[key], false)) {
                         parent[key] = {};
                     }
                     parent = parent[key];
                 }
+                // update the parent of the last item to reference our new value
             } catch (err) {
                 _didIteratorError10 = true;
                 _iteratorError10 = err;
@@ -797,6 +797,9 @@ function applyPatches(obj, patches) {
 
             parent[final_key] = patch_val;
         }
+
+        // final post-processing to transform the special object values into
+        // strings that css expects
     } catch (err) {
         _didIteratorError9 = true;
         _iteratorError9 = err;
@@ -813,13 +816,13 @@ function applyPatches(obj, patches) {
     }
 
     if (flatten_styles) return flattenStyles(output, paths_to_flatten);
+
     return output;
 }
 
 var currentAnimations = exports.currentAnimations = function currentAnimations(_ref7) {
     var anim_queue = _ref7.anim_queue,
         warped_time = _ref7.warped_time;
-
     return anim_queue.filter(function (_ref8) {
         var start_time = _ref8.start_time,
             end_time = _ref8.end_time;
@@ -853,7 +856,6 @@ var finalFrameAnimations = exports.finalFrameAnimations = function finalFrameAni
 var pastAnimations = exports.pastAnimations = function pastAnimations(_ref10) {
     var anim_queue = _ref10.anim_queue,
         warped_time = _ref10.warped_time;
-
     return anim_queue.filter(function (_ref11) {
         var start_time = _ref11.start_time,
             duration = _ref11.duration;
@@ -864,33 +866,12 @@ var pastAnimations = exports.pastAnimations = function pastAnimations(_ref10) {
 var futureAnimations = exports.futureAnimations = function futureAnimations(_ref12) {
     var anim_queue = _ref12.anim_queue,
         warped_time = _ref12.warped_time;
-
     return anim_queue.filter(function (_ref13) {
         var start_time = _ref13.start_time,
             duration = _ref13.duration;
         return start_time > warped_time;
     });
 };
-
-// export const sortedAnimations = (anim_queue) => {
-//     return [...anim_queue].sort((a, b) => {
-//         // sort by end time, if both are the same, sort by start time,
-//         //  and properly handle infinity
-//         if (a.end_time == b.end_time) {
-//             return b.start_time - a.start_time
-//         } else {
-//             if (a.end_time == Infinity) {
-//                 return 1
-//             }
-//             else if (b.end_time == Infinity) {
-//                 return -1
-//             }
-//             else {
-//                 return b.end_time - a.end_time
-//             }
-//         }
-//     })
-// }
 
 // 0 /a /b /c       3
 // 1 /a /b          2
@@ -976,7 +957,7 @@ var activeAnimations = exports.activeAnimations = function activeAnimations(_ref
 
     var anims = [].concat((0, _toConsumableArray3.default)(finalFrameAnimations({ anim_queue: anim_queue, former_time: former_time, warped_time: warped_time })), (0, _toConsumableArray3.default)(currentAnimations({ anim_queue: anim_queue, warped_time: warped_time })));
 
-    if (uniqueify) anims = uniqueAnimations(anims);
+    if (uniqueify) return uniqueAnimations(anims);
 
     return anims;
 };
@@ -987,11 +968,11 @@ var patchesFromAnimation = function patchesFromAnimation(animation, warped_time)
     var patches = [];
     var delta = warped_time - animation.start_time;
     if (animation.merge) {
-        var values = animation.tick(delta);
+        var _patch2 = animation.tick(delta);
         (0, _keys2.default)(animation.start_state).forEach(function (key) {
             patches.push({
                 split_path: [].concat((0, _toConsumableArray3.default)(animation.split_path), [key]),
-                value: values[key]
+                value: _patch2[key]
             });
         });
     } else {
@@ -1025,10 +1006,12 @@ var computeAnimatedState = exports.computeAnimatedState = function computeAnimat
         for (var _iterator13 = (0, _getIterator3.default)(active_animations), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
             var animation = _step13.value;
 
-            try {
+            if (global.DEBUG) try {
                 patches = [].concat((0, _toConsumableArray3.default)(patches), (0, _toConsumableArray3.default)(patchesFromAnimation(animation, warped_time)));
             } catch (e) {
                 console.log(animation.type, 'Animation tick function threw an exception:', e.stack, animation);
+            } else {
+                patches = [].concat((0, _toConsumableArray3.default)(patches), (0, _toConsumableArray3.default)(patchesFromAnimation(animation, warped_time)));
             }
         }
     } catch (err) {

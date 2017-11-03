@@ -1290,7 +1290,7 @@ combined-stream@^1.0.5, combined-stream@~1.0.5:
   dependencies:
     delayed-stream "~1.0.0"
 
-commander@^2.11.0:
+commander@^2.11.0, commander@~2.11.0:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.11.0.tgz#157152fd1e7a6c8d98a5b715cf376df928004563"
 
@@ -2480,9 +2480,9 @@ module-deps@^4.0.8:
     through2 "^2.0.0"
     xtend "^4.0.0"
 
-monadical-react-components@^0.0.9:
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/monadical-react-components/-/monadical-react-components-0.0.9.tgz#8e1b7819f4b467e10d18fd27dab24b8a303c4b31"
+monadical-react-components@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/monadical-react-components/-/monadical-react-components-0.0.10.tgz#59676a9fdadb297576b175cd03b45dea4cf8aab1"
   dependencies:
     babel-core "^6.26.0"
     babel-preset-env "^1.6.1"
@@ -2491,7 +2491,7 @@ monadical-react-components@^0.0.9:
     react-dom "^16.0.0"
     react-redux "^5.0.6"
     redux "^3.7.2"
-    redux-time "^0.0.18"
+    redux-time "^0.0.19"
 
 ms@2.0.0:
   version "2.0.0"
@@ -2926,13 +2926,13 @@ redux-devtools-extension@^2.13.2:
   version "2.13.2"
   resolved "https://registry.yarnpkg.com/redux-devtools-extension/-/redux-devtools-extension-2.13.2.tgz#e0f9a8e8dfca7c17be92c7124958a3b94eb2911d"
 
-redux-time@^0.0.18:
-  version "0.0.18"
-  resolved "https://registry.yarnpkg.com/redux-time/-/redux-time-0.0.18.tgz#b2febe1e8c0052934da031223b7d76c4863bc758"
+redux-time@^0.0.19:
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/redux-time/-/redux-time-0.0.19.tgz#52caa59afd9cdb8e4049717caea494e8ac53c35c"
   dependencies:
     extend "^3.0.1"
     lodash.isequal "^4.5.0"
-    warped-time "^0.0.14"
+    warped-time "^0.0.16"
 
 redux@^3.7.2:
   version "3.7.2"
@@ -3177,6 +3177,10 @@ source-map-support@^0.4.15:
 source-map@^0.5.3, source-map@^0.5.6, source-map@~0.5.1, source-map@~0.5.3:
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.5.7.tgz#8a039d2d1021d22d1ea14c80d8ea468ba2ef3fcc"
+
+source-map@~0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/source-map/-/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
 
 sprintf-js@~1.0.2:
   version "1.0.3"
@@ -3428,6 +3432,13 @@ ua-parser-js@^0.7.9:
   version "0.7.17"
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.17.tgz#e9ec5f9498b9ec910e7ae3ac626a805c4d09ecac"
 
+uglify-js@3.1.6:
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.1.6.tgz#918832602036e95d2318e11f27ee8461a8592c5d"
+  dependencies:
+    commander "~2.11.0"
+    source-map "~0.6.1"
+
 uglify-js@^2.6.1:
   version "2.8.29"
   resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-2.8.29.tgz#29c5733148057bb4e1f75df35b7a9cb72e6a59dd"
@@ -3505,10 +3516,6 @@ warning@^3.0.0:
   resolved "https://registry.yarnpkg.com/warning/-/warning-3.0.0.tgz#32e5377cb572de4ab04753bdf8821c01ed605b7c"
   dependencies:
     loose-envify "^1.0.0"
-
-warped-time@^0.0.14:
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/warped-time/-/warped-time-0.0.14.tgz#29517f1fd819b511cdbdb27c51841e1bd6040818"
 
 warped-time@^0.0.16:
   version "0.0.16"

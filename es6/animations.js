@@ -550,6 +550,11 @@ export const Reverse = (animation) => {
     // TODO
 // }
 
+export const Flatten = (nested_animations) => {
+    // flattens arrays nested one level deep
+    return [].concat.apply([], nested_animations)
+}
+
 // make each animation in a sequence start after the last one ends
 export const Sequential = (animations, start_time) => {
     checkIsValidSequence(animations)

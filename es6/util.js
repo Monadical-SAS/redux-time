@@ -382,16 +382,13 @@ export const flattenStyles = (state, paths_to_flatten) => {
 }
 
 const shouldFlatten = (split_path) => {
-    // TODO: profile and see if this is slow
-
-    // WARNING: optimized code, profile before changing anything
-    //  check to see if a given path introduces some CSS state that needs
-    //  to be converted from an object to a css string, e.g.
-    //  {style: transform: translate: {top: 0, left: 0}}
-    const style_key = split_path.lastIndexOf('style')
-    return (style_key != -1
-            && (split_path[style_key + 1] == 'transform'
-                || split_path[style_key + 1] == 'animation'))
+    // check to see if a given path introduces some CSS state that needs
+    // to be converted from an object to a css string, e.g.
+    // {style: transform: translate: {top: 0, left: 0}}
+    const style_key_pos = split_path.lastIndexOf('style')
+    return (style_key_pos != -1
+            && (split_path[style_key_pos + 1] == 'transform'
+                || split_path[style_key_pos + 1] == 'animation'))
 }
 
 export function applyPatches(obj, patches, flatten_styles=true) {
@@ -412,32 +409,39 @@ export function applyPatches(obj, patches, flatten_styles=true) {
         }
         const keys = [...patch.split_path]
 
-        if (flatten_styles && shouldFlatten(keys)) paths_to_flatten.push(keys)
+        // record this path for later post-processing if it's a css transform or animation path
+        if (flatten_styles && shouldFlatten(keys))
+            paths_to_flatten.push(keys)
 
         const final_key = keys.pop()
-        // get to the end of the list of paths
+        // iterate down the path to the last object
         let parent = output
         for (let key of keys) {
+            // create any level as an empty object if it doesn't exist yet
             if (parent[key] === undefined || parent[key] === null || isBaseType(parent[key], false)) {
                 parent[key] = {}
             }
             parent = parent[key]
         }
+        // update the parent of the last item to reference our new value
         parent[final_key] = patch_val
     }
+
+    // final post-processing to transform the special object values into
+    // strings that css expects
     if (flatten_styles)
         return flattenStyles(output, paths_to_flatten)
+
     return output
 }
 
 
-export const currentAnimations = ({anim_queue, warped_time}) => {
-    return anim_queue.filter(({start_time, end_time}) => {
+export const currentAnimations = ({anim_queue, warped_time}) =>
+    anim_queue.filter(({start_time, end_time}) => {
         const started_already = start_time <= warped_time
         const has_not_ended = end_time > warped_time
         return started_already && has_not_ended
     })
-}
 
 export const finalFrameAnimations = ({anim_queue, warped_time, former_time}) => {
     const is_between = (anim) => {
@@ -456,35 +460,14 @@ export const finalFrameAnimations = ({anim_queue, warped_time, former_time}) => 
 }
 
 
-export const pastAnimations = ({anim_queue, warped_time}) => {
-    return anim_queue.filter(({start_time, duration}) =>
+export const pastAnimations = ({anim_queue, warped_time}) =>
+    anim_queue.filter(({start_time, duration}) =>
         (start_time + duration < warped_time))
-}
 
-export const futureAnimations = ({anim_queue, warped_time}) => {
-    return anim_queue.filter(({start_time, duration}) => (start_time > warped_time))
-}
+export const futureAnimations = ({anim_queue, warped_time}) =>
+    anim_queue.filter(({start_time, duration}) =>
+        (start_time > warped_time))
 
-
-// export const sortedAnimations = (anim_queue) => {
-//     return [...anim_queue].sort((a, b) => {
-//         // sort by end time, if both are the same, sort by start time,
-//         //  and properly handle infinity
-//         if (a.end_time == b.end_time) {
-//             return b.start_time - a.start_time
-//         } else {
-//             if (a.end_time == Infinity) {
-//                 return 1
-//             }
-//             else if (b.end_time == Infinity) {
-//                 return -1
-//             }
-//             else {
-//                 return b.end_time - a.end_time
-//             }
-//         }
-//     })
-// }
 
 // 0 /a /b /c       3
 // 1 /a /b          2
@@ -521,13 +504,13 @@ export const activeAnimations = ({anim_queue, warped_time,
         throw 'Both warped_time and former_time must be passed to get activeAnimations'
     }
 
-    let anims = [
+    const anims = [
         ...finalFrameAnimations({anim_queue, former_time, warped_time}),
         ...currentAnimations({anim_queue, warped_time}),
     ]
 
     if (uniqueify)
-        anims = uniqueAnimations(anims)
+        return uniqueAnimations(anims)
 
     return anims
 }
@@ -538,11 +521,11 @@ const patchesFromAnimation = (animation, warped_time) => {
     const patches = []
     const delta = warped_time - animation.start_time
     if (animation.merge) {
-        const values = animation.tick(delta)
-        Object.keys(animation.start_state).forEach((key) => {
+        const patch = animation.tick(delta)
+        Object.keys(animation.start_state).forEach(key => {
             patches.push({
                 split_path: [...animation.split_path, key],
-                value: values[key],
+                value: patch[key],
             })
         })
     } else {
@@ -554,8 +537,7 @@ const patchesFromAnimation = (animation, warped_time) => {
     return patches
 }
 
-export const computeAnimatedState = ({
-        animations, warped_time, former_time=null}) => {
+export const computeAnimatedState = ({animations, warped_time, former_time=null}) => {
     former_time = former_time === null ? warped_time : former_time
 
     const active_animations = activeAnimations({anim_queue: animations,
@@ -565,10 +547,14 @@ export const computeAnimatedState = ({
     let patches = []
     // console.log({active_animations})
     for (let animation of active_animations) {
-        try {
+        if (global.DEBUG)
+            try {
+                patches = [...patches, ...patchesFromAnimation(animation, warped_time)]
+            } catch(e) {
+                console.log(animation.type, 'Animation tick function threw an exception:', e.stack, animation)
+            }
+        else {
             patches = [...patches, ...patchesFromAnimation(animation, warped_time)]
-        } catch(e) {
-            console.log(animation.type, 'Animation tick function threw an exception:', e.stack, animation)
         }
     }
     return applyPatches({}, patches)
