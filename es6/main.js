@@ -69,10 +69,6 @@ class AnimationsHandler {
     tick(high_res_timestamp) {
         this.animating = true
         const {animations} = this.store.getState()
-        if (high_res_timestamp) {
-            this.start_time = this.start_time || this.time.getActualTime()
-            high_res_timestamp = this.start_time + high_res_timestamp/1000
-        }
         const new_timestamp = this.time.getWarpedTime()
 
         if (shouldAnimate(animations.queue, new_timestamp, animations.speed)) {
