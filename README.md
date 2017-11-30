@@ -57,7 +57,8 @@ Every tick function is a pure function of the `start_state`, `end_state`, and de
 ## Walkthrough Example
 
 ```javascript
-import {animationsReducer, startAnimation, Animate} from 'redux-time'
+import {animationsReducer, startAnimation} from 'redux-time'
+import {Animate} from 'redux-time/node/animations'
 
 // 1. Create a redux store, and start the animation runloop with initial state
 const store = createStore(combineReducers({animations: animationsReducer}))
@@ -255,6 +256,8 @@ window.time = startAnimation(window.store, window.initial_state)
 ### Getting Started
 
 ```javascript
+import {Become, Animate, Rotate} from 'redux-time/node/animations'
+
 // change some state value instantly
 window.store.dispatch({type: 'ANIMATE', animation: Become({
     path: '/ball/text',
@@ -378,7 +381,7 @@ Typically, you wont create animations objects by hand, but rather use some of th
 #### Provided Animation Functions
 
 ```javascript
-import {...} from 'redux-time/src/animations' 
+import {...} from 'redux-time/node/animations' 
 
 // Basics
 
