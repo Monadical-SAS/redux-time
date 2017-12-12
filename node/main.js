@@ -108,10 +108,6 @@ var AnimationsHandler = function () {
             var _store$getState2 = this.store.getState(),
                 animations = _store$getState2.animations;
 
-            if (high_res_timestamp) {
-                this.start_time = this.start_time || this.time.getActualTime();
-                high_res_timestamp = this.start_time + high_res_timestamp / 1000;
-            }
             var new_timestamp = this.time.getWarpedTime();
 
             if (shouldAnimate(animations.queue, new_timestamp, animations.speed)) {
