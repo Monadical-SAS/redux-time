@@ -29,9 +29,10 @@
   ],
   "main": "node/main.js",
   "dependencies": {
+    "babel-core": "^6.26.0",
     "extend": "^3.0.1",
     "lodash.isequal": "^4.5.0",
-    "warped-time": "^0.0.16"
+    "warped-time": "^0.0.17"
   },
   "devDependencies": {
     "aliasify": "^2.1.0",
@@ -53,7 +54,6 @@
     "minifyify": "^7.3.5",
     "monadical-react-components": "^0.0.10",
     "redux": "^3.7.2",
-    "redux-devtools-extension": "^2.13.2",
     "three": "^0.88.0",
     "uglify-js": "3.2.2",
     "watchify": "^3.9.0"
