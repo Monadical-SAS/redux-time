@@ -2480,18 +2480,18 @@ module-deps@^4.0.8:
     through2 "^2.0.0"
     xtend "^4.0.0"
 
-monadical-react-components@^0.0.10:
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/monadical-react-components/-/monadical-react-components-0.0.10.tgz#59676a9fdadb297576b175cd03b45dea4cf8aab1"
+monadical-react-components@^0.0.11:
+  version "0.0.11"
+  resolved "https://registry.yarnpkg.com/monadical-react-components/-/monadical-react-components-0.0.11.tgz#f99d75e1924da8e61350631a2a3daad0be6e4321"
   dependencies:
     babel-core "^6.26.0"
     babel-preset-env "^1.6.1"
-    react "^16.0.0"
+    react "^16.2.0"
     react-bootstrap "^0.31.5"
-    react-dom "^16.0.0"
+    react-dom "^16.2.0"
     react-redux "^5.0.6"
     redux "^3.7.2"
-    redux-time "^0.0.19"
+    redux-time "^0.0.23"
 
 ms@2.0.0:
   version "2.0.0"
@@ -2845,7 +2845,7 @@ react-bootstrap@^0.31.5:
     uncontrollable "^4.1.0"
     warning "^3.0.0"
 
-react-dom@^16.0.0:
+react-dom@^16.2.0:
   version "16.2.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.2.0.tgz#69003178601c0ca19b709b33a83369fe6124c044"
   dependencies:
@@ -2875,7 +2875,7 @@ react-redux@^5.0.6:
     loose-envify "^1.1.0"
     prop-types "^15.5.10"
 
-react@^16.0.0:
+react@^16.2.0:
   version "16.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-16.2.0.tgz#a31bd2dab89bff65d42134fa187f24d054c273ba"
   dependencies:
@@ -2922,13 +2922,14 @@ readdirp@^2.0.0:
     readable-stream "^2.0.2"
     set-immediate-shim "^1.0.1"
 
-redux-time@^0.0.19:
-  version "0.0.19"
-  resolved "https://registry.yarnpkg.com/redux-time/-/redux-time-0.0.19.tgz#52caa59afd9cdb8e4049717caea494e8ac53c35c"
+redux-time@^0.0.23:
+  version "0.0.23"
+  resolved "https://registry.yarnpkg.com/redux-time/-/redux-time-0.0.23.tgz#cfb621a031034e982776c6835410d83cbb83da2e"
   dependencies:
+    babel-core "^6.26.0"
     extend "^3.0.1"
     lodash.isequal "^4.5.0"
-    warped-time "^0.0.16"
+    warped-time "^0.0.17"
 
 redux@^3.7.2:
   version "3.7.2"
@@ -3512,10 +3513,6 @@ warning@^3.0.0:
   resolved "https://registry.yarnpkg.com/warning/-/warning-3.0.0.tgz#32e5377cb572de4ab04753bdf8821c01ed605b7c"
   dependencies:
     loose-envify "^1.0.0"
-
-warped-time@^0.0.16:
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/warped-time/-/warped-time-0.0.16.tgz#b5d6c21b89fd7de8cff99a76137835b2dbd4c208"
 
 warped-time@^0.0.17:
   version "0.0.17"

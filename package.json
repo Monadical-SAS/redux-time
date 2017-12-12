@@ -52,7 +52,7 @@
     "eslint-plugin-babel": "^4.1.2",
     "flow-bin": "^0.61.0",
     "minifyify": "^7.3.5",
-    "monadical-react-components": "^0.0.10",
+    "monadical-react-components": "^0.0.11",
     "redux": "^3.7.2",
     "three": "^0.88.0",
     "uglify-js": "3.2.2",
