@@ -20,7 +20,16 @@ const fmtWithUnit = (val, unit) => {
 const tick_func = ({duration, start_state, delta_state, end_state,
                     curve='linear', unit=null}) => {
 
-    const curve_func = EasingFunctions[curve]
+    if (typeof(curve) === 'string') {
+        const curve_func = EasingFunctions[curve]
+        if (curve_func === undefined) {
+            throw `${curve} is not a valid easing function`
+        }
+    } else if (typeof(curve) === 'function') {
+        const curve_func = curve
+    } else {
+       throw 'curve must be the String name of a curve function like "easeInOutQuad", or a Function object'
+    }
 
     return (time_elapsed) => {
         if (time_elapsed < 0) {
