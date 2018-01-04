@@ -286,13 +286,14 @@ var tick_func = function tick_func(_ref) {
         _ref$unit = _ref.unit,
         unit = _ref$unit === undefined ? null : _ref$unit;
 
+    var curve_func = void 0;
     if (typeof curve === 'string') {
-        var _curve_func = _util.EasingFunctions[curve];
-        if (_curve_func === undefined) {
+        curve_func = _util.EasingFunctions[curve];
+        if (curve_func === undefined) {
             throw curve + ' is not a valid easing function';
         }
     } else if (typeof curve === 'function') {
-        var _curve_func2 = curve;
+        curve_func = curve;
     } else {
         throw 'curve must be the String name of a curve function like "easeInOutQuad", or a Function object';
     }
