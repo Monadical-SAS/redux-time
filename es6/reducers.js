@@ -117,7 +117,7 @@ export const animationsReducer = (state=initial_state, action) => {
             return {
                 ...state,
                 state: animated_state,
-                speed: (action.speed || (!state.speed && state.speed)) + 0,
+                speed: (action.speed || (!action.force && state.speed)) + 0,
                 warped_time: action.warped_time,
                 former_time: action.former_time,
                 force: action.force,
