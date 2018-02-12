@@ -398,11 +398,13 @@ import {...} from 'redux-time/node/animations'
 
 // CSS Animations
 
-    // animate an animation defined in CSS  .e.g  @keyframes blinker {from {opacity: 1.0;} to {opacity: 0.0;}}
-    AnimateCSS({name="blinker", path, start_time, end_time, duration=1000, curve='linear'})
+    // animate a specific css value over a time range
+    Style({path, start_state, end_state, start_time, end_time, duration, curve='linear', unit=null})
 
-    // check out Animate.css for awesome animations to use with this ^
-    // https://github.com/daneden/animate.css
+    // animate a CSS keyframe animation .e.g  @keyframes blinker {from {opacity: 1.0;} to {opacity: 0.0;}}
+    // see github.com/daneden/animate.css for more animations to use with this
+    AnimateCSS({name="blinker", path, start_time, end_time, duration=1000, curve='linear'})
+    
 
 // JS Animations
 
