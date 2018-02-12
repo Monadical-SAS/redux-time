@@ -40,6 +40,7 @@ At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum
 - all state is a function of the current point in time
 - define animations in Javascript or with [CSS @keyframes](https://developer.mozilla.org/en-US/docs/Web/CSS/%40keyframes)
 - time-travel debugging (e.g. slow down, reverse, jump to point in time)
+- optionally time synchronized to a server so people see animations at exactly the same time
 - compose animations with pure functions e.g.: `Repeat(Rotate(...), 10)`
 - seamlessly animate existing React + Redux codebase without major changes
 - animate any state tree value manually, or use provided Animation functions for common animations e.g.: `Translate`, `Rotate`, `Opacity`
