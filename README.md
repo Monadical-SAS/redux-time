@@ -40,11 +40,11 @@ At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum
 
 - all state is a function of the current point in time
 - define animations in Javascript or with [CSS @keyframes](https://developer.mozilla.org/en-US/docs/Web/CSS/%40keyframes)
-- time-travel debugging (e.g. slow down, reverse, jump to point in time)
-- optionally time synchronized to a server so people see animations at exactly the same time
+- you get time-travel debugging for free! (e.g. slow down, reverse, jump to point in time)
+- optionally synchronize time to a server so users see all animations at exactly the same time
 - compose animations with pure functions e.g.: `Repeat(Rotate(...), 10)`
 - seamlessly animate existing React + Redux codebase without major changes
-- animate any state tree value manually, or use provided Animation functions for common animations e.g.: `Translate`, `Rotate`, `Opacity`
+- animate any state tree value manually, or use library-provided Animation functions for common animations e.g.: `Translate`, `Rotate`, `Opacity`
 - it's knock-your-socks-off fast, just tun `benchmarks.js` to see for yourself.  On a test laptop we get animated state computed at over 100FPS with 5000 concurrent animations. The bottleneck is usually rendering--check out three.js for 3d rendering, or Canvas for 2d, or Inferno for react animating
 - fully compatible with CSS animation libraries like [Animate.css](https://daneden.github.io/animate.css/), you already have access to 1000s of pre-written animations out there that plug right into `redux-time`!
 
