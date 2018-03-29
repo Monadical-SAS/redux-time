@@ -9,7 +9,7 @@
 ▶️ [Intro](#intro) | [Walkthrough](#walkthrough-example) | [Info & Motivation](#info--motivation) | [Links](#links) | [Documentation](#documentation) | [Examples](https://monadical-sas.github.io/redux-time/examples/) | [Source](https://github.com/Monadical-SaS/redux-time/)
 
 `redux-time` is a library that allows you to deterministically compute your state tree as a function of time.  It's primarily used for animations, but it can also be used for generically changing any redux state as time progresses.
-It works well with React as a render layer, but you can use any other render layer you want, including ThreeJS!
+It works well with React/React-Native as a render layer, but you can use any other render layer you want, including ThreeJS or canvas!
 
 It's likely if you're looking for a web animations solution, you're probably trying to either do:
 
