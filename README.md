@@ -157,36 +157,16 @@ This process repeats on every animation frame, and the ball state changes on eve
 
 **A simple game, with animations dispatched from a backend via websocket.**
 ```javascript
-window.initial_state = {
-    game: {table: {...}, players: {...}},
-}
-window.store = createStore(combineReducers({animations}))
-window.time = startAnimation(window.store, window.initial_state)
-window.socket = new WebSocket('/game_backend')
+const initial_state = {game: {table: {...}, players: {...}}}
+const store = createStore(combineReducers({animations}))
+const time = startAnimation(window.store, window.initial_state)
+const socket = new WebSocket('/game_backend')
 
-// when the backend sends us a new gamestate
-window.socket.onmessage = (message) => {
-    const action = JSON.parse(message)
-    if (action.type == 'UPDATE_GAMESTATE') {
-        const new_state = action.gamestate
-        const {table, players} = new_state
-        const animations = Sequential([
-            // bounce the ball, rotate the arrow, flash the box red, etc...
-            ...get_game_animations(action.animations),
-
-            // once the animations complete,
-            // set the whole ui gamestate to the server's state
-            Become({
-                path: '/game',
-                state: {table, players},
-                start_time: window.time.getActualTime(),
-            }),
-        ])
-    }
-    window.store.dispatch({type: 'ANIMATE', animations: animations})
+socket.onmessage = (gamestate_update) => {
+    const {animations} = JSON.parse(gamestate_update)
+    store.dispatch({type: 'ANIMATE', animations})
 }
 ```
-Note: we use `window.store`, `window.socket` to refer to the redux store, and a WebSocket connection to the backend respectively.  In practice you would architect with dependency injection, so `window.` is not needed, but we use it here and in the rest of the docs for simplicity.
 
 ## Contributing
 
