@@ -37,7 +37,7 @@ class AnimationsHandler {
         this.animating = !autostart_animating
         this.store = store
         this.time = new WarpedTime({speed})
-        store.subscribe(::this.handleStateChange)
+        store.subscribe(this.handleStateChange.bind(this))
         if (initial_state) {
             this.initState(initial_state)
         }
@@ -80,7 +80,7 @@ class AnimationsHandler {
         }
 
         if (shouldAnimate(animations.queue, new_timestamp, animations.speed)) {
-            global.nextFrameId = this.requestFrame(::this.tick)
+            global.nextFrameId = this.requestFrame(this.tick.bind(this))
         } else {
             this.animating = false
         }

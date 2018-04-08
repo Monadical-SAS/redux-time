@@ -30,33 +30,32 @@
   "main": "node/main.js",
   "dependencies": {
     "babel-core": "^6.26.0",
+    "esm": "^3.0.16",
     "extend": "^3.0.1",
     "lodash.isequal": "^4.5.0",
+    "npm": "^5.8.0",
     "warped-time": "^0.0.17"
   },
   "devDependencies": {
     "aliasify": "^2.1.0",
     "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.0.3",
-    "babel-plugin-syntax-function-bind": "^6.13.0",
-    "babel-plugin-transform-flow-strip-types": "^6.14.0",
-    "babel-plugin-transform-function-bind": "^6.8.0",
+    "babel-eslint": "^8.2.2",
     "babel-plugin-transform-react-constant-elements": "^6.9.1",
     "babel-plugin-transform-runtime": "^6.12.0",
     "babel-preset-react": "^6.11.1",
     "babel-preset-stage-2": "^6.13.0",
     "babel-runtime": "^6.26.0",
     "babelify": "^8.0.0",
-    "browserify": "^14.5.0",
-    "eslint": "^4.13.1",
-    "eslint-plugin-babel": "^4.1.2",
-    "flow-bin": "^0.61.0",
+    "browserify": "^16.1.1",
+    "eslint": "^4.19.1",
+    "eslint-plugin-babel": "^5.0.0",
+    "flow-bin": "^0.69.0",
     "minifyify": "^7.3.5",
     "monadical-react-components": "^0.0.11",
     "redux": "^3.7.2",
-    "three": "^0.88.0",
-    "uglify-js": "3.2.2",
-    "watchify": "^3.9.0"
+    "three": "^0.91.0",
+    "uglify-js": "3.3.20",
+    "watchify": "^3.11.0"
   },
   "browserify": {
     "transform": [
@@ -71,9 +70,7 @@
       "stage-2"
     ],
     "plugins": [
-      "syntax-function-bind",
       "transform-react-constant-elements",
-      "transform-function-bind",
       "transform-runtime"
     ]
   },
