@@ -25,7 +25,7 @@ Ok now that we've gotten that out of the way, we get to the fun part with the ni
 npm install redux-time    # 🎂
 ```
 Check it out in action on the [full demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.  
-At [Monadical](https://monadical.com) we use `redux-time` for animating ethereum-backed browser-based poker ([come help us build it](https://monadical.com/apply)!).
+At [OddSlingers](https://labs.oddslingers.com) `redux-time` is used for animating real-time online poker on desktop & mobile.
 
 <p align="center">
     <a href="https://monadical-sas.github.io/redux-time/examples/ball.html">
