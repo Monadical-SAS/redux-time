@@ -1,9 +1,9 @@
 {
-    "parser": "babel-eslint",
-    "globals": {
-        "window": true
+    "env": {
+        "es6": true
     },
-    "plugins": [
-        "babel"
-    ]
+    "parserOptions": {
+        "ecmaVersion": 2018,
+        "sourceType": "module"
+    }
 }

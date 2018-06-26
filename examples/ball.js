@@ -4,14 +4,14 @@ import ReactDOM from 'react-dom'
 import {createStore, combineReducers} from 'redux'
 import {Provider, connect} from 'react-redux'
 
-import {ExpandableSection} from 'monadical-react-components/node/expandable-section'
-import {AnimationControls} from 'monadical-react-components/node/redux-time-controls'
-import {AnimationStateVisualizer} from 'monadical-react-components/node/redux-time-visualizer'
-import {AnimationTimeline} from 'monadical-react-components/node/redux-time-timeline'
+import {ExpandableSection} from 'monadical-react-components/expandable-section'
+import {AnimationControls} from 'monadical-react-components/redux-time-controls'
+import {AnimationStateVisualizer} from 'monadical-react-components/redux-time-visualizer'
+import {AnimationTimeline} from 'monadical-react-components/redux-time-timeline'
 
 
-import {animationsReducer, startAnimation} from '../node/main.js'
-import {Become, Animate, Translate, RepeatSequence} from '../node/animations.js'
+import {animationsReducer, startAnimation} from 'redux-time'
+import {Become, Animate, Translate, RepeatSequence} from 'redux-time/animations'
 
 
 const SOURCE = "https://github.com/Monadical-SAS/redux-time/blob/master/examples/ball.js"

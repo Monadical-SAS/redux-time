@@ -1,0 +1,14 @@
+.git
+.DS_Store
+.gitignore
+.ignore
+.npmignore
+CODE_OF_CONDUCT.md
+LICENSE
+README.md
+logo.png
+package.json
+yarn.lock
+node_modules
+scripts
+examples

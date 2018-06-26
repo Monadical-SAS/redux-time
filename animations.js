@@ -74,7 +74,7 @@ export const Become = ({path, state, start_time, end_time, duration}) => {
         duration,
         tick: (_) => {
             return state
-        },
+        }
     })
 }
 

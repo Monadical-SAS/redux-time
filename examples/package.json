@@ -1,0 +1,22 @@
+{
+  "name": "redux-time-examples",
+  "version": "1.0.0",
+  "description": "Demos and example code for redux-time",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Monadical-SAS/redux-time.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Monadical-SAS/redux-time/issues"
+  },
+  "homepage": "https://github.com/Monadical-SAS/redux-time#readme",
+  "dependencies": {
+    "redux-time": "file:.."
+  }
+}

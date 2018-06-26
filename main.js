@@ -27,7 +27,7 @@ class AnimationsHandler {
         if (requestFrame === null) {
             if (global.DEBUG) console.log('Running animations in browser')
             this.requestFrame = (func) =>
-                window.requestAnimationFrame.call(window, func)
+                global.requestAnimationFrame.call(global, func)
         } else {
             if (global.DEBUG) console.log('Running animations with custom requestFrame')
             this.requestFrame = requestFrame

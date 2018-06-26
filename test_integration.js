@@ -26,7 +26,7 @@ const testReducer = (state=initial_state.test, action) => {
 
 const store = createStore(
     combineReducers({test: testReducer, animations: animationsReducer}),
-    initial_state,
+    initial_state
 )
 assert(store.getState().animations.warped_time == 0,
        'Initial current_time should be 0.')
