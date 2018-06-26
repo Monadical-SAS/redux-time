@@ -64,12 +64,12 @@ function build_all() {
 
         # browserify "es6/$name" "browser/$name" &
     done
-    for file in "$CODE"/examples/*.js; do
-        [ -e "$file" ] || continue
-        name="$(basename "$file")"
+    # for file in "$CODE"/examples/*.js; do
+    #     [ -e "$file" ] || continue
+    #     name="$(basename "$file")"
 
-        browserify "examples/$name" "examples/static/$name" &
-    done
+    #     browserify "examples/$name" "examples/static/$name" &
+    # done
     wait
 }
 
