@@ -1,6 +1,6 @@
 {
   "name": "redux-time",
-  "version": "0.0.26",
+  "version": "0.0.27",
   "description": "Redux animation library that renders your state tree at a given point in time.",
   "author": "Nick Sweeting <git@nicksweeting.com>",
   "license": "MIT",
