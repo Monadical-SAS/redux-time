@@ -33,15 +33,13 @@
     "babel-preset-env": "^1.7.0",
     "extend": "^3.0.1",
     "lodash.isequal": "^4.5.0",
-    "warped-time": "^0.0.18"
+    "warped-time": "^0.0.19"
   },
   "devDependencies": {
     "aliasify": "^2.1.0",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.5",
-    "babel-plugin-syntax-function-bind": "^6.13.0",
     "babel-plugin-transform-flow-strip-types": "^6.14.0",
-    "babel-plugin-transform-function-bind": "^6.8.0",
     "babel-plugin-transform-runtime": "^6.12.0",
     "babel-preset-stage-2": "^6.13.0",
     "babel-runtime": "^6.26.0",
@@ -68,8 +66,6 @@
       "stage-2"
     ],
     "plugins": [
-      "syntax-function-bind",
-      "transform-function-bind",
       "transform-runtime"
     ]
   },
