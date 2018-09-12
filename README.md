@@ -15,7 +15,7 @@ It's likely if you're looking for a web animations solution, you're probably try
 
  - minor content transitions (e.g. photo gallery transitions, hover dropdowns)
  or
- - **full-blown interactive dynamic animations** (like for games)
+ - **full-blown interactive dynamic animations** (like for games or data visualization)
 
 `redux-time` is designed for the second case.  If you want simple CSS content transitions and aren't building complex videogame-style animations, check out [react-transition-group](https://facebook.github.io/react/docs/animation.html) (basic) or [react-move](https://github.com/tannerlinsley/react-move) (advanced) instead.
 
