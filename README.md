@@ -27,6 +27,17 @@ npm install redux-time    # 🎂
 Check it out in action on the [full demo](https://monadical-sas.github.io/redux-time/examples/demo.html) page, or follow the [walkthrough example](#walkthrough-example) below.  
 At [OddSlingers](https://labs.oddslingers.com) `redux-time` is used for animating real-time online poker on desktop & mobile.
 
+```javascript
+dispatch({
+    type: 'ANIMATE',
+    animation: Bounce({
+        path: '/ball',
+        duration: 1000,
+        curve: 'easeInQuad',
+    }),
+)}
+```
+
 <p align="center">
     <a href="https://monadical-sas.github.io/redux-time/examples/ball.html">
         <img src="examples/ball_screenshot.png" width="600px" alt="Ball Demo Screenshot"/><br/>
