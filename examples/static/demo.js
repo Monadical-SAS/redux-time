@@ -1189,9 +1189,6 @@ var AnimationsHandler = function () {
                 animations = _store$getState.animations;
 
             this.time.setSpeed(animations.speed);
-            if (true === animations.force) {
-                this.time.setWarpedTime(animations.warped_time);
-            }
             var timestamp = this.time.getWarpedTime();
             if (!this.animating && shouldAnimate(animations.queue, timestamp, this.time.speed)) {
                 if (global.DEBUG) {
@@ -1209,11 +1206,6 @@ var AnimationsHandler = function () {
                 animations = _store$getState2.animations;
 
             var new_timestamp = this.time.getWarpedTime();
-
-            if (new_timestamp < this.time.genesis_time) {
-                new_timestamp = this.time.genesis_time;
-                animations.speed = 0;
-            }
 
             if (shouldAnimate(animations.queue, new_timestamp, animations.speed)) {
                 global.nextFrameId = this.requestFrame(this.tick.bind(this));
@@ -1371,10 +1363,9 @@ var animationsReducer = exports.animationsReducer = function animationsReducer()
 
             return (0, _extends3.default)({}, state, {
                 state: animated_state,
-                speed: (action.speed || !state.speed && state.speed) + 0,
+                speed: action.speed || state.speed,
                 warped_time: action.warped_time,
-                former_time: action.former_time,
-                force: action.force
+                former_time: action.former_time
             });
 
         default:
