@@ -91,11 +91,11 @@ const time = startAnimation(store, initial_state)
 // 2. Set up our first animation
 const move_ball_animation = () =>
     Animate({
-        // move the ball 100px down over 5s
+        // move the ball 20px down over 1s
         path: '/ball/style/top',
         start_state: 0,
-        end_state: 100,
-        duration: 5000,
+        end_state: 20,
+        duration: 1000,
     })
 
 document.onkeypress = (e) => {
