@@ -91,7 +91,7 @@ const time = startAnimation(store, initial_state)
 // 2. Set up our first animation
 const move_ball_animation = () =>
     Animate({
-        // move the ball 20px down over 1s
+        // move the ball 100px down over 5s
         path: '/ball/style/top',
         start_state: 0,
         end_state: 100,
