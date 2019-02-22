@@ -72,6 +72,11 @@ Every tick function is a pure function of the `start_state`, `end_state`, and de
 ## Walkthrough Example
 
 ```javascript
+import React from 'react'
+import ReactDOM from 'react-dom'
+
+import {createStore, combineReducers} from 'redux'
+import {Provider, connect} from 'react-redux'
 import {animationsReducer, startAnimation} from 'redux-time'
 import {Animate} from 'redux-time/node/animations'
 
@@ -84,24 +89,25 @@ const time = startAnimation(store, initial_state)
 
 ```javascript
 // 2. Set up our first animation
-const move_ball_animation = Animate({
-    // move the ball 20px down over 1s
-    path: '/ball/style/top',
-    start_state: 0,
-    end_state: 20,
-    duration: 1000,
-})
+const move_ball_animation = () =>
+    Animate({
+        // move the ball 20px down over 1s
+        path: '/ball/style/top',
+        start_state: 0,
+        end_state: 100,
+        duration: 5000,
+    })
 
 document.onkeypress = (e) => {
     // trigger it when the down arrow is pressed
     if (e.keyCode == 40) {
-        store.dispatch({type: 'ANIMATE', animation: move_ball_animation})
+        store.dispatch({type: 'ANIMATE', animation: move_ball_animation()})
     }
 }
 ```
 
 ```javascript
-// 2. Create a component to display our state
+// 3. Create a component to display our state
 const BallComponent = ({ball}) =>
     <div style={{position: 'absolute', ...ball.style}}></div>
 
