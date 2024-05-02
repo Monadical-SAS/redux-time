@@ -706,13 +706,9 @@ If you encounter high memory use, try reducing `animations.max_time_travel` to s
 
 If you see a particular slowdown that you think is in `redux-time`, please submit an issue and we'll gladly take a look!
 
-## Troubleshooting
-
-WIP
-
 ---
 <img src="examples/static/jeremy.jpg" height="40px" style="float:right"/>
 
-MIT License | [Monadical](https://monadical.com) SAS 2017 ([we're hiring!](https://monadical.com/apply))
+MIT License | [Monadical](https://monadical.com) 2017 - 2024+ ([we're hiring!](https://monadical.com/apply))
 
-[![Monadical Logo](https://nicksweeting.com/d/monadical-banner.png)](https://monadical.com)
+[![Monadical Logo](https://monadical.com/static/core/img/logo@2x.png)](https://monadical.com)
