@@ -1,4 +1,4 @@
 node_modules/
+*.code-workspace
 *.sublime-project
-.idea/
 *.sublime-workspace
