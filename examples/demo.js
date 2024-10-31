@@ -4,11 +4,11 @@ import ReactDOM from 'react-dom'
 import {createStore, combineReducers} from 'redux'
 import {Provider} from 'react-redux'
 
-import {AnimationControls} from 'monadical-react-components/node/redux-time-controls'
-import {AnimationStateVisualizer} from 'monadical-react-components/node/redux-time-visualizer'
-import {AnimationTimeline} from 'monadical-react-components/node/redux-time-timeline'
+import {AnimationControls} from 'monadical-react-components/build/redux-time-controls'
+import {AnimationStateVisualizer} from 'monadical-react-components/build/redux-time-visualizer'
+import {AnimationTimeline} from 'monadical-react-components/build/redux-time-timeline'
 
-import {animationsReducer, startAnimation} from '../node/main.js'
+import {animationsReducer, startAnimation} from '../build/main.js'
 import {AnimationTester} from './test-component.js'
 
 

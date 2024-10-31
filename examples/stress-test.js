@@ -9,9 +9,9 @@ import {ExpandableSection} from 'monadical-react-components/node/expandable-sect
 import {AnimationControls} from 'monadical-react-components/node/redux-time-controls'
 
 
-import {range} from '../node/util.js'
-import {animationsReducer, startAnimation} from '../node/main.js'
-import {Become, Translate, RepeatSequence, Flatten} from '../node/animations.js'
+import {range} from '../build/util.js'
+import {animationsReducer, startAnimation} from '../build/main.js'
+import {Become, Translate, RepeatSequence, Flatten} from '../build/animations.js'
 
 
 

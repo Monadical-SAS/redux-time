@@ -8,8 +8,8 @@ import {
 import {
     animationsReducer,
     startAnimation,
-} from '../node/main.js'
-import {Become, Animate, Sequence} from '../node/animations.js'
+} from '../build/main.js'
+import {Become, Animate, Sequence} from '../build/animations.js'
 
 
 // init threejs scene

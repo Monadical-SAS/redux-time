@@ -82,7 +82,7 @@ import ReactDOM from 'react-dom'
 import {createStore, combineReducers} from 'redux'
 import {Provider, connect} from 'react-redux'
 import {animationsReducer, startAnimation} from 'redux-time'
-import {Animate} from 'redux-time/node/animations'
+import {Animate} from 'redux-time/build/animations'
 
 // 1. Create a redux store, and start the animation runloop with initial state
 const store = createStore(combineReducers({animations: animationsReducer}))
@@ -261,7 +261,7 @@ window.time = startAnimation(window.store, window.initial_state)
 ### Getting Started
 
 ```javascript
-import {Become, Animate, Rotate} from 'redux-time/node/animations'
+import {Become, Animate, Rotate} from 'redux-time/build/animations'
 
 // change some state value instantly
 window.store.dispatch({type: 'ANIMATE', animation: Become({
@@ -386,7 +386,7 @@ Typically, you wont create animations objects by hand, but rather use some of th
 #### Provided Animation Functions
 
 ```javascript
-import {...} from 'redux-time/node/animations' 
+import {...} from 'redux-time/build/animations' 
 
 // Basics
 

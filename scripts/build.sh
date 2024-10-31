@@ -26,7 +26,7 @@ function build_file() {
         eslint "src/$1" || exit 1
         echo
         echo "[2/3] Babelifying for Node..."
-        babel "src/$1" "node/$1" || exit 1
+        babel "src/$1" "build/$1" || exit 1
         # echo
         # echo "[3/3] Browserifying for Browsers..."
         # browserify "src/$1" "browser/$1"
@@ -52,7 +52,7 @@ function build_all() {
         [ -e "$file" ] || continue
         name="$(basename "$file")"
 
-        babel "src/$name" "node/$name" &  # env NODE_ENV=production 
+        babel "src/$name" "build/$name" &  # env NODE_ENV=production 
     done
     wait
 

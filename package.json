@@ -27,7 +27,7 @@
     "games",
     "game-engine"
   ],
-  "main": "node/main.js",
+  "main": "build/main.js",
   "dependencies": {
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
@@ -70,7 +70,7 @@
   "scripts": {
     "watch": "./scripts/watch.sh",
     "build": "./scripts/build.sh",
-    "test": "node node/tests.js",
+    "test": "node build/tests.js",
     "minify": "./node_modules/.bin/uglifyjs examples/static/stress-test.js --compress --mangle --source-map --output examples/static/stress-test.min.js"
   }
 }
