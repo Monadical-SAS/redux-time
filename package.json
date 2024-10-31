@@ -31,7 +31,7 @@
   "dependencies": {
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
-    "extend": "^3.0.1",
+    "extend": "^3.0.2",
     "lodash.isequal": "^4.5.0",
     "warped-time": "^0.0.19"
   },
@@ -42,15 +42,15 @@
     "babel-plugin-transform-runtime": "^6.12.0",
     "babel-preset-stage-2": "^6.13.0",
     "babel-runtime": "^6.26.0",
-    "babelify": "^8.0.0",
-    "browserify": "^16.2.2",
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.1",
     "eslint": "^5.0.1",
     "eslint-plugin-babel": "^5.1.0",
     "minifyify": "^7.3.5",
-    "redux": "^4.0.0",
-    "three": "^0.125.0",
-    "uglify-js": "3.4.2",
-    "watchify": "^3.11.0"
+    "redux": "^5.0.1",
+    "three": "^0.170.0",
+    "uglify-js": "3.19.3",
+    "watchify": "^4.0.0"
   },
   "browserify": {
     "transform": [
