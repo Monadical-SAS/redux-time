@@ -3,7 +3,5 @@
     "globals": {
         "window": true
     },
-    "plugins": [
-        "babel"
-    ]
+    "plugins": ["babel"]
 }
