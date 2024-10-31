@@ -461,7 +461,7 @@ const delayed_rotate = Rotate({
     start_time: Date.now() + 1000,   // to start 1sec from now
     duration: 1000,
     start_state: 0,
-    delta_state: 360,
+    end_state: 360,
 })
 store.dispatch({type: 'ANIMATE', animation: delayed_rotate})
 ```
@@ -472,7 +472,7 @@ You can use `start_time` to build up a sequence of animations that overlap or ru
 
 ### State Tree
 
-I  you have some existing state elsewhere in your redux state-tree that you want to augment with redux-time:
+If you have some existing state elsewhere in your redux state-tree that you want to augment with redux-time:
 
 ```javascript
 const mapStateToProps = ({ball, animations}) => ({
@@ -519,7 +519,7 @@ store.dispatch({type: 'ANIMATE', animation: Animate({
     path: '/path/to/your/state/value',
     duration: 1000,
     start_state: 0,
-    delta_state: 100,
+    end_state_state: 100,
     tick: (delta) => {
         // e.g. stepped value instead of smoothly changing continuous value
         if (delta <= 0) return 0
