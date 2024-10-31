@@ -21,15 +21,15 @@ function browserify() {
 }
 
 function build_file() {
-    if [[ -e "es6/$1" ]]; then
+    if [[ -e "src/$1" ]]; then
         echo "[1/3] Linting JS..."
-        eslint "es6/$1" || exit 1
+        eslint "src/$1" || exit 1
         echo
         echo "[2/3] Babelifying for Node..."
-        babel "es6/$1" "node/$1" || exit 1
+        babel "src/$1" "node/$1" || exit 1
         # echo
         # echo "[3/3] Browserifying for Browsers..."
-        # browserify "es6/$1" "browser/$1"
+        # browserify "src/$1" "browser/$1"
     fi
 
     if [[ -e "examples/$1" ]]; then
@@ -44,25 +44,25 @@ function build_file() {
 
 function build_all() {
     echo "[1/3] Linting JS..."
-    eslint es6 || exit 1
+    eslint src || exit 1
 
     echo
     echo "[2/3] Babelifying for Node..."
-    for file in "$CODE"/es6/*.js; do
+    for file in "$CODE"/src/*.js; do
         [ -e "$file" ] || continue
         name="$(basename "$file")"
 
-        babel "es6/$name" "node/$name" &  # env NODE_ENV=production 
+        babel "src/$name" "node/$name" &  # env NODE_ENV=production 
     done
     wait
 
     echo
     echo "[3/3] Browserifying for Browsers..."
-    for file in "$CODE"/es6/*.js; do
+    for file in "$CODE"/src/*.js; do
         [ -e "$file" ] || continue
         name="$(basename "$file")"
 
-        # browserify "es6/$name" "browser/$name" &
+        # browserify "src/$name" "browser/$name" &
     done
     # for file in "$CODE"/examples/*.js; do
     #     [ -e "$file" ] || continue
