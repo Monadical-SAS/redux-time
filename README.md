@@ -709,6 +709,6 @@ If you see a particular slowdown that you think is in `redux-time`, please submi
 ---
 <img src="examples/static/jeremy.jpg" height="40px" style="float:right"/>
 
-MIT License | [Monadical](https://monadical.com) 2017 - 2024+ ([we're hiring!](https://monadical.com/apply))
+MIT License | [Monadical](https://monadical.com) 2017 - 2024+ ([we're hiring!](https://monadical.com/team))
 
 [![Monadical Logo](https://monadical.com/static/core/img/logo@2x.png)](https://monadical.com)
